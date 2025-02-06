@@ -1,3 +1,4 @@
+/*
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { z } from "zod";
@@ -55,3 +56,4 @@ export async function POST(request) {
     );
   }
 }
+*/

@@ -1,25 +1,21 @@
-"use client";
-import axios from "axios";
-import TestButton from "@/components/TestButton";
+import { getHomePageData } from "@/data/loaders";
 
-export default function Home() {
-  /* const test = axios.get('http://localhost:1337/api/assessments')
-      .then(response => {
-        console.log(response.data); // JSON data is automatically parsed
-      })
-      .catch(error => {
-        console.error(error); // Handles both network and HTTP errors
-      });
+import { HeroSection } from "@/components/custom/hero-section";
+import { FeatureSection } from "@/components/custom/features-section";
 
-  console.log(test);*/
+export default async function Home() {
+  const strapiData = await getHomePageData();
+  const { blocks } = strapiData?.data || [];
+  return <main>{blocks.map(blockRenderer)}</main>;
+}
 
-  /**/
+const blockComponents = {
+  "layout.hero-section": HeroSection,
+  "layout.features-section": FeatureSection,
+};
 
-  return (
-    <div>
-      <h1>
-        <TestButton />
-      </h1>
-    </div>
-  );
+function blockRenderer(block: any) {
+  const Component =
+    blockComponents[block.__component as keyof typeof blockComponents];
+  return Component ? <Component key={block.id} data={block} /> : null;
 }

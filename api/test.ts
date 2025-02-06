@@ -1,7 +1,8 @@
+/*
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
-import systemMessage from "@/utils/systemMessage";
+import systemMessage from "@/lib/systemMessage";
 
 export const gptTest = async () => {
   const openai = new OpenAI({
@@ -34,3 +35,4 @@ export const gptTest = async () => {
   const issue = completion.choices[0].message.parsed;
   return issue;
 };
+*/

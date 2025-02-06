@@ -1,3 +1,4 @@
+/*
 "use client"; // Mark this as a client-side component
 
 import { useState } from "react";
@@ -49,3 +50,4 @@ export default function TestButton() {
     </div>
   );
 }
+*/
