@@ -3,6 +3,7 @@
 import template from "@/lib/template.json";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { ComboBox } from "@/components/custom/combo-box";
 
 const FormField = ({ field }: any) => {
   //console.log(field);
@@ -16,6 +17,15 @@ const FormField = ({ field }: any) => {
           name={field.fieldName}
           type={field.fieldType}
         />
+      </>
+    );
+  }
+
+  if (field.fieldType === "option") {
+    return (
+      <>
+        <Label htmlFor={field.fieldName}>{field.fieldName}</Label>
+        <ComboBox />
       </>
     );
   }
