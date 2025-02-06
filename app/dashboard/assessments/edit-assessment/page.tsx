@@ -10,23 +10,25 @@ const FormField = ({ field }: any) => {
 
   if (field.fieldType === "text") {
     return (
-      <>
+      <div>
         <Label htmlFor={field.fieldName}>{field.fieldName}</Label>
         <Input
           id={field.fieldName}
           name={field.fieldName}
           type={field.fieldType}
         />
-      </>
+      </div>
     );
   }
 
   if (field.fieldType === "option") {
     return (
-      <>
+      <div>
         <Label htmlFor={field.fieldName}>{field.fieldName}</Label>
-        <ComboBox />
-      </>
+        <div className={"w-full"}>
+          <ComboBox />
+        </div>
+      </div>
     );
   }
 
@@ -38,7 +40,7 @@ function Page() {
   //console.log(data);
 
   return (
-    <form>
+    <form id={"a11y-bug-form"} className={"w-full max-w-[75%] my-14 mx-auto"}>
       {data.map((field) => {
         return <FormField key={field.fieldName} field={field} />;
       })}

@@ -70,3 +70,17 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+#main {
+  min-height: calc(100vh - 140px);
+}
+
+#a11y-bug-form > div {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+#a11y-bug-form label {
+  width: 25%;
+  padding-right: 20px;
+}
