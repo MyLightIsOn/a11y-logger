@@ -1,6 +1,6 @@
 "use client";
 
-import { Payment, columns } from "@/components/custom/assessment-table/columns";
+import { columns } from "@/components/custom/assessment-table/columns";
 import { AssessmentDataTable } from "@/components/custom/assessment-table/data-table";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,8 +11,6 @@ const fetchAccessibilityIssues = async () => {
 };
 
 export default function DemoPage() {
-  //const data = await getData();
-
   const { data, error, isLoading } = useQuery({
     queryKey: ["assessments"],
     queryFn: fetchAccessibilityIssues,
