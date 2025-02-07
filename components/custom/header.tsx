@@ -5,6 +5,7 @@ import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 import { Logo } from "@/components/custom/logo";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "./logout-button";
+import { LightDarkToggle } from "@/components/custom/light-dark-toggle";
 
 interface HeaderProps {
   data: {
@@ -39,6 +40,7 @@ export function LoggedInUser({
       >
         {userData.username}
       </Link>
+      <LightDarkToggle />
       <LogoutButton />
     </div>
   );
