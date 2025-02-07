@@ -17,7 +17,13 @@ function AssessmentsTable(props) {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  return <div>Assessment Table</div>;
+  return (
+    <div>
+      {data.map((assessment) => {
+        return <p key={assessment.documentId}>{assessment.name}</p>;
+      })}
+    </div>
+  );
 }
 
 export default AssessmentsTable;
