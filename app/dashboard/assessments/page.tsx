@@ -1,7 +1,7 @@
 "use client";
 
-import { columns } from "@/components/custom/assessment-table/columns";
-import { AssessmentDataTable } from "@/components/custom/assessment-table/data-table";
+import { renderColumns } from "@/components/custom/assessments-list/columns";
+import { AssessmentDataTable } from "@/components/custom/assessments-list/data-table";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchAccessibilityIssues = async () => {
@@ -16,7 +16,7 @@ export default function DemoPage() {
     queryFn: fetchAccessibilityIssues,
   });
 
-  console.log(data);
+  const columns = renderColumns();
 
   return (
     <div className="container mx-auto py-10 px-10">

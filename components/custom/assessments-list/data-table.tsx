@@ -76,7 +76,7 @@ export function AssessmentDataTable<TData, TValue>({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns
+              Hide Columns
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
