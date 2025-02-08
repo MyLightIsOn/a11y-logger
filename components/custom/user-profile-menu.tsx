@@ -22,7 +22,12 @@ export function UserProfileMenu({ user }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost">{user}</Button>
+        <Button
+          className={"font-bold hover:underline focus:underline text-lg"}
+          variant="ghost"
+        >
+          {user}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>

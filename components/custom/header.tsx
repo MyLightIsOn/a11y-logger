@@ -34,7 +34,7 @@ export function LoggedInUser({
 }) {
   return (
     <div className="flex gap-2 items-center">
-      <UserProfileMenu user={userData.username} />
+      <UserProfileMenu user={userData.email} />
       <LightDarkToggle />
     </div>
   );
