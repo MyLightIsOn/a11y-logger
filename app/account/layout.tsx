@@ -2,7 +2,7 @@
 
 import SideBar from "@/components/custom/sidebar";
 
-export default function DashboardLayout({
+export default function AccountLayout({
   children,
 }: {
   readonly children: React.ReactNode;

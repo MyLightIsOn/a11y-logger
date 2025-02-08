@@ -22,10 +22,10 @@ const columnsSchema = [
   { heading: "updatedAt", displayName: "Last Update", type: "date" },
 ];
 
-export const renderColumns = () => {
+export const renderColumns = (data: { documentId: string }[]) => {
   const columns: ColumnDef<Assessments>[] = [];
 
-  columnsSchema.map((columnData) => {
+  columnsSchema.map((columnData, index) => {
     columns.push({
       accessorKey: columnData.heading,
       header: ({ column }) => (
@@ -43,7 +43,16 @@ export const renderColumns = () => {
           return formatDate(row.original[columnData.heading]);
         }
 
-        return row.original[columnData.heading];
+        return index === 0 ? (
+          <a
+            className={"hover:underline focus:underline"}
+            href={`/assessments/${data[index].documentId}`}
+          >
+            {row.original[columnData.heading]}
+          </a>
+        ) : (
+          row.original[columnData.heading]
+        );
       },
     });
   });
