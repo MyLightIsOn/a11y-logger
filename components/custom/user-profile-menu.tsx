@@ -18,12 +18,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function UserProfileMenu({ user }) {
+interface MenuProps {
+  user: string;
+}
+
+export function UserProfileMenu({ user }: MenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className={"font-bold hover:underline focus:underline text-lg"}
+          className={"font-bold hover:underline focus:underline"}
           variant="ghost"
         >
           {user}

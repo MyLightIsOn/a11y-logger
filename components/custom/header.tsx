@@ -6,6 +6,7 @@ import { Logo } from "@/components/custom/logo";
 import { Button } from "@/components/ui/button";
 import { LightDarkToggle } from "@/components/custom/light-dark-toggle";
 import { UserProfileMenu } from "@/components/custom/user-profile-menu";
+import { User } from "@/types/user";
 
 interface HeaderProps {
   data: {
@@ -22,16 +23,7 @@ interface HeaderProps {
   };
 }
 
-interface AuthUserProps {
-  username: string;
-  email: string;
-}
-
-export function LoggedInUser({
-  userData,
-}: {
-  readonly userData: AuthUserProps;
-}) {
+export function LoggedInUser({ userData }: { readonly userData: User }) {
   return (
     <div className="flex gap-2 items-center">
       <UserProfileMenu user={userData.email} />
