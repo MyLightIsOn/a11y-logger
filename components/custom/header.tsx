@@ -4,8 +4,8 @@ import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 
 import { Logo } from "@/components/custom/logo";
 import { Button } from "@/components/ui/button";
-import { LogoutButton } from "./logout-button";
 import { LightDarkToggle } from "@/components/custom/light-dark-toggle";
+import { UserProfileMenu } from "@/components/custom/user-profile-menu";
 
 interface HeaderProps {
   data: {
@@ -33,15 +33,9 @@ export function LoggedInUser({
   readonly userData: AuthUserProps;
 }) {
   return (
-    <div className="flex gap-2">
-      <Link
-        href="/dashboard/account"
-        className="font-semibold hover:text-primary"
-      >
-        {userData.username}
-      </Link>
+    <div className="flex gap-2 items-center">
+      <UserProfileMenu user={userData.username} />
       <LightDarkToggle />
-      <LogoutButton />
     </div>
   );
 }

@@ -22,20 +22,11 @@ interface LogoProps {
   dark?: boolean;
 }
 
-export function Logo({
-  text = "Logo Text",
-  dark = false,
-}: Readonly<LogoProps>) {
+export function Logo({ text = "Logo Text" }: Readonly<LogoProps>) {
   return (
     <Link className="flex items-center gap-2" href="/">
       <BugIcon width={24} height={24} />
-      <span
-        className={`text-lg font-semibold ${
-          dark ? "text-white" : "text-slate-900"
-        }`}
-      >
-        {text}
-      </span>
+      <span className={`text-lg font-semibold`}>{text}</span>
     </Link>
   );
 }
