@@ -3,11 +3,16 @@
 import { renderColumns } from "@/components/custom/assessments-list/columns";
 import { AssessmentDataTable } from "@/components/custom/assessments-list/data-table";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const fetchAssessments = async () => {
-  const res = await fetch("/api/assessments");
-  if (!res.ok) throw new Error("Failed to fetch assessments");
-  return res.json();
+  const api_url = `/api/assessments`;
+  try {
+    const res = await axios.get(api_url);
+    return res.data;
+  } catch (err) {
+    throw new Error(`Failed to fetch assessments: ${err}`);
+  }
 };
 
 export default function DemoPage() {

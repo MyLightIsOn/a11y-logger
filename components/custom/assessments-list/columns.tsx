@@ -43,15 +43,17 @@ export const renderColumns = (data: { documentId: string }[]) => {
           return formatDate(row.original[columnData.heading]);
         }
 
-        return index === 0 ? (
+        if (columnData.heading === "name") {
+          console.log(columnData);
+        }
+
+        return (
           <a
             className={"hover:underline focus:underline"}
-            href={`/assessments/${data[index].documentId}`}
+            href={`/assessments/${data[index]?.documentId}`}
           >
             {row.original[columnData.heading]}
           </a>
-        ) : (
-          row.original[columnData.heading]
         );
       },
     });
