@@ -34,7 +34,7 @@ interface AssessmentDataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function AssessmentDataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
 }: AssessmentDataTableProps<TData, TValue>) {

@@ -3,7 +3,15 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { renderColumns } from "@/components/custom/assessments-list/columns";
-import { AssessmentDataTable } from "@/components/custom/assessments-list/data-table";
+import { DataTable } from "@/components/custom/assessments-list/data-table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -31,14 +39,31 @@ function Page() {
     { heading: "severity", displayName: "Severity", type: "string" },
     { heading: "standard", displayName: "Standard", type: "string" },
   ];
-
+  const assessment = data;
   data = data?.issues;
 
   const columns = renderColumns(data, schema);
 
+  console.log(assessment);
+
   return (
     <div className="container mx-auto py-10 px-10">
-      {data && <AssessmentDataTable columns={columns} data={data} />}
+      {assessment && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{assessment.title}</CardTitle>
+            <CardDescription>{assessment.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Total Issues: {data.length}</p>
+          </CardContent>
+          <CardFooter>
+            <p>Card Footer</p>
+          </CardFooter>
+        </Card>
+      )}
+
+      {data && <DataTable columns={columns} data={data} />}
     </div>
   );
 }

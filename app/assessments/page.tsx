@@ -1,7 +1,7 @@
 "use client";
 
 import { renderColumns } from "@/components/custom/assessments-list/columns";
-import { AssessmentDataTable } from "@/components/custom/assessments-list/data-table";
+import { DataTable } from "@/components/custom/assessments-list/data-table";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -35,7 +35,7 @@ export default function DemoPage() {
 
   return (
     <div className="container mx-auto py-10 px-10">
-      {data && <AssessmentDataTable columns={columns} data={data} />}
+      {data && <DataTable columns={columns} data={data} />}
     </div>
   );
 }
