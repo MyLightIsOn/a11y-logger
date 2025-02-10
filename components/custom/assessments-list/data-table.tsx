@@ -67,9 +67,9 @@ export function AssessmentDataTable<TData, TValue>({
       <div className="flex items-center py-4">
         <Input
           placeholder="Search..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

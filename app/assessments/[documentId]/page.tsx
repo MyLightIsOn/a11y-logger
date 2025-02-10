@@ -23,7 +23,9 @@ function Page() {
     queryKey: ["assessment"],
     queryFn: () => fetchAssessment(url),
   });
+
   console.log(data);
+
   return <div>ID Page</div>;
 }
 

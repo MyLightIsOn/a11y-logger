@@ -14,8 +14,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Assessments } from "@/types/assessments";
 
+interface RowProps {
+  row: {
+    index: number;
+    original: Assessments;
+  };
+}
+
 const columnsSchema = [
-  { heading: "name", displayName: "Assessment", type: "string" },
+  { heading: "title", displayName: "Assessment", type: "string" },
   { heading: "progress", displayName: "Status", type: "string" },
   { heading: "platform", displayName: "Platform", type: "string" },
   { heading: "createdAt", displayName: "Created", type: "date" },
@@ -38,21 +45,21 @@ export const renderColumns = (data: { documentId: string }[]) => {
         </Button>
       ),
       //TODO fix type
-      cell: ({ row }: { row: { original: any } }) => {
+      cell: ({ row }: RowProps) => {
         if (columnData.type === "date") {
+          // @ts-ignore
           return formatDate(row.original[columnData.heading]);
-        }
-
-        if (columnData.heading === "name") {
-          console.log(columnData);
         }
 
         return (
           <a
             className={"hover:underline focus:underline"}
-            href={`/assessments/${data[index]?.documentId}`}
+            href={`/assessments/${data[row.index]?.documentId}`}
           >
-            {row.original[columnData.heading]}
+            {
+              // @ts-ignore
+              row.original[columnData.heading]
+            }
           </a>
         );
       },

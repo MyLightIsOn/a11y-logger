@@ -12,6 +12,9 @@ export async function GET(request: NextRequest) {
   try {
     const req = await axios.get(url, {
       headers: API_AUTH_TOKEN,
+      params: {
+        populate: ["issues.screenshots"],
+      },
     });
 
     return NextResponse.json(req.data.data);

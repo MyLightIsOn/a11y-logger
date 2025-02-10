@@ -23,6 +23,8 @@ export default function DemoPage() {
 
   const columns = renderColumns(data);
 
+  console.log(data);
+
   return (
     <div className="container mx-auto py-10 px-10">
       {data && <AssessmentDataTable columns={columns} data={data} />}
