@@ -21,7 +21,15 @@ export default function DemoPage() {
     queryFn: fetchAssessments,
   });
 
-  const columns = renderColumns(data);
+  const schema = [
+    { heading: "title", displayName: "Assessment", type: "string" },
+    { heading: "progress", displayName: "Status", type: "string" },
+    { heading: "platform", displayName: "Platform", type: "string" },
+    { heading: "createdAt", displayName: "Created", type: "date" },
+    { heading: "updatedAt", displayName: "Last Update", type: "date" },
+  ];
+
+  const columns = renderColumns(data, schema);
 
   console.log(data);
 

@@ -21,18 +21,10 @@ interface RowProps {
   };
 }
 
-const columnsSchema = [
-  { heading: "title", displayName: "Assessment", type: "string" },
-  { heading: "progress", displayName: "Status", type: "string" },
-  { heading: "platform", displayName: "Platform", type: "string" },
-  { heading: "createdAt", displayName: "Created", type: "date" },
-  { heading: "updatedAt", displayName: "Last Update", type: "date" },
-];
-
-export const renderColumns = (data: { documentId: string }[]) => {
+export const renderColumns = (data, schema) => {
+  console.log(data);
   const columns: ColumnDef<Assessments>[] = [];
-
-  columnsSchema.map((columnData, index) => {
+  schema.map((columnData, index) => {
     columns.push({
       accessorKey: columnData.heading,
       header: ({ column }) => (

@@ -2,6 +2,8 @@
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { renderColumns } from "@/components/custom/assessments-list/columns";
+import { AssessmentDataTable } from "@/components/custom/assessments-list/data-table";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -19,14 +21,26 @@ const fetchAssessment = async (url: string) => {
 function Page() {
   const pathname = usePathname();
   const url = pathname.replace("/assessments/", "");
-  const { data, error, isLoading } = useQuery({
+  let { data, error, isLoading } = useQuery({
     queryKey: ["assessment"],
     queryFn: () => fetchAssessment(url),
   });
 
-  console.log(data);
+  const schema = [
+    { heading: "title", displayName: "Title", type: "string" },
+    { heading: "severity", displayName: "Severity", type: "string" },
+    { heading: "standard", displayName: "Standard", type: "string" },
+  ];
 
-  return <div>ID Page</div>;
+  data = data?.issues;
+
+  const columns = renderColumns(data, schema);
+
+  return (
+    <div className="container mx-auto py-10 px-10">
+      {data && <AssessmentDataTable columns={columns} data={data} />}
+    </div>
+  );
 }
 
 export default Page;
