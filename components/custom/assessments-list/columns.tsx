@@ -22,7 +22,6 @@ interface RowProps {
 }
 
 export const renderColumns = (data, schema) => {
-  console.log(data);
   const columns: ColumnDef<Assessments>[] = [];
   schema.map((columnData, index) => {
     columns.push({
