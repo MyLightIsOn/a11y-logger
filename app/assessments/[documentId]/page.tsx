@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Subnav from "@/components/custom/subnav";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -44,26 +45,27 @@ function Page() {
 
   const columns = renderColumns(data, schema);
 
-  console.log(assessment);
-
   return (
-    <div className="container mx-auto py-10 px-10">
-      {assessment && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{assessment.title}</CardTitle>
-            <CardDescription>{assessment.description}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Total Issues: {data.length}</p>
-          </CardContent>
-          <CardFooter>
-            <p>Card Footer</p>
-          </CardFooter>
-        </Card>
-      )}
+    <div>
+      <Subnav />
+      <div className="container mx-auto py-10 px-10">
+        {assessment && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{assessment.title}</CardTitle>
+              <CardDescription>{assessment.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Total Issues: {data.length}</p>
+            </CardContent>
+            <CardFooter>
+              <p>Card Footer</p>
+            </CardFooter>
+          </Card>
+        )}
 
-      {data && <DataTable columns={columns} data={data} />}
+        {data && <DataTable columns={columns} data={data} />}
+      </div>
     </div>
   );
 }
