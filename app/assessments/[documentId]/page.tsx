@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Subnav from "@/components/custom/subnav";
+import { DonutChart } from "@/components/charts/donut";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -58,6 +59,7 @@ function Page() {
             <CardContent>
               <p>Total Issues: {data.length}</p>
             </CardContent>
+            <DonutChart />
             <CardFooter>
               <p>Card Footer</p>
             </CardFooter>
