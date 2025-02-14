@@ -31,7 +31,10 @@ export function DonutChart({
 
   Object.keys(chartColors).forEach((property) => {
     chartTable.push(
-      <div key={property} className={"w-1/2 flex justify-between pr-12 mb-2"}>
+      <div
+        key={property}
+        className={"w-1/2 flex justify-between mb-2 pr-16 relative left-5"}
+      >
         <div>{property.charAt(0).toUpperCase() + property.slice(1)}</div>
         <div
           style={{ backgroundColor: `hsl(var(${chartColors[property]}))` }}
@@ -42,7 +45,7 @@ export function DonutChart({
   });
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col border-none shadow-none">
       <CardHeader className="items-center pb-0">
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -100,7 +103,7 @@ export function DonutChart({
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className={"flex flex-wrap"}>{chartTable}</div>
+        <div className={"flex flex-wrap w-[300px] m-auto"}>{chartTable}</div>
       </CardFooter>
     </Card>
   );

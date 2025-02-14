@@ -212,7 +212,10 @@ function Page() {
               title={"Severity Overview"}
               description={"A Breakdown of Issue Severity"}
             />
-            <div className={"flex justify-between p-5"}>{chartTable}</div>
+            <hr className={"w-[80%] m-auto border-gray-500"} />
+            <div className={"flex justify-between p-5 max-w-[300px] m-auto"}>
+              {chartTable}
+            </div>
           </Card>
         </div>
       </div>
