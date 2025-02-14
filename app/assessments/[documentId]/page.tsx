@@ -15,6 +15,7 @@ import {
 import Subnav from "@/components/custom/subnav";
 import { DonutChart } from "@/components/charts/donut";
 import { ChartConfig } from "@/components/ui/chart";
+import { formatDate } from "@/lib/utils";
 
 const chartConfig = {
   count: {
@@ -22,19 +23,19 @@ const chartConfig = {
   },
   critical: {
     label: "Critical",
-    color: "hsl(var(--chart-1))",
+    color: "--severity-chart-1",
   },
   major: {
     label: "Major",
-    color: "hsl(var(--chart-2))",
+    color: "--severity-chart-2",
   },
   minor: {
     label: "Minor",
-    color: "hsl(var(--chart-3))",
+    color: "--severity-chart-3",
   },
-  enhancement: {
-    label: "Enhancement",
-    color: "hsl(var(--chart-4))",
+  advisory: {
+    label: "Advisory",
+    color: "--severity-chart-4",
   },
 } satisfies ChartConfig;
 
@@ -51,14 +52,15 @@ const fetchAssessment = async (url: string) => {
   }
 };
 
+const chartColors = {
+  critical: "--severity-chart-1",
+  major: "--severity-chart-2",
+  minor: "--severity-chart-3",
+  advisory: "--severity-chart-4",
+};
+
 const countSeverity = (data) => {
   const dataArray = [];
-  const chartColors = {
-    critical: "var(--color-critical)",
-    major: "var(--color-major)",
-    minor: "var(--color-minor)",
-    enhancement: "var(--color-enhancement)",
-  };
 
   data?.map((issue) => {
     const object = {
@@ -83,7 +85,7 @@ const countSeverity = (data) => {
     chartData.push({
       severity: property,
       count: issueCounts[property],
-      fill: chartColors[property],
+      fill: `hsl(var(${chartColors[property]}))`,
     });
   });
 
@@ -111,40 +113,72 @@ function Page() {
   const columns = renderColumns(data, schema);
 
   const { chartData, issueCounts } = countSeverity(data);
-
+  console.log(assessment);
   return (
     <div>
       <Subnav />
       <div className="container mx-auto py-10 px-10">
         <div className={"flex gap-5 mb-5"}>
           {assessment && (
-            <Card className={"w-2/3"}>
-              <CardHeader>
-                <CardTitle>{assessment.title}</CardTitle>
-                <CardDescription>{assessment.description}</CardDescription>
+            <Card className={"w-full"}>
+              <CardHeader className={"flex flex-row"}>
+                <div className={"w-3/4"}>
+                  <CardTitle>{assessment.title}</CardTitle>
+                  <CardDescription>{assessment.description}</CardDescription>
+                  <div className={"flex mt-5"}>
+                    <p className={"text-sm"}>
+                      <span className={"font-bold"}>Standard:</span>{" "}
+                      {assessment.standard}
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className={
+                    "w-1/4 text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5"
+                  }
+                >
+                  <p>
+                    <span className={"font-bold"}>Date Created:</span>{" "}
+                    {formatDate(assessment.createdAt)}
+                  </p>
+                  {assessment.date_completed && (
+                    <p>
+                      <span className={"font-bold"}>Date Completed:</span>{" "}
+                      {formatDate(assessment.date_completed)}
+                    </p>
+                  )}
+                  {assessment.updatedAt && (
+                    <p>
+                      <span className={"font-bold"}>Last Update:</span>{" "}
+                      {formatDate(assessment.updatedAt)}
+                    </p>
+                  )}
+                  <p>
+                    <span className={"font-bold"}>Status:</span>{" "}
+                    {assessment.progress.charAt(0).toUpperCase() +
+                      assessment.progress.slice(1)}
+                  </p>
+                </div>
               </CardHeader>
-              <div className={"flex"}>
-                <CardContent>
-                  <p>Total Issues: {data.length}</p>
-                </CardContent>
-              </div>
             </Card>
           )}
-
-          <div className={"w-1/3"}>
-            <DonutChart
-              chartData={chartData}
-              chartConfig={chartConfig}
-              mainLabel={"Total Issues"}
-            />
-          </div>
         </div>
 
         <div className={"flex gap-5"}>
           <Card className={"w-2/3 p-5"}>
             {data && <DataTable columns={columns} data={data} />}
           </Card>
-          <Card className={"w-1/3"}></Card>
+          <Card className={"w-1/3"}>
+            <DonutChart
+              chartData={chartData}
+              chartConfig={chartConfig}
+              chartColors={chartColors}
+              countLabel={"Total Issues"}
+              title={"Severity Overview"}
+              description={"A Breakdown of Issue Severity"}
+            />
+          </Card>
         </div>
       </div>
     </div>

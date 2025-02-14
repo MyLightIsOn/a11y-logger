@@ -24,7 +24,7 @@
       "fieldName": "Severity",
       "fieldType": "option",
       "options": [
-        "Critical","Major","Minor","Enhancement"
+        "Critical","Major","Minor","Advisory"
       ],
       "required": false
     },
