@@ -17,6 +17,7 @@ import { DonutChart } from "@/components/charts/donut";
 import { ChartConfig } from "@/components/ui/chart";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import * as React from "react";
 
 const chartConfig = {
   count: {
@@ -114,7 +115,22 @@ function Page() {
   const columns = renderColumns(data, schema);
 
   const { chartData, issueCounts } = countSeverity(data);
-  console.log(assessment?.tags);
+
+  const chartTable = [];
+  Object.keys(chartColors).forEach((property) => {
+    const label = property;
+    const count = issueCounts[property];
+
+    chartTable.push(
+      <div key={label} className={"flex flex-col text-center text-sm"}>
+        <div className={"font-bold"}>
+          {label.charAt(0).toUpperCase() + label.slice(1)}
+        </div>
+        <div className={"text-2xl"}>{count || 0}</div>
+      </div>,
+    );
+  });
+
   return (
     <div>
       <Subnav />
@@ -196,6 +212,7 @@ function Page() {
               title={"Severity Overview"}
               description={"A Breakdown of Issue Severity"}
             />
+            <div className={"flex justify-between p-5"}>{chartTable}</div>
           </Card>
         </div>
       </div>
