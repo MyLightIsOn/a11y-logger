@@ -16,6 +16,7 @@ import Subnav from "@/components/custom/subnav";
 import { DonutChart } from "@/components/charts/donut";
 import { ChartConfig } from "@/components/ui/chart";
 import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const chartConfig = {
   count: {
@@ -113,12 +114,12 @@ function Page() {
   const columns = renderColumns(data, schema);
 
   const { chartData, issueCounts } = countSeverity(data);
-  console.log(assessment);
+  console.log(assessment?.tags);
   return (
     <div>
       <Subnav />
       <div className="container mx-auto py-10 px-10">
-        <div className={"flex gap-5 mb-5"}>
+        <div className={"flex gap-5 mb-5 relative"}>
           {assessment && (
             <Card className={"w-full"}>
               <CardHeader className={"flex flex-row"}>
@@ -131,11 +132,28 @@ function Page() {
                       {assessment.standard}
                     </p>
                   </div>
+                  {assessment?.tags && (
+                    <div className={"text-sm flex w-1/2 mt-2"}>
+                      <span className={"font-bold"}>Tags:</span>{" "}
+                      <div>
+                        {assessment.tags.map((tag) => {
+                          return (
+                            <Badge
+                              key={tag.slug}
+                              className={"mx-1 my-1 bg-tags dark"}
+                            >
+                              {tag.title}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div
                   className={
-                    "w-1/4 text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5"
+                    "w-1/4 h-fit text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5 absolute top-3 right-5 rounded-lg border-border border"
                   }
                 >
                   <p>

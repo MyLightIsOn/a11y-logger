@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const req = await axios.get(url, {
       headers: API_AUTH_TOKEN,
       params: {
-        populate: ["issues.screenshots"],
+        populate: ["issues.screenshots", "tags"],
       },
     });
 
