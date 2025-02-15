@@ -110,9 +110,10 @@ function Page() {
     { heading: "severity", displayName: "Severity", type: "string" },
   ];
   const assessment = data;
+  const issuesURL = `assessments/${assessment?.documentId as string}/issues`;
   data = data?.issues;
 
-  const columns = renderColumns(data, schema);
+  const columns = renderColumns(data, schema, issuesURL);
 
   const { chartData, issueCounts } = countSeverity(data);
 

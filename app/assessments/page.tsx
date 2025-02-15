@@ -29,7 +29,7 @@ export default function DemoPage() {
     { heading: "updatedAt", displayName: "Last Update", type: "date" },
   ];
 
-  const columns = renderColumns(data, schema);
+  const columns = renderColumns(data, schema, "assessments");
 
   return (
     <div className="container mx-auto py-10 px-10">

@@ -21,9 +21,10 @@ interface RowProps {
   };
 }
 
-export const renderColumns = (data, schema) => {
+export const renderColumns = (data, schema, type) => {
   const columns: ColumnDef<Assessments>[] = [];
-  schema.map((columnData, index) => {
+
+  schema.map((columnData) => {
     columns.push({
       accessorKey: columnData.heading,
       header: ({ column }) => (
@@ -45,7 +46,7 @@ export const renderColumns = (data, schema) => {
         return (
           <a
             className={"hover:underline focus:underline"}
-            href={`/assessments/${data[row.index]?.documentId}`}
+            href={`/${type}/${data[row.index]?.documentId}`}
           >
             {
               // @ts-ignore
