@@ -134,7 +134,7 @@ function Page() {
 
   return (
     <div>
-      <Subnav />
+      <Subnav edit generate trash />
       <div className="container mx-auto py-10 px-10">
         <div className={"flex gap-5 mb-5 relative"}>
           {assessment && (

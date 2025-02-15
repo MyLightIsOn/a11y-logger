@@ -1,8 +1,13 @@
 import React from "react";
-import { FileChartColumn, Edit, Trash2 } from "lucide-react";
+import { FileChartColumn, Edit, Trash2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-function Subnav() {
+function Subnav({
+  edit = false,
+  generate = false,
+  duplicate = false,
+  trash = false,
+}) {
   return (
     <div
       className={
@@ -10,15 +15,26 @@ function Subnav() {
       }
     >
       <div className={"flex gap-2"}>
-        <Button>
-          Edit <Edit />
-        </Button>
-        <Button>
-          Generate Report <FileChartColumn />
-        </Button>
-        <Button variant={"destructive"}>
-          Delete <Trash2 />
-        </Button>
+        {edit && (
+          <Button>
+            Edit <Edit />
+          </Button>
+        )}
+        {duplicate && (
+          <Button>
+            Duplicate <Copy />
+          </Button>
+        )}
+        {generate && (
+          <Button>
+            Generate Report <FileChartColumn />
+          </Button>
+        )}
+        {trash && (
+          <Button variant={"destructive"}>
+            Delete <Trash2 />
+          </Button>
+        )}
       </div>
     </div>
   );

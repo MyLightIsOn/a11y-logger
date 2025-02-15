@@ -4,6 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import Subnav from "@/components/custom/subnav";
 
 const fetchIssue = async (url: string) => {
   const api_url = `/api/issues?documentId=${url}`;
@@ -27,7 +28,11 @@ function Page(props) {
 
   console.log(data);
 
-  return <div>Issue Page</div>;
+  return (
+    <div>
+      <Subnav edit duplicate trash />
+    </div>
+  );
 }
 
 export default Page;
