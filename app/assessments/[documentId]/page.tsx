@@ -141,7 +141,7 @@ function Page() {
             <Card className={"w-full"}>
               <CardHeader className={"flex flex-row"}>
                 <div className={"w-3/4"}>
-                  <CardTitle>{assessment.title}</CardTitle>
+                  <CardTitle className={"mb-2"}>{assessment.title}</CardTitle>
                   <CardDescription>{assessment.description}</CardDescription>
                   <div className={"flex mt-5"}>
                     <p className={"text-sm"}>
