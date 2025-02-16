@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
+import ImageGallery from "@/components/custom/image-gallery";
+import { IMAGE_URL } from "@/static/const";
 
 const fetchIssue = async (url: string) => {
   const api_url = `/api/issues?documentId=${url}`;
@@ -25,6 +27,20 @@ const fetchIssue = async (url: string) => {
   }
 };
 
+const organizeScreenshots = (images) => {
+  const screenshots = [];
+
+  images?.map((image) => {
+    screenshots.push({
+      largeURL: IMAGE_URL + image.url,
+      thumbnailURL: IMAGE_URL + image.formats.thumbnail.url,
+      width: image.width,
+      height: image.height,
+    });
+  });
+  return screenshots;
+};
+
 function Page(props) {
   const pathname = usePathname();
   const url = pathname.split("/");
@@ -35,9 +51,8 @@ function Page(props) {
   });
 
   const issue = data;
-
+  const screenshots = organizeScreenshots(issue?.screenshots);
   console.log(issue);
-
   return (
     <div>
       <Subnav edit duplicate trash />
@@ -70,31 +85,34 @@ function Page(props) {
                       {issue.suggested_fix}
                     </CardDescription>
                   </div>
+                  {issue?.tags && (
+                    <div className={"text-sm flex w-1/2 mt-2"}>
+                      <span className={"font-bold"}>Tags:</span>{" "}
+                      <div>
+                        {issue.tags.map((tag) => {
+                          return (
+                            <Badge
+                              key={tag.slug}
+                              className={"mx-1 my-1 bg-tags dark"}
+                            >
+                              {tag.title}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardHeader>
             </Card>
           )}
-          <Card className={"w-1/3"}>
-            <div className={"mt-10"}>
-              <h2 className={"font-bold text-sm"}>Screenshots</h2>
+          <Card className={"w-1/3 max-w-[400px] h-fit"}>
+            <div className={"p-6"}>
+              <h2 className={"font-bold text-sm text-center mb-6"}>
+                Screenshots
+              </h2>
+              <ImageGallery galleryID="my-test-gallery" images={screenshots} />
             </div>
-            {/*{issue?.tags && (
-              <div className={"text-sm flex w-1/2 mt-2"}>
-                <span className={"font-bold"}>Tags:</span>{" "}
-                <div>
-                  {issue.tags.map((tag) => {
-                    return (
-                      <Badge
-                        key={tag.slug}
-                        className={"mx-1 my-1 bg-tags dark"}
-                      >
-                        {tag.title}
-                      </Badge>
-                    );
-                  })}
-                </div>
-              </div>
-            )}*/}
           </Card>
         </div>
       </div>
