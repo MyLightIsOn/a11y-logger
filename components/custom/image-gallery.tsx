@@ -34,7 +34,7 @@ export default function ImageGallery(props) {
           rel="noreferrer"
         >
           <img src={image.thumbnailURL} alt="" className={"max-w-none"} />
-          {/*<img className={"w-fit h-fit"} src={image.thumbnailURL} alt="" />*/}
+          cd
         </a>
       ))}
     </div>

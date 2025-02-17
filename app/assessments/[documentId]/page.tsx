@@ -170,7 +170,7 @@ function Page() {
 
                 <div
                   className={
-                    "w-1/4 h-fit text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5 absolute top-3 right-5 rounded-lg border-border border"
+                    "w-1/4 h-fit w-fit text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5 absolute top-3 right-5 rounded-lg border-border border"
                   }
                 >
                   <p>

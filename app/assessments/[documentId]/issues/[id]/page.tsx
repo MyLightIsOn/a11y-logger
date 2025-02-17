@@ -15,6 +15,27 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import ImageGallery from "@/components/custom/image-gallery";
 import { IMAGE_URL } from "@/static/const";
+import OctagonAlert from "@/components/icons/octagon-alert";
+import TriangleAlert from "@/components/icons/triangle-alert";
+import CircleAlert from "@/components/icons/circle-alert";
+
+const renderSeverityIcon = (severity) => {
+  if (severity === "critical") {
+    return <OctagonAlert />;
+  }
+
+  if (severity === "major") {
+    return <TriangleAlert />;
+  }
+
+  if (severity === "minor") {
+    return <CircleAlert />;
+  }
+
+  if (severity === "advisory") {
+    return <CircleAlert color="hsl(198 17% 71%)" />;
+  }
+};
 
 const fetchIssue = async (url: string) => {
   const api_url = `/api/issues?documentId=${url}`;
@@ -62,9 +83,17 @@ function Page(props) {
             <Card className={"w-2/3"}>
               <CardHeader className={"flex flex-row"}>
                 <div>
-                  <CardTitle className={"mb-2 text-2xl"}>
+                  <CardTitle className={"mb-2 text-2xl relative"}>
                     {issue.title}
                   </CardTitle>
+                  <div>
+                    <h2 className={"font-bold flex"}>
+                      Severity: {issue.severity}{" "}
+                      <span className={"ml-2"}>
+                        {renderSeverityIcon(issue.severity)}
+                      </span>
+                    </h2>
+                  </div>
                   <div className={"mt-10"}>
                     <h2 className={"font-bold text-sm"}>Description</h2>
                     <CardDescription className={"text-sm"}>
