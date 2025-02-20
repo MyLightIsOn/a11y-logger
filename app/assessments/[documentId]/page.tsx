@@ -23,19 +23,19 @@ const chartConfig = {
   count: {
     label: "Total Issues",
   },
-  critical: {
+  severity1: {
     label: "Critical",
     color: "--severity-chart-1",
   },
-  major: {
+  severity2: {
     label: "Major",
     color: "--severity-chart-2",
   },
-  minor: {
+  severity3: {
     label: "Minor",
     color: "--severity-chart-3",
   },
-  advisory: {
+  severity4: {
     label: "Advisory",
     color: "--severity-chart-4",
   },
@@ -55,10 +55,10 @@ const fetchAssessment = async (url: string) => {
 };
 
 const chartColors = {
-  critical: "--severity-chart-1",
-  major: "--severity-chart-2",
-  minor: "--severity-chart-3",
-  advisory: "--severity-chart-4",
+  severity1: "--severity-chart-1",
+  severity2: "--severity-chart-2",
+  severity3: "--severity-chart-3",
+  severity4: "--severity-chart-4",
 };
 
 const countSeverity = (data) => {

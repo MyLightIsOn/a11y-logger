@@ -20,21 +20,32 @@ import TriangleAlert from "@/components/icons/triangle-alert";
 import CircleAlert from "@/components/icons/circle-alert";
 
 const renderSeverityIcon = (severity) => {
-  if (severity === "critical") {
-    return <OctagonAlert />;
+  const severityObject = {
+    severityText: "",
+    severityIcon: undefined,
+  };
+
+  if (severity === "severity1") {
+    severityObject.severityText = "Critical";
+    severityObject.severityIcon = <OctagonAlert />;
   }
 
-  if (severity === "major") {
-    return <TriangleAlert />;
+  if (severity === "severity2") {
+    severityObject.severityText = "Major";
+    severityObject.severityIcon = <TriangleAlert />;
   }
 
-  if (severity === "minor") {
-    return <CircleAlert />;
+  if (severity === "severity3") {
+    severityObject.severityText = "Minor";
+    severityObject.severityIcon = <CircleAlert />;
   }
 
-  if (severity === "advisory") {
-    return <CircleAlert color="hsl(198 17% 71%)" />;
+  if (severity === "severity4") {
+    severityObject.severityText = "Other";
+    severityObject.severityIcon = <CircleAlert color="hsl(198 17% 71%)" />;
   }
+
+  return severityObject;
 };
 
 const fetchIssue = async (url: string) => {
@@ -73,6 +84,8 @@ function Page(props) {
 
   const issue = data;
   const screenshots = organizeScreenshots(issue?.screenshots);
+  const { severityText, severityIcon } = renderSeverityIcon(issue?.severity);
+
   console.log(issue);
   return (
     <div>
@@ -88,9 +101,9 @@ function Page(props) {
                   </CardTitle>
                   <div>
                     <h2 className={"font-bold flex"}>
-                      Severity: {issue.severity}{" "}
-                      <span className={"ml-2"}>
-                        {renderSeverityIcon(issue.severity)}
+                      Severity:
+                      <span className={"ml-2 flex items-center font-normal"}>
+                        {severityText} {severityIcon}
                       </span>
                     </h2>
                   </div>
