@@ -29,15 +29,18 @@ export function DonutChart({
   const totalCount = chartData.reduce((acc, curr) => acc + curr.count, 0);
   const chartTable = [];
 
-  Object.keys(chartColors).forEach((property) => {
+  Object.keys(chartData).forEach((property) => {
     chartTable.push(
       <div
-        key={property}
+        key={chartData[property].label}
         className={"w-1/2 flex justify-between mb-2 pr-16 relative left-5"}
       >
-        <div>{property.charAt(0).toUpperCase() + property.slice(1)}</div>
+        <div>
+          {chartData[property].label.charAt(0).toUpperCase() +
+            chartData[property].label.slice(1)}
+        </div>
         <div
-          style={{ backgroundColor: `hsl(var(${chartColors[property]}))` }}
+          style={{ backgroundColor: chartData[property].fill }}
           className={"w-[20px] h-[20px]"}
         ></div>
       </div>,

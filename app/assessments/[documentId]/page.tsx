@@ -14,32 +14,10 @@ import {
 } from "@/components/ui/card";
 import Subnav from "@/components/custom/subnav";
 import { DonutChart } from "@/components/charts/donut";
-import { ChartConfig } from "@/components/ui/chart";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import * as React from "react";
-
-const chartConfig = {
-  count: {
-    label: "Total Issues",
-  },
-  severity1: {
-    label: "Critical",
-    color: "--severity-chart-1",
-  },
-  severity2: {
-    label: "Major",
-    color: "--severity-chart-2",
-  },
-  severity3: {
-    label: "Minor",
-    color: "--severity-chart-3",
-  },
-  severity4: {
-    label: "Advisory",
-    color: "--severity-chart-4",
-  },
-} satisfies ChartConfig;
+import { chartConfig, chartColors } from "@/static/chart-setup";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -54,16 +32,8 @@ const fetchAssessment = async (url: string) => {
   }
 };
 
-const chartColors = {
-  severity1: "--severity-chart-1",
-  severity2: "--severity-chart-2",
-  severity3: "--severity-chart-3",
-  severity4: "--severity-chart-4",
-};
-
 const countSeverity = (data) => {
   const dataArray = [];
-
   data?.map((issue) => {
     const object = {
       severity: issue.severity,
@@ -81,14 +51,24 @@ const countSeverity = (data) => {
     return accumulator;
   }, {});
 
-  let chartData = [];
-
+  let unsortedData = [];
   Object.keys(issueCounts).forEach((property) => {
-    chartData.push({
+    unsortedData.push({
       severity: property,
       count: issueCounts[property],
       fill: `hsl(var(${chartColors[property]}))`,
+      label: chartConfig[property].label,
     });
+  });
+
+  const chartData = unsortedData.sort((a, b) => {
+    if (a.severity < b.severity) {
+      return -1;
+    }
+    if (a.severity > b.severity) {
+      return 1;
+    }
+    return 0;
   });
 
   return {
@@ -115,12 +95,12 @@ function Page() {
 
   const columns = renderColumns(data, schema, issuesURL);
 
-  const { chartData, issueCounts } = countSeverity(data);
-
+  const { chartData } = countSeverity(data);
   const chartTable = [];
-  Object.keys(chartColors).forEach((property) => {
-    const label = property;
-    const count = issueCounts[property];
+
+  chartData.map((issueType) => {
+    const label = issueType.label;
+    const count = issueType.count;
 
     chartTable.push(
       <div key={label} className={"flex flex-col text-center text-sm"}>

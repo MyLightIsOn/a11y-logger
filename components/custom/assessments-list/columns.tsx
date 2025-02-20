@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Assessments } from "@/types/assessments";
+import { chartConfig } from "@/static/chart-setup";
 
 interface RowProps {
   row: {
@@ -23,7 +24,6 @@ interface RowProps {
 
 export const renderColumns = (data, schema, type) => {
   const columns: ColumnDef<Assessments>[] = [];
-
   schema.map((columnData) => {
     columns.push({
       accessorKey: columnData.heading,
@@ -41,6 +41,10 @@ export const renderColumns = (data, schema, type) => {
         if (columnData.type === "date") {
           // @ts-ignore
           return formatDate(row.original[columnData.heading]);
+        }
+
+        if (columnData.heading === "severity") {
+          return chartConfig[data[row.index].severity].label;
         }
 
         return (
