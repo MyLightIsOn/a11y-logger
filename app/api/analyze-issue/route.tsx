@@ -1,29 +1,8 @@
-import { NextResponse, NextRequest } from "next/server";
-import axios from "axios";
-import { API_AUTH_TOKEN, API_URL } from "@/static/const";
+import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
 import systemMessage from "@/lib/systemMessage";
-
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const query = searchParams?.get("documentId");
-  const url = `${API_URL}/issues/${query}`;
-
-  try {
-    const req = await axios.get(url, {
-      headers: API_AUTH_TOKEN,
-      params: {
-        populate: ["screenshots", "tags"],
-      },
-    });
-
-    return NextResponse.json(req.data.data);
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
 
 export async function POST(request) {
   const { userInput } = await request.json(); // Parse input from the client

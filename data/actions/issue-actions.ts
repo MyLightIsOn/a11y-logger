@@ -18,7 +18,7 @@ export async function addIssueAction(
 
   try {
     // Send a POST request to the API route
-    const res = await fetch(`http://localhost:3000/api/ai`, {
+    const res = await fetch(`http://localhost:3000/api/analyze-issue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,19 +29,18 @@ export async function addIssueAction(
     });
 
     const responseData = await res.json();
-
     if (responseData.success) {
       return {
         ...prevState,
-        message: "Test",
-        data: { test: responseData },
+        message: "Success",
+        data: responseData,
         strapiErrors: null,
       };
     } else {
       return {
         ...prevState,
         strapiErrors: responseData.error,
-        message: "Failed to Update Profile.",
+        message: "Issue Analysis Failed",
       };
     }
   } catch (error) {

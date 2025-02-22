@@ -115,11 +115,9 @@ function Page() {
   });
 
   const onClickAction = (type) => {
-    if (type === "add") {
-      router.push(`/assessments/${assessment?.documentId}/add`);
+    if (type === "add-issue") {
+      router.push(`/assessments/${assessment?.documentId}/add-issue`);
     }
-
-    console.log(type);
   };
 
   return (

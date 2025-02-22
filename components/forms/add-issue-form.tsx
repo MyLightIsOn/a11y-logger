@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { useActionState } from "react";
@@ -8,6 +8,8 @@ import { SubmitButton } from "@/components/custom/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
 import { addIssueAction } from "@/data/actions/issue-actions";
+import { usePathname, useRouter } from "next/navigation";
+import qs from "qs";
 
 const INITIAL_STATE = {
   data: null,
@@ -33,6 +35,23 @@ export function AddIssueForm({
     updateIssueWithId,
     INITIAL_STATE,
   );
+
+  const pathname = usePathname();
+  const editIssuePath = pathname.replace("/add-issue", "");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log(formState);
+    if (formState?.data?.success) {
+      console.log("success");
+      const data = JSON.stringify(formState.data);
+
+      const query = qs.stringify(formState.data);
+
+      router.push(`${editIssuePath}/edit-issue?${query}`);
+    }
+  }, [formState]);
 
   return (
     <form className={cn("space-y-4", className)} action={formAction}>

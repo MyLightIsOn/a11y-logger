@@ -18,7 +18,10 @@ function Subnav({
     >
       <div className={"flex gap-2"}>
         {add && (
-          <Button variant={"success"} onClick={() => onClickAction("add")}>
+          <Button
+            variant={"success"}
+            onClick={() => onClickAction("add-issue")}
+          >
             Add <Plus />
           </Button>
         )}
