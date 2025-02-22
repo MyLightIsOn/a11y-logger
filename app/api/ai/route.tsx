@@ -1,9 +1,8 @@
-/*
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
-import systemMessage from "@/utils/systemMessage";
+import systemMessage from "@/lib/systemMessage";
 
 export async function POST(request) {
   const { userInput } = await request.json(); // Parse input from the client
@@ -56,4 +55,3 @@ export async function POST(request) {
     );
   }
 }
-*/

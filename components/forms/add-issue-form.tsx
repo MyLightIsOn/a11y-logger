@@ -47,7 +47,11 @@ export function AddIssueForm({
         />
       </div>
       <div className="flex justify-end">
-        <SubmitButton text="Next" loadingText="Analyzing Issue" />
+        <SubmitButton
+          text="Next"
+          loadingText="Analyzing Issue"
+          onClick={(e) => e.preventDefault()}
+        />
       </div>
       <StrapiErrors error={formState?.strapiErrors} />
     </form>

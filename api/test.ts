@@ -1,4 +1,3 @@
-/*
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
@@ -35,4 +34,3 @@ export const gptTest = async () => {
   const issue = completion.choices[0].message.parsed;
   return issue;
 };
-*/
