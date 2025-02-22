@@ -18,6 +18,7 @@ import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import * as React from "react";
 import { chartConfig, chartColors } from "@/static/chart-setup";
+import { useRouter } from "next/navigation";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -78,6 +79,7 @@ const countSeverity = (data) => {
 };
 
 function Page() {
+  const router = useRouter();
   const pathname = usePathname();
   const url = pathname.replace("/assessments/", "");
   let { data, error, isLoading } = useQuery({
@@ -112,9 +114,17 @@ function Page() {
     );
   });
 
+  const onClickAction = (type) => {
+    if (type === "add") {
+      router.push(`/assessments/${assessment?.documentId}/add`);
+    }
+
+    console.log(type);
+  };
+
   return (
     <div>
-      <Subnav edit generate trash />
+      <Subnav add edit generate trash onClickAction={onClickAction} />
       <div className="container mx-auto py-10 px-10">
         <div className={"flex gap-5 mb-5 relative"}>
           {assessment && (

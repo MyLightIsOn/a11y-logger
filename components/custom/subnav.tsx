@@ -1,5 +1,5 @@
 import React from "react";
-import { FileChartColumn, Edit, Trash2, Copy } from "lucide-react";
+import { FileChartColumn, Edit, Trash2, Copy, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 function Subnav({
@@ -7,6 +7,8 @@ function Subnav({
   generate = false,
   duplicate = false,
   trash = false,
+  add = false,
+  onClickAction,
 }) {
   return (
     <div
@@ -15,23 +17,31 @@ function Subnav({
       }
     >
       <div className={"flex gap-2"}>
+        {add && (
+          <Button variant={"success"} onClick={() => onClickAction("add")}>
+            Add <Plus />
+          </Button>
+        )}
         {edit && (
-          <Button>
+          <Button onClick={() => onClickAction("edit")}>
             Edit <Edit />
           </Button>
         )}
         {duplicate && (
-          <Button>
+          <Button onClick={() => onClickAction("duplicate")}>
             Duplicate <Copy />
           </Button>
         )}
         {generate && (
-          <Button>
+          <Button onClick={() => onClickAction("generate")}>
             Generate Report <FileChartColumn />
           </Button>
         )}
         {trash && (
-          <Button variant={"destructive"}>
+          <Button
+            variant={"destructive"}
+            onClick={() => onClickAction("trash")}
+          >
             Delete <Trash2 />
           </Button>
         )}
