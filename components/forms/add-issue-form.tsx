@@ -42,7 +42,6 @@ export function AddIssueForm({
   const router = useRouter();
 
   useEffect(() => {
-    console.log(formState);
     if (formState?.data?.success) {
       console.log("success");
       const data = JSON.stringify(formState.data);

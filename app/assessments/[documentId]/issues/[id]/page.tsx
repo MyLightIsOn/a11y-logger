@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
 import ImageGallery from "@/components/custom/image-gallery";
 import { IMAGE_URL } from "@/static/const";
 import OctagonAlert from "@/components/icons/octagon-alert";
@@ -86,7 +85,6 @@ function Page(props) {
   const screenshots = organizeScreenshots(issue?.screenshots);
   const { severityText, severityIcon } = renderSeverityIcon(issue?.severity);
 
-  console.log(issue);
   return (
     <div>
       <Subnav edit duplicate trash />
@@ -103,7 +101,8 @@ function Page(props) {
                     <h2 className={"font-bold flex"}>
                       Severity:
                       <span className={"ml-2 flex items-center font-normal"}>
-                        {severityText} {severityIcon}
+                        {severityText}{" "}
+                        <span className={"block ml-2"}>{severityIcon}</span>
                       </span>
                     </h2>
                   </div>

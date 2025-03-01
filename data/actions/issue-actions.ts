@@ -51,3 +51,46 @@ export async function addIssueAction(
     };
   }
 }
+
+export async function editIssueAction(prevState: any, formData: FormData) {
+  /*const rawFormData = Object.fromEntries(formData);
+
+  const payload = {
+    description: rawFormData.description,
+  };
+
+  try {
+    // Send a POST request to the API route
+    const res = await fetch(`http://localhost:3000/api/analyze-issue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userInput: payload.description,
+      }), // Example user input
+    });
+
+    const responseData = await res.json();
+    if (responseData.success) {
+      return {
+        ...prevState,
+        message: "Success",
+        data: responseData,
+        strapiErrors: null,
+      };
+    } else {
+      return {
+        ...prevState,
+        strapiErrors: responseData.error,
+        message: "Issue Analysis Failed",
+      };
+    }
+  } catch (error) {
+    return {
+      ...prevState,
+      strapiErrors: null,
+      message: "Ops! Something went wrong. Please try again.",
+    };
+  }*/
+}
