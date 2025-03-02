@@ -7,7 +7,7 @@ import { useActionState } from "react";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
-import { addIssueAction } from "@/data/actions/issue-actions";
+import { analyzeIssueAction } from "@/data/actions/issue-actions";
 import { usePathname, useRouter } from "next/navigation";
 import qs from "qs";
 
@@ -29,7 +29,7 @@ export function AddIssueForm({
   readonly data: AddIssueFormProps;
   readonly className?: string;
 }) {
-  const updateIssueWithId = addIssueAction.bind(null, data.id);
+  const updateIssueWithId = analyzeIssueAction.bind(null, data.id);
 
   const [formState, formAction] = useActionState(
     updateIssueWithId,

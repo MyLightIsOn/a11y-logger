@@ -7,7 +7,10 @@ import { useActionState } from "react";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
-import { addIssueAction, editIssueAction } from "@/data/actions/issue-actions";
+import {
+  analyzeIssueAction,
+  addIssueAction,
+} from "@/data/actions/issue-actions";
 import { usePathname, useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import qs from "qs";
@@ -83,7 +86,7 @@ export function EditIssueForm({ className }: { readonly className?: string }) {
   const formData = JSON.parse(searchParams.get("data"));
   const router = useRouter();
 
-  const updateIssueWithId = editIssueAction.bind(null, formData);
+  const updateIssueWithId = addIssueAction.bind(null, formData);
 
   const [formState, formAction] = useActionState(updateIssueWithId, formData);
 
@@ -92,9 +95,11 @@ export function EditIssueForm({ className }: { readonly className?: string }) {
       console.log("issue saved");
       console.log(formState.data);
     }
-  }, [formState]);
 
-  console.log(formState);
+    if (formState?.strapiErrors) {
+      console.log(formState);
+    }
+  }, [formState]);
 
   return (
     <form className={cn("space-y-4", className)} action={formAction}>

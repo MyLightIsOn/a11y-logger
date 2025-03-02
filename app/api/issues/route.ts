@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { API_AUTH_TOKEN, API_URL } from "@/static/const";
 import axios from "axios";
+import { getStrapiURL } from "@/lib/utils";
+import { getAuthToken } from "@/data/services/get-token";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -22,16 +24,21 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const data = request.body;
-
-  const url = `${API_URL}/issues`;
+  const data = await request.json();
+  const test = API_AUTH_TOKEN;
 
   try {
-    const req = await axios.post(url, data, {
-      headers: API_AUTH_TOKEN,
+    const res = await fetch(`${API_URL}/issues`, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: test.Authorization,
+      },
     });
 
-    return NextResponse.json(req.data.data);
+    const responseData = await res.json();
+    return NextResponse.json(responseData);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
