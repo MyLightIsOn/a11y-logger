@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { useActionState } from "react";
@@ -15,13 +15,13 @@ import { Input } from "@/components/ui/input";
 
 interface AddIssueFormProps {
   id: string;
-  issue_title: string;
+  title: string;
   severity: string;
   original_description: string;
   updated_description: string;
   impact: string;
   suggested_fix: string;
-  specs: string;
+  criteria_reference: string;
 }
 
 function toTitleCase(str) {
@@ -40,13 +40,13 @@ function snakeToTitle(str) {
 
 const INITIAL_STATE = {
   id: null,
-  issue_title: null,
+  title: null,
   severity: null,
   original_description: null,
   updated_description: null,
   impact: null,
   suggested_fix: null,
-  specs: null,
+  criteria_reference: null,
 };
 
 const buildForm = ({ formData }) => {
@@ -62,9 +62,9 @@ const buildForm = ({ formData }) => {
       formElement = (
         <Input
           key={key}
-          id="lastName"
-          name="lastName"
-          placeholder="Last Name"
+          id={key}
+          name={key}
+          placeholder={displayTitle}
           defaultValue={formData[key] || ""}
         />
       );
@@ -81,20 +81,31 @@ export function EditIssueForm({ className }: { readonly className?: string }) {
 
   // Get a specific query parameter
   const formData = JSON.parse(searchParams.get("data"));
+  const router = useRouter();
 
   const updateIssueWithId = editIssueAction.bind(null, formData);
 
-  const [formState, formAction] = useActionState(
-    updateIssueWithId,
-    INITIAL_STATE,
-  );
+  const [formState, formAction] = useActionState(updateIssueWithId, formData);
+
+  useEffect(() => {
+    if (formState?.message === "success") {
+      console.log("issue saved");
+      console.log(formState.data);
+    }
+  }, [formState]);
 
   console.log(formState);
 
   return (
-    <form className={cn("space-y-4", className)}>
+    <form className={cn("space-y-4", className)} action={formAction}>
       Edit Issues
       {buildForm({ formData })}
+      <SubmitButton
+        text="Save Issue"
+        loadingText="Saving Profile"
+        onClick={(e) => e.preventDefault()}
+      />
+      <StrapiErrors error={formState?.strapiErrors} />
     </form>
   );
 }

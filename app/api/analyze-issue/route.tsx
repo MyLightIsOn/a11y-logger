@@ -13,16 +13,14 @@ export async function POST(request) {
   });
 
   const AccessibilityIssueResponse = z.object({
-    issue_title: z.string(),
+    title: z.string(),
+    severity: z.enum(["severity1", "severity2", "severity3", "severity4"]),
     original_description: z.string(),
     updated_description: z.string(),
-    comments: z.string(),
     url: z.string(),
     impact: z.string(),
     suggested_fix: z.string(),
-    specs: z.string(),
-    description: z.string(),
-    severity: z.enum(["Critical", "Major", "Minor", "Enhancement"]),
+    criteria_reference: z.string(),
   });
 
   try {

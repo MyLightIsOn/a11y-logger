@@ -22,7 +22,7 @@ export async function POST(request) {
     howToFix: z.string(),
     wcagSpecs: z.string(),
     description: z.string(),
-    impact: z.enum(["Critical", "Major", "Minor", "Enhancement"]),
+    impact: z.enum(["severity1", "severity2", "severity3", "severity4"]),
   });
 
   try {

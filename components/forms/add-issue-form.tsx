@@ -43,7 +43,7 @@ export function AddIssueForm({
 
   useEffect(() => {
     if (formState?.data?.success) {
-      console.log("success");
+      console.log("analyzation complete");
       const data = JSON.stringify(formState.data);
 
       const query = qs.stringify(formState.data);

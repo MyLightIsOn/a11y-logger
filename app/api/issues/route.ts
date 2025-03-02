@@ -20,3 +20,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request: NextRequest) {
+  const data = request.body;
+
+  const url = `${API_URL}/issues`;
+
+  try {
+    const req = await axios.post(url, data, {
+      headers: API_AUTH_TOKEN,
+    });
+
+    return NextResponse.json(req.data.data);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
