@@ -4,6 +4,7 @@ import { Header } from "@/components/custom/header";
 import { Footer } from "@/components/custom/footer";
 import "./globals.css";
 import { ThemeProvider } from "@/components/custom/theme-provider";
+import { Toaster } from "sonner";
 
 import { getGlobalData, getGlobalPageMetadata } from "@/data/loaders";
 
@@ -45,6 +46,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Header data={globalData.data.header} />
+          <Toaster richColors />
           <div>{children}</div>
           <Footer data={globalData.data.footer} />
         </ThemeProvider>

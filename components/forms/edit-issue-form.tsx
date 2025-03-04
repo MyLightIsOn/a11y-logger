@@ -1,9 +1,7 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
-
 import { useActionState } from "react";
-
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
@@ -11,26 +9,14 @@ import { addIssueAction } from "@/data/actions/issue-actions";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
-
-function toTitleCase(str) {
-  return str.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
-}
-
-function snakeToTitle(str) {
-  // Replace underscores with spaces
-  let result = str.replace(/_/g, " ");
-  // Convert to title case
-  result = toTitleCase(result);
-  return result;
-}
+import { snakeCaseToTitleCase } from "@/lib/utils";
+import { toast } from "sonner";
 
 const buildForm = ({ formData }) => {
-  const form = [];
+  const form: React.JSX.Element[] = [];
 
   Object.keys(formData).forEach((key) => {
-    const displayTitle = snakeToTitle(key);
+    const displayTitle = snakeCaseToTitleCase(key);
     const formKey = key;
     const formValue = formData[key];
     let formElement;
@@ -55,21 +41,23 @@ const buildForm = ({ formData }) => {
 
 export function EditIssueForm({ className }: { readonly className?: string }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
-  // Get a specific query parameter
-  const formData = JSON.parse(searchParams.get("data"));
-  formData.assessmentID = searchParams.get("assessmentID");
+  const formData = JSON.parse(searchParams.get("data") as string);
+  formData.assessment_id = searchParams.get("assessment_id");
+
   const updateIssueWithId = addIssueAction.bind(null, formData);
 
   const [formState, formAction] = useActionState(updateIssueWithId, formData);
   useEffect(() => {
-    if (formState?.message === "success") {
-      console.log("issue saved");
-      console.log(formState.data);
+    if (formState.success) {
+      toast.success("Issue saved");
+      router.push(`/assessments/${formData.assessment_id}`);
     }
 
-    if (formState?.strapiErrors) {
-      console.log(formState);
+    if (formState.error) {
+      toast.error("Error while saving");
+      console.log(formState.error);
     }
   }, [formState]);
 

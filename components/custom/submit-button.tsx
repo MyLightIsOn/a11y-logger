@@ -3,6 +3,7 @@ import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import React from "react";
 
 function Loader({ text }: { readonly text: string }) {
   return (
@@ -18,6 +19,7 @@ interface SubmitButtonProps {
   loadingText: string;
   className?: string;
   loading?: boolean;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export function SubmitButton({
@@ -25,6 +27,7 @@ export function SubmitButton({
   loadingText,
   loading,
   className,
+  onClick,
 }: Readonly<SubmitButtonProps>) {
   const status = useFormStatus();
   return (
@@ -33,6 +36,7 @@ export function SubmitButton({
       aria-disabled={status.pending || loading}
       disabled={status.pending || loading}
       className={cn(className)}
+      onClick={onClick}
     >
       {status.pending || loading ? <Loader text={loadingText} /> : text}
     </Button>

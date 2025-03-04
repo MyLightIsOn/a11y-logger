@@ -2,7 +2,7 @@
 
 export async function analyzeIssueAction(
   userId: string,
-  assessmentID: string,
+  assessment_id: string,
   prevState: any,
   formData: FormData,
 ) {
@@ -12,7 +12,7 @@ export async function analyzeIssueAction(
     description: rawFormData.description,
   };
   console.log("HEEEEEIIII");
-  console.log(assessmentID);
+  console.log(assessment_id);
   console.log(userId);
   console.log(prevState);
   try {
@@ -28,7 +28,7 @@ export async function analyzeIssueAction(
     });
 
     const responseData = await res.json();
-    responseData.assessmentID = assessmentID;
+    responseData.assessment_id = assessment_id;
 
     if (responseData.success) {
       return {
@@ -53,24 +53,18 @@ export async function analyzeIssueAction(
   }
 }
 
-export async function addIssueAction(
-  prevState: any,
-  formData: FormData,
-  assessment: string,
-) {
-  console.log(formData);
-
+export async function addIssueAction(prevState: any, formData: FormData) {
   const payload = {
     data: {
       id: formData.id,
-      title: formData.issue_title,
+      title: formData.title,
       severity: formData.severity,
       original_description: formData.original_description,
       updated_description: formData.updated_description,
       impact: formData.impact,
       suggested_fix: formData.suggested_fix,
       assessment: {
-        connect: [`${formData.assessmentID}`],
+        connect: [`${formData.assessment_id}`],
       },
     },
   };
@@ -87,25 +81,25 @@ export async function addIssueAction(
 
     const responseData = await res.json();
 
-    if (responseData.success) {
+    if (responseData.error) {
       return {
-        ...prevState,
-        message: "Success",
-        data: responseData,
-        strapiErrors: null,
+        success: false,
+        error: responseData.error,
       };
-    } else {
+    }
+
+    if (responseData.data.id) {
       return {
         ...prevState,
-        strapiErrors: responseData.error,
-        message: "Issue Analysis Failed",
+        success: true,
+        data: responseData.data.data,
+        strapiErrors: null,
       };
     }
   } catch (error) {
     return {
-      ...prevState,
-      strapiErrors: null,
-      message: "Ops! Something went wrong. Please try again.",
+      success: false,
+      error: error,
     };
   }
 }

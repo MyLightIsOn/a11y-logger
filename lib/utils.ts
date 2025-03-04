@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -24,7 +24,19 @@ export function formatDate(dateStr: string) {
   const month = String(date.getUTCMonth() + 1).padStart(2, "0");
   const day = String(date.getUTCDate()).padStart(2, "0");
 
-  const formattedDate = `${year}-${month}-${day}`;
+  return `${year}-${month}-${day}`;
+}
 
-  return formattedDate;
+export function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
+export function snakeCaseToTitleCase(str) {
+  // Replace underscores with spaces
+  let result = str.replace(/_/g, " ");
+  // Convert to title case
+  result = toTitleCase(result);
+  return result;
 }

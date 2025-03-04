@@ -31,12 +31,12 @@ export function AddIssueForm({
 }) {
   const pathname = usePathname();
   const editIssuePath = pathname.replace("/add-issue", "");
-  const assessmentID = editIssuePath.replace("/assessments/", "");
+  const assessment_id = editIssuePath.replace("/assessments/", "");
 
   const updateIssueWithId = analyzeIssueAction.bind(
     null,
     data.id,
-    assessmentID,
+    assessment_id,
   );
 
   const [formState, formAction] = useActionState(
