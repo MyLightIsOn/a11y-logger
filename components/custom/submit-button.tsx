@@ -19,7 +19,7 @@ interface SubmitButtonProps {
   loadingText: string;
   className?: string;
   loading?: boolean;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export function SubmitButton({

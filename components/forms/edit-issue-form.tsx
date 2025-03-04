@@ -12,10 +12,14 @@ import { Input } from "@/components/ui/input";
 import { snakeCaseToTitleCase } from "@/lib/utils";
 import { toast } from "sonner";
 
-const buildForm = ({ formData }) => {
-  const form: React.JSX.Element[] = [];
+interface FormData {
+  [key: string]: any; // This can be more specific, depending on the structure of your formData
+}
 
-  Object.keys(formData).forEach((key) => {
+const buildForm = ({ formData }: FormData) => {
+  const form: React.JSX.Element[] = [];
+  console.log(formData);
+  Object.keys(formData).forEach((key: string) => {
     const displayTitle = snakeCaseToTitleCase(key);
     const formKey = key;
     const formValue = formData[key];
@@ -42,13 +46,12 @@ const buildForm = ({ formData }) => {
 export function EditIssueForm({ className }: { readonly className?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
-
   const formData = JSON.parse(searchParams.get("data") as string);
   formData.assessment_id = searchParams.get("assessment_id");
 
   const updateIssueWithId = addIssueAction.bind(null, formData);
-
   const [formState, formAction] = useActionState(updateIssueWithId, formData);
+
   useEffect(() => {
     if (formState.success) {
       toast.success("Issue saved");
