@@ -7,25 +7,10 @@ import { useActionState } from "react";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
-import {
-  analyzeIssueAction,
-  addIssueAction,
-} from "@/data/actions/issue-actions";
-import { usePathname, useRouter } from "next/navigation";
+import { addIssueAction } from "@/data/actions/issue-actions";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import qs from "qs";
 import { Input } from "@/components/ui/input";
-
-interface AddIssueFormProps {
-  id: string;
-  title: string;
-  severity: string;
-  original_description: string;
-  updated_description: string;
-  impact: string;
-  suggested_fix: string;
-  criteria_reference: string;
-}
 
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function (txt) {
@@ -41,17 +26,6 @@ function snakeToTitle(str) {
   return result;
 }
 
-const INITIAL_STATE = {
-  id: null,
-  title: null,
-  severity: null,
-  original_description: null,
-  updated_description: null,
-  impact: null,
-  suggested_fix: null,
-  criteria_reference: null,
-};
-
 const buildForm = ({ formData }) => {
   const form = [];
 
@@ -64,11 +38,11 @@ const buildForm = ({ formData }) => {
     if (formKey !== "specs") {
       formElement = (
         <Input
-          key={key}
-          id={key}
-          name={key}
+          key={formKey}
+          id={formKey}
+          name={formKey}
           placeholder={displayTitle}
-          defaultValue={formData[key] || ""}
+          defaultValue={formValue || ""}
         />
       );
 
@@ -84,12 +58,10 @@ export function EditIssueForm({ className }: { readonly className?: string }) {
 
   // Get a specific query parameter
   const formData = JSON.parse(searchParams.get("data"));
-  const router = useRouter();
-
+  formData.assessmentID = searchParams.get("assessmentID");
   const updateIssueWithId = addIssueAction.bind(null, formData);
 
   const [formState, formAction] = useActionState(updateIssueWithId, formData);
-
   useEffect(() => {
     if (formState?.message === "success") {
       console.log("issue saved");

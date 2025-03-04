@@ -1,12 +1,8 @@
 "use server";
-import qs from "qs";
-import { revalidatePath } from "next/cache";
-
-import { mutateData } from "@/data/services/mutate-data";
-import { BASE_URL } from "@/static/const";
 
 export async function analyzeIssueAction(
   userId: string,
+  assessmentID: string,
   prevState: any,
   formData: FormData,
 ) {
@@ -15,7 +11,10 @@ export async function analyzeIssueAction(
   const payload = {
     description: rawFormData.description,
   };
-
+  console.log("HEEEEEIIII");
+  console.log(assessmentID);
+  console.log(userId);
+  console.log(prevState);
   try {
     // Send a POST request to the API route
     const res = await fetch(`http://localhost:3000/api/analyze-issue`, {
@@ -29,6 +28,8 @@ export async function analyzeIssueAction(
     });
 
     const responseData = await res.json();
+    responseData.assessmentID = assessmentID;
+
     if (responseData.success) {
       return {
         ...prevState,
@@ -52,7 +53,13 @@ export async function analyzeIssueAction(
   }
 }
 
-export async function addIssueAction(prevState: any, formData: FormData) {
+export async function addIssueAction(
+  prevState: any,
+  formData: FormData,
+  assessment: string,
+) {
+  console.log(formData);
+
   const payload = {
     data: {
       id: formData.id,
@@ -62,7 +69,9 @@ export async function addIssueAction(prevState: any, formData: FormData) {
       updated_description: formData.updated_description,
       impact: formData.impact,
       suggested_fix: formData.suggested_fix,
-      //criteria_reference: formData.specs,
+      assessment: {
+        connect: [`${formData.assessmentID}`],
+      },
     },
   };
 

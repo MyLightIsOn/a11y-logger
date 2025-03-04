@@ -29,25 +29,27 @@ export function AddIssueForm({
   readonly data: AddIssueFormProps;
   readonly className?: string;
 }) {
-  const updateIssueWithId = analyzeIssueAction.bind(null, data.id);
+  const pathname = usePathname();
+  const editIssuePath = pathname.replace("/add-issue", "");
+  const assessmentID = editIssuePath.replace("/assessments/", "");
+
+  const updateIssueWithId = analyzeIssueAction.bind(
+    null,
+    data.id,
+    assessmentID,
+  );
 
   const [formState, formAction] = useActionState(
     updateIssueWithId,
     INITIAL_STATE,
   );
 
-  const pathname = usePathname();
-  const editIssuePath = pathname.replace("/add-issue", "");
-
   const router = useRouter();
 
   useEffect(() => {
     if (formState?.data?.success) {
       console.log("analyzation complete");
-      const data = JSON.stringify(formState.data);
-
       const query = qs.stringify(formState.data);
-
       router.push(`${editIssuePath}/edit-issue?${query}`);
     }
   }, [formState]);
