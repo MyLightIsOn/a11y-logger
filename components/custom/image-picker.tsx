@@ -11,6 +11,7 @@ interface ImagePickerProps {
   label: string;
   showCard?: boolean;
   defaultValue?: string;
+  multiple?: boolean;
 }
 
 function generateDataUrl(file: File, callback: (imageUrl: string) => void) {
@@ -31,7 +32,7 @@ function ImagePreview({ dataUrl }: { readonly dataUrl: string }) {
   );
 }
 
-function ImageCard({
+function SingleImageCard({
   dataUrl,
   fileInput,
 }: {
@@ -58,18 +59,71 @@ function ImageCard({
   );
 }
 
+function MultipleImageCard({
+  dataUrl,
+  fileInput,
+}: {
+  readonly dataUrl: Array<string>;
+  readonly fileInput: React.RefObject<HTMLInputElement>;
+}) {
+  const imagePreview: React.JSX.Element[] = [];
+
+  if (dataUrl) {
+    dataUrl.map((url: string) => {
+      const el = <ImagePreview dataUrl={url} key={url} />;
+
+      imagePreview.push(el);
+    });
+  }
+
+  return (
+    <div className="w-full relative">
+      <div className=" flex items-center space-x-4 rounded-md border p-4">
+        {!dataUrl && <p>No image selected</p>}
+        {imagePreview}
+      </div>
+      <button
+        onClick={() => fileInput.current?.click()}
+        className="w-full absolute inset-0"
+        type="button"
+      ></button>
+    </div>
+  );
+}
+
 export default function ImagePicker({
   id,
   name,
   label,
   defaultValue,
+  multiple,
 }: Readonly<ImagePickerProps>) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(defaultValue ?? null);
+  const [multipleDataUrl, setMultipleDataUrl] =
+    useState<Array<string> | null>();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) generateDataUrl(file, setDataUrl);
+    if (multiple) {
+      const files = e.target.files;
+      let fileArray = [];
+      if (!files) return;
+
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.readAsDataURL(files[i]);
+        reader.onload = () => {
+          fileArray.push(reader.result as string);
+          /*if (fileArray.length === files.length) {
+            setDataUrl(fileArray);
+          }*/
+          setMultipleDataUrl(fileArray);
+        };
+      }
+    } else {
+      const file = e.target.files?.[0];
+      if (file) generateDataUrl(file, setDataUrl);
+    }
   };
 
   return (
@@ -83,9 +137,18 @@ export default function ImagePicker({
           onChange={handleFileChange}
           ref={fileInput}
           accept="image/*"
+          multiple={multiple}
         />
       </div>
-      <ImageCard dataUrl={dataUrl ?? ""} fileInput={fileInput} />
+      {!multiple && (
+        <SingleImageCard dataUrl={dataUrl ?? ""} fileInput={fileInput} />
+      )}
+      {multiple && (
+        <MultipleImageCard
+          dataUrl={multipleDataUrl ?? ""}
+          fileInput={fileInput}
+        />
+      )}
     </React.Fragment>
   );
 }

@@ -1,5 +1,14 @@
 "use server";
 
+import { z } from "zod";
+import { getUserMeLoader } from "@/data/services/get-user-me-loader";
+import {
+  fileDeleteService,
+  fileUploadService,
+} from "@/data/services/file-service";
+import { mutateData } from "@/data/services/mutate-data";
+import { revalidatePath } from "next/cache";
+
 export async function analyzeIssueAction(
   userId: string,
   assessment_id: string,
@@ -11,10 +20,7 @@ export async function analyzeIssueAction(
   const payload = {
     description: rawFormData.description,
   };
-  console.log("HEEEEEIIII");
-  console.log(assessment_id);
-  console.log(userId);
-  console.log(prevState);
+
   try {
     // Send a POST request to the API route
     const res = await fetch(`http://localhost:3000/api/analyze-issue`, {
@@ -102,4 +108,45 @@ export async function addIssueAction(prevState: any, formData: FormData) {
       error: error,
     };
   }
+}
+
+const MAX_FILE_SIZE = 5000000;
+
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
+// VALIDATE IMAGE WITH ZOD
+const imageSchema = z.object({
+  image: z
+    .any()
+    .refine((file) => {
+      if (file.size === 0 || file.name === undefined) return false;
+      else return true;
+    }, "Please update or add new image.")
+
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      ".jpg, .jpeg, .png and .webp files are accepted.",
+    )
+    .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`),
+});
+
+export async function uploadIssueImageAction(
+  imageId: string,
+  prevState: any,
+  formData: FormData,
+) {
+  // GET THE LOGGED IN USER
+
+  console.log("LOGGED IN!");
+
+  return {
+    strapiErrors: null,
+    zodErrors: null,
+    message: "Image Uploaded",
+  };
 }
