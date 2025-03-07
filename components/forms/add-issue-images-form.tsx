@@ -32,7 +32,7 @@ export function AddIssueImagesForm({
     initialState,
   );
 
-  console.log(formState);
+  //console.log(formState);
 
   return (
     <form className={cn("space-y-4", className)} action={formAction}>

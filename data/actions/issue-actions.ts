@@ -119,7 +119,9 @@ export async function uploadIssueImageAction(
   let zodErrors = null;
   let message = null;
   let strapiErrors = null;
+  let imageData = null;
   let images = formData.getAll("image");
+  let savedImagesIds = [];
 
   images.map((image: any) => {
     // VALIDATE THE IMAGE
@@ -160,7 +162,10 @@ export async function uploadIssueImageAction(
   Promise.all(promises)
     .then((values) => {
       // Every promise has resolved
-      console.log(values);
+
+      values.map((value: any) => {
+        savedImagesIds.push(value[0].id);
+      });
     })
     .catch((error) => {
       // Any promise rejected
@@ -173,5 +178,6 @@ export async function uploadIssueImageAction(
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,
     message: message,
+    imageData: savedImagesIds,
   };
 }

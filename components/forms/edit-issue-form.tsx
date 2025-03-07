@@ -53,6 +53,7 @@ export function EditIssueForm({ className }: { readonly className?: string }) {
   const [formState, formAction] = useActionState(updateIssueWithId, formData);
 
   useEffect(() => {
+    console.log("what what");
     if (formState.success) {
       toast.success("Issue saved");
       router.push(`/assessments/${formData.assessment_id}`);
@@ -68,11 +69,7 @@ export function EditIssueForm({ className }: { readonly className?: string }) {
     <form className={cn("space-y-4", className)} action={formAction}>
       Edit Issues
       {buildForm({ formData })}
-      <SubmitButton
-        text="Save Issue"
-        loadingText="Saving Profile"
-        onClick={(e) => e.preventDefault()}
-      />
+      <SubmitButton text="Save Issue" loadingText="Saving Issue" />
       <StrapiErrors error={formState?.strapiErrors} />
     </form>
   );
