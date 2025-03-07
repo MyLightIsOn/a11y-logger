@@ -111,16 +111,11 @@ export async function addIssueAction(prevState: any, formData: FormData) {
   }
 }
 
-export async function uploadIssueImageAction(
-  imageId: string,
-  prevState: any,
-  formData: FormData,
-) {
+export async function uploadIssueImageAction(formData: any) {
   let zodErrors = null;
   let message = null;
   let strapiErrors = null;
-  let imageData = null;
-  let images = formData.getAll("image");
+  let images = formData.data;
   let savedImagesIds = [];
 
   images.map((image: any) => {
@@ -172,12 +167,10 @@ export async function uploadIssueImageAction(
       console.log(error);
     });
 
-  console.log("SAVING IMAGE!");
-
   return {
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,
     message: message,
-    imageData: savedImagesIds,
+    success: true,
   };
 }

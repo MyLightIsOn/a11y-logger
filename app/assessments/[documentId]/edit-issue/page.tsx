@@ -1,12 +1,10 @@
 import React from "react";
-import { EditIssueForm } from "@/components/forms/edit-issue-form";
-import AddIssueImagesForm from "@/components/forms/add-issue-images-form";
+import EditFormsContainer from "@/components/forms/edit-forms-container";
 
-export default async function AddIssueRoute(props) {
+export default async function AddIssueRoute() {
   return (
-    <div className="p-4">
-      <AddIssueImagesForm />
-      <EditIssueForm />
+    <div>
+      <EditFormsContainer />
     </div>
   );
 }

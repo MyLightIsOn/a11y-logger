@@ -1,51 +1,35 @@
 "use client";
-import React, { useActionState, useState } from "react";
 import { cn } from "@/lib/utils";
 import ImagePicker from "@/components/custom/image-picker";
 import { ZodErrors } from "@/components/custom/zod-errors";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
 import { SubmitButton } from "@/components/custom/submit-button";
-import { uploadProfileImageAction } from "@/data/actions/profile-actions";
-import { uploadIssueImageAction } from "@/data/actions/issue-actions";
-
-const initialState = {
-  message: null,
-  data: null,
-  strapiErrors: null,
-  zodErrors: null,
-};
 
 export function AddIssueImagesForm({
-  data,
   className,
+  imageFormState,
+  imageFormAction,
+  setSelectedImages,
 }: {
-  data: any;
   className?: string;
+  imageFormState: any;
+  imageFormAction: any;
+  setSelectedImages: any;
 }) {
-  const uploadIssueImageWithIdAction = uploadIssueImageAction.bind(
-    null,
-    data?.id,
-  );
-
-  const [formState, formAction] = useActionState(
-    uploadIssueImageWithIdAction,
-    initialState,
-  );
-
   //console.log(formState);
 
   return (
-    <form className={cn("space-y-4", className)} action={formAction}>
+    <form className={cn("space-y-4", className)} action={imageFormAction}>
       <div className="">
         <ImagePicker
           id="image"
           name="image"
           label="Profile Image"
-          defaultValue={data?.url || ""}
           multiple
+          setSelectedImages={setSelectedImages}
         />
-        <ZodErrors error={formState?.zodErrors?.image} />
-        <StrapiErrors error={formState?.strapiErrors} />
+        <ZodErrors error={imageFormState?.zodErrors?.image} />
+        <StrapiErrors error={imageFormState?.strapiErrors} />
       </div>
       <div className="flex justify-end">
         <SubmitButton text="Update Image" loadingText="Saving Image" />

@@ -12,6 +12,7 @@ interface ImagePickerProps {
   showCard?: boolean;
   defaultValue?: string;
   multiple?: boolean;
+  setSelectedImages?: any;
 }
 
 function generateDataUrl(file: File, callback: (imageUrl: string) => void) {
@@ -109,6 +110,7 @@ export default function ImagePicker({
   label,
   defaultValue,
   multiple,
+  setSelectedImages,
 }: Readonly<ImagePickerProps>) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(defaultValue ?? null);
@@ -129,6 +131,8 @@ export default function ImagePicker({
           setMultipleDataUrl(fileArray);
         };
       }
+
+      setSelectedImages(files);
     } else {
       const file = e.target.files?.[0];
       if (file) generateDataUrl(file, setDataUrl);
