@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { getUserMeLoader } from "@/data/services/get-user-me-loader";
+import { imageSchema } from "@/static/image-schema";
 import {
   fileDeleteService,
   fileUploadService,
@@ -110,43 +111,67 @@ export async function addIssueAction(prevState: any, formData: FormData) {
   }
 }
 
-const MAX_FILE_SIZE = 5000000;
-
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
-
-// VALIDATE IMAGE WITH ZOD
-const imageSchema = z.object({
-  image: z
-    .any()
-    .refine((file) => {
-      if (file.size === 0 || file.name === undefined) return false;
-      else return true;
-    }, "Please update or add new image.")
-
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted.",
-    )
-    .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`),
-});
-
 export async function uploadIssueImageAction(
   imageId: string,
   prevState: any,
   formData: FormData,
 ) {
-  // GET THE LOGGED IN USER
+  let zodErrors = null;
+  let message = null;
+  let strapiErrors = null;
+  let images = formData.getAll("image");
 
-  console.log("LOGGED IN!");
+  images.map((image: any) => {
+    // VALIDATE THE IMAGE
+    const validatedFields = imageSchema.safeParse({
+      image: image,
+    });
+    if (!validatedFields.success) {
+      zodErrors = validatedFields.error.flatten().fieldErrors;
+      message = "Invalid Image";
+    }
+  });
+
+  const promises = images.map((image: any) => {
+    // Return the Promise created by the async function
+    return fileUploadService(image)
+      .then((fileUploadResponse) => {
+        // Handle successful response
+        if (!fileUploadResponse) {
+          message = "Ops! Something went wrong. Please try again.";
+          return "Ops! Something went wrong. Please try again.";
+        }
+        if (fileUploadResponse.error) {
+          // Handle error in response
+          strapiErrors = fileUploadResponse.error;
+          message = "Failed to Upload File.";
+          return "Failed to Upload File.";
+        }
+
+        // Handle successful upload
+        return fileUploadResponse;
+      })
+      .catch((_err) => {
+        // Handle error during the API call
+        return "Failed to Upload File.";
+      });
+  });
+
+  Promise.all(promises)
+    .then((values) => {
+      // Every promise has resolved
+      console.log(values);
+    })
+    .catch((error) => {
+      // Any promise rejected
+      console.log(error);
+    });
+
+  console.log("SAVING IMAGE!");
 
   return {
-    strapiErrors: null,
-    zodErrors: null,
-    message: "Image Uploaded",
+    strapiErrors: strapiErrors,
+    zodErrors: zodErrors,
+    message: message,
   };
 }

@@ -32,6 +32,18 @@ function ImagePreview({ dataUrl }: { readonly dataUrl: string }) {
   );
 }
 
+function IssueImagePreview({ dataUrl }: { readonly dataUrl: string }) {
+  return (
+    <StrapiImage
+      src={dataUrl}
+      alt="preview"
+      height={200}
+      width={200}
+      className="object-cover"
+    />
+  );
+}
+
 function SingleImageCard({
   dataUrl,
   fileInput,
@@ -70,7 +82,7 @@ function MultipleImageCard({
 
   if (dataUrl) {
     dataUrl.map((url: string) => {
-      const el = <ImagePreview dataUrl={url} key={url} />;
+      const el = <IssueImagePreview dataUrl={url} key={url} />;
 
       imagePreview.push(el);
     });
@@ -114,9 +126,6 @@ export default function ImagePicker({
         reader.readAsDataURL(files[i]);
         reader.onload = () => {
           fileArray.push(reader.result as string);
-          /*if (fileArray.length === files.length) {
-            setDataUrl(fileArray);
-          }*/
           setMultipleDataUrl(fileArray);
         };
       }
