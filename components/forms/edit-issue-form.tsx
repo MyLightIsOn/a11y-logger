@@ -66,7 +66,7 @@ export function EditIssueForm({
     <form className={cn("space-y-4", className)} action={editFormAction}>
       Edit Issues
       {buildForm({ editFormData })}
-      <SubmitButton text="Save Issue" loadingText="Saving Issue" />
+      {/*<SubmitButton text="Save Issue" loadingText="Saving Issue" />*/}
       <StrapiErrors error={editFormState?.strapiErrors} />
     </form>
   );

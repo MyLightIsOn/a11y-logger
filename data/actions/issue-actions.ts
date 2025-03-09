@@ -115,62 +115,73 @@ export async function uploadIssueImageAction(formData: any) {
   let zodErrors = null;
   let message = null;
   let strapiErrors = null;
-  let images = formData.data;
-  let savedImagesIds = [];
+  const images = formData.data;
+  const savedImagesIds: Array<string> = [];
 
-  images.map((image: any) => {
-    // VALIDATE THE IMAGE
-    const validatedFields = imageSchema.safeParse({
-      image: image,
+  if (images) {
+    images.map((image: any) => {
+      // VALIDATE THE IMAGE
+      const validatedFields = imageSchema.safeParse({
+        image: image,
+      });
+      if (!validatedFields.success) {
+        zodErrors = validatedFields.error.flatten().fieldErrors;
+        message = "Invalid Image";
+      }
     });
-    if (!validatedFields.success) {
-      zodErrors = validatedFields.error.flatten().fieldErrors;
-      message = "Invalid Image";
-    }
-  });
 
-  const promises = images.map((image: any) => {
-    // Return the Promise created by the async function
-    return fileUploadService(image)
-      .then((fileUploadResponse) => {
-        // Handle successful response
-        if (!fileUploadResponse) {
-          message = "Ops! Something went wrong. Please try again.";
-          return "Ops! Something went wrong. Please try again.";
-        }
-        if (fileUploadResponse.error) {
-          // Handle error in response
-          strapiErrors = fileUploadResponse.error;
-          message = "Failed to Upload File.";
+    const promises = images.map((image: any) => {
+      // Return the Promise created by the async function
+      return fileUploadService(image)
+        .then((fileUploadResponse) => {
+          // Handle successful response
+          if (!fileUploadResponse) {
+            message = "Ops! Something went wrong. Please try again.";
+            return "Ops! Something went wrong. Please try again.";
+          }
+          if (fileUploadResponse.error) {
+            // Handle error in response
+            strapiErrors = fileUploadResponse.error;
+            message = "Failed to Upload File.";
+            return "Failed to Upload File.";
+          }
+
+          // Handle successful upload
+          return fileUploadResponse;
+        })
+        .catch((_err) => {
+          // Handle error during the API call
           return "Failed to Upload File.";
-        }
-
-        // Handle successful upload
-        return fileUploadResponse;
-      })
-      .catch((_err) => {
-        // Handle error during the API call
-        return "Failed to Upload File.";
-      });
-  });
-
-  Promise.all(promises)
-    .then((values) => {
-      // Every promise has resolved
-
-      values.map((value: any) => {
-        savedImagesIds.push(value[0].id);
-      });
-    })
-    .catch((error) => {
-      // Any promise rejected
-      console.log(error);
+        });
     });
+
+    Promise.all(promises)
+      .then((values) => {
+        // Every promise has resolved
+
+        values.map((value: any) => {
+          savedImagesIds.push(value[0].id);
+        });
+      })
+      .catch((error) => {
+        // Any promise rejected
+        console.log(error);
+      });
+
+    return {
+      strapiErrors: strapiErrors,
+      zodErrors: zodErrors,
+      message: message,
+      success: true,
+      data: savedImagesIds,
+    };
+  }
 
   return {
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,
     message: message,
-    success: true,
+    success: false,
+    data: savedImagesIds,
   };
 }

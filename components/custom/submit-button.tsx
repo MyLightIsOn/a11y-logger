@@ -20,6 +20,7 @@ interface SubmitButtonProps {
   className?: string;
   loading?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  form?: string;
 }
 
 export function SubmitButton({
@@ -28,10 +29,12 @@ export function SubmitButton({
   loading,
   className,
   onClick,
+  form,
 }: Readonly<SubmitButtonProps>) {
   const status = useFormStatus();
   return (
     <Button
+      form={form}
       type="submit"
       aria-disabled={status.pending || loading}
       disabled={status.pending || loading}

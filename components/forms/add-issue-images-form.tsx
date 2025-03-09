@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import ImagePicker from "@/components/custom/image-picker";
 import { ZodErrors } from "@/components/custom/zod-errors";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
-import { SubmitButton } from "@/components/custom/submit-button";
 
 export function AddIssueImagesForm({
   className,
@@ -19,7 +18,11 @@ export function AddIssueImagesForm({
   //console.log(formState);
 
   return (
-    <form className={cn("space-y-4", className)} action={imageFormAction}>
+    <form
+      className={cn("space-y-4", className)}
+      id={"issue-image-form"}
+      action={imageFormAction}
+    >
       <div className="">
         <ImagePicker
           id="image"
@@ -30,9 +33,6 @@ export function AddIssueImagesForm({
         />
         <ZodErrors error={imageFormState?.zodErrors?.image} />
         <StrapiErrors error={imageFormState?.strapiErrors} />
-      </div>
-      <div className="flex justify-end">
-        <SubmitButton text="Update Image" loadingText="Saving Image" />
       </div>
     </form>
   );
