@@ -57,19 +57,20 @@ export async function analyzeIssueAction(
 }
 
 export async function addIssueAction(prevState: any, formData: FormData) {
+  const rawFormData = Object.fromEntries(formData);
   const payload = {
     data: {
-      id: formData.id,
-      title: formData.title,
-      severity: formData.severity,
-      original_description: formData.original_description,
-      updated_description: formData.updated_description,
-      impact: formData.impact,
-      suggested_fix: formData.suggested_fix,
+      id: rawFormData.id,
+      title: rawFormData.title,
+      severity: rawFormData.severity,
+      original_description: rawFormData.original_description,
+      updated_description: rawFormData.updated_description,
+      impact: rawFormData.impact,
+      suggested_fix: rawFormData.suggested_fix,
       assessment: {
-        connect: [`${formData.assessment_id}`],
+        connect: [`${rawFormData.assessment_id}`],
       },
-      screenshots: formData.screenshots,
+      screenshots: rawFormData.screenshots.split(","),
     },
   };
 
@@ -174,4 +175,12 @@ export async function uploadIssueImageAction(formData: any) {
         console.log(error);
       });
   }
+
+  return {
+    strapiErrors: strapiErrors,
+    zodErrors: zodErrors,
+    message: message,
+    success: true,
+    data: savedImagesIds,
+  };
 }

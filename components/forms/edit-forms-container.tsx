@@ -23,12 +23,13 @@ const IMAGE_FORM_INITIAL_STATE = {
 function EditFormsContainer() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const editFormData = JSON.parse(searchParams.get("data") as string);
-  editFormData.assessment_id = searchParams.get("assessment_id");
+  const editFormDataTest = JSON.parse(searchParams.get("data") as string);
+  editFormDataTest.assessment_id = searchParams.get("assessment_id");
 
-  const updateIssueWithId = addIssueAction.bind(null, editFormData);
+  /*const updateIssueWithId = addIssueAction.bind(null, editFormData);*/
+  const [editFormData, setEditFormData] = useState(editFormDataTest);
   const [editFormState, editFormAction] = useActionState(
-    updateIssueWithId,
+    addIssueAction,
     editFormData,
   );
 
@@ -48,20 +49,23 @@ function EditFormsContainer() {
   useEffect(() => {
     if (imageFormState.success) {
       toast.success("Images saved");
-      editFormState.screenshots = imageFormState.data;
+      setEditFormData({
+        ...editFormData,
+        screenshots: imageFormState.data,
+      });
+      setImageids(imageFormState.data);
+    }
+  }, [imageFormState]);
 
+  useEffect(() => {
+    if (imageFormState.success) {
       const form = document.getElementById("issue-form");
 
       form.dispatchEvent(
         new Event("submit", { cancelable: true, bubbles: true }),
       );
-
-      IMAGE_FORM_INITIAL_STATE.imageIds = imageIds;
-      setImageids(imageFormState.data);
     }
-  }, [imageFormState]);
-
-  useEffect(() => {}, [imageIds]);
+  }, [imageIds]);
 
   return (
     <div className={"p-4"}>
@@ -75,6 +79,7 @@ function EditFormsContainer() {
         editFormAction={editFormAction}
         editFormData={editFormData}
         router={router}
+        setEditFormData={setEditFormData}
       />
       <SubmitButton
         form="issue-image-form"

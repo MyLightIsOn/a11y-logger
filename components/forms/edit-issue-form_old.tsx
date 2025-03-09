@@ -6,13 +6,12 @@ import { StrapiErrors } from "@/components/custom/strapi-errors";
 import { Input } from "@/components/ui/input";
 import { snakeCaseToTitleCase } from "@/lib/utils";
 import { toast } from "sonner";
-import editFormsContainer from "@/components/forms/edit-forms-container";
 
 interface editFormData {
   [key: string]: any; // This can be more specific, depending on the structure of your editFormData
 }
 
-const buildForm = ({ editFormData, setEditFormData }: editFormData) => {
+const buildForm = ({ editFormData }: editFormData) => {
   const form: React.JSX.Element[] = [];
   Object.keys(editFormData).forEach((key: string) => {
     const displayTitle = snakeCaseToTitleCase(key);
@@ -28,12 +27,6 @@ const buildForm = ({ editFormData, setEditFormData }: editFormData) => {
           name={formKey}
           placeholder={displayTitle}
           defaultValue={formValue || ""}
-          onChange={(e) => {
-            setEditFormData({
-              ...editFormData,
-              [key]: e.target.value,
-            });
-          }}
         />
       );
 
@@ -50,14 +43,12 @@ export function EditIssueForm({
   editFormAction,
   editFormData,
   router,
-  setEditFormData,
 }: {
   readonly className?: string;
   editFormState: any;
   editFormAction: any;
   editFormData: any;
   router: any;
-  setEditFormData: any;
 }) {
   useEffect(() => {
     if (editFormState.success) {
@@ -78,7 +69,7 @@ export function EditIssueForm({
       action={editFormAction}
     >
       Edit Issues
-      {buildForm({ editFormData, setEditFormData })}
+      {buildForm({ editFormData })}
       {/*<SubmitButton text="Save Issue" loadingText="Saving Issue" />*/}
       <StrapiErrors error={editFormState?.strapiErrors} />
     </form>
