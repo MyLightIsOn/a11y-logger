@@ -76,6 +76,8 @@ export async function addIssueAction(prevState: any, formData: FormData) {
     },
   };
 
+  console.log("SAVING ISSSUEEE!!!!");
+
   try {
     // Send a POST request to the API route
     const res = await fetch(`http://localhost:3000/api/issues`, {
@@ -167,21 +169,13 @@ export async function uploadIssueImageAction(formData: any) {
         // Any promise rejected
         console.log(error);
       });
-
-    return {
-      strapiErrors: strapiErrors,
-      zodErrors: zodErrors,
-      message: message,
-      success: true,
-      data: savedImagesIds,
-    };
   }
 
   return {
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,
     message: message,
-    success: false,
+    success: true,
     data: savedImagesIds,
   };
 }

@@ -48,6 +48,13 @@ function EditFormsContainer() {
   useEffect(() => {
     if (imageFormState.success) {
       toast.success("Images saved");
+
+      var form = document.getElementById("issue-form");
+
+      form.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true }),
+      );
+
       IMAGE_FORM_INITIAL_STATE.imageIds = imageIds;
       setImageids(imageFormState.data);
     }

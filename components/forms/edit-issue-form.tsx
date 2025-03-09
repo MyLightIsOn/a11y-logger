@@ -63,7 +63,11 @@ export function EditIssueForm({
   }, [editFormState]);
 
   return (
-    <form className={cn("space-y-4", className)} action={editFormAction}>
+    <form
+      id={"issue-form"}
+      className={cn("space-y-4", className)}
+      action={editFormAction}
+    >
       Edit Issues
       {buildForm({ editFormData })}
       {/*<SubmitButton text="Save Issue" loadingText="Saving Issue" />*/}

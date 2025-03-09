@@ -15,8 +15,6 @@ export function AddIssueImagesForm({
   imageFormAction: any;
   setSelectedImages: any;
 }) {
-  //console.log(formState);
-
   return (
     <form
       className={cn("space-y-4", className)}
