@@ -1,14 +1,10 @@
 "use server";
 
-import { z } from "zod";
-import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 import { imageSchema } from "@/static/image-schema";
 import {
   fileDeleteService,
   fileUploadService,
 } from "@/data/services/file-service";
-import { mutateData } from "@/data/services/mutate-data";
-import { revalidatePath } from "next/cache";
 
 export async function analyzeIssueAction(
   userId: string,
@@ -73,10 +69,9 @@ export async function addIssueAction(prevState: any, formData: FormData) {
       assessment: {
         connect: [`${formData.assessment_id}`],
       },
+      screenshots: formData.screenshots,
     },
   };
-
-  console.log("SAVING ISSSUEEE!!!!");
 
   try {
     // Send a POST request to the API route
@@ -157,25 +152,26 @@ export async function uploadIssueImageAction(formData: any) {
         });
     });
 
-    Promise.all(promises)
+    return Promise.all(promises)
       .then((values) => {
         // Every promise has resolved
 
         values.map((value: any) => {
           savedImagesIds.push(value[0].id);
+          console.log(savedImagesIds);
         });
+
+        return {
+          strapiErrors: strapiErrors,
+          zodErrors: zodErrors,
+          message: message,
+          success: true,
+          data: savedImagesIds,
+        };
       })
       .catch((error) => {
         // Any promise rejected
         console.log(error);
       });
   }
-
-  return {
-    strapiErrors: strapiErrors,
-    zodErrors: zodErrors,
-    message: message,
-    success: true,
-    data: savedImagesIds,
-  };
 }
