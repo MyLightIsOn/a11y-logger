@@ -2,6 +2,7 @@
 
 import { renderColumns } from "@/components/custom/assessments-list/columns";
 import { DataTable } from "@/components/custom/assessments-list/data-table";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -33,7 +34,19 @@ export default function DemoPage() {
 
   return (
     <div className="container mx-auto py-10 px-10">
-      {data && <DataTable columns={columns} data={data} />}
+      {isLoading ? (
+        <>
+          <div className={"flex justify-between mb-4"}>
+            <Skeleton className={"w-1/3 h-10"} />
+            <Skeleton className={"w-[120px] h-10"} />
+          </div>
+          <Skeleton className={"w-full h-[500px]"} />
+        </>
+      ) : error ? (
+        <div>Error: {error.message}</div>
+      ) : (
+        data && <DataTable columns={columns} data={data} />
+      )}
     </div>
   );
 }
