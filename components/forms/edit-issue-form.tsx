@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { SubmitButton } from "@/components/custom/submit-button";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
 import { Input } from "@/components/ui/input";
 import { snakeCaseToTitleCase } from "@/lib/utils";
 import { toast } from "sonner";
-import editFormsContainer from "@/components/forms/edit-forms-container";
 
 interface editFormData {
   [key: string]: any; // This can be more specific, depending on the structure of your editFormData
@@ -79,7 +77,6 @@ export function EditIssueForm({
     >
       Edit Issues
       {buildForm({ editFormData, setEditFormData })}
-      {/*<SubmitButton text="Save Issue" loadingText="Saving Issue" />*/}
       <StrapiErrors error={editFormState?.strapiErrors} />
     </form>
   );

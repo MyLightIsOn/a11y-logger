@@ -1,5 +1,5 @@
 import React from "react";
-import { AddIssueForm } from "@/components/forms/add-issue-form";
+import { AnalyzieIssueForm } from "@/components/forms/analyzie-issue-form";
 import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 
 export default async function AddIssueRoute(props) {
@@ -7,8 +7,8 @@ export default async function AddIssueRoute(props) {
   const userData = user.data;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 p-4">
-      <AddIssueForm data={userData} className="col-span-3" />
+    <div className="p-4">
+      <AnalyzieIssueForm data={userData} />
     </div>
   );
 }
