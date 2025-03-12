@@ -18,7 +18,10 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(req.data.data);
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Type assertion
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
 }
