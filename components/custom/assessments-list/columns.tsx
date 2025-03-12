@@ -22,7 +22,17 @@ interface RowProps {
   };
 }
 
-export const renderColumns = (data, schema, type) => {
+interface Schema {
+  heading: string;
+  displayName: string;
+  type: string;
+}
+
+export const renderColumns = (
+  data: { documentId: string }[],
+  schema: Schema[],
+  type: string,
+) => {
   const columns: ColumnDef<Assessments>[] = [];
   schema.map((columnData) => {
     columns.push({
@@ -39,7 +49,6 @@ export const renderColumns = (data, schema, type) => {
       //TODO fix type
       cell: ({ row }: RowProps) => {
         if (columnData.type === "date") {
-          // @ts-ignore
           return formatDate(row.original[columnData.heading]);
         }
 
@@ -52,10 +61,7 @@ export const renderColumns = (data, schema, type) => {
             className={"hover:underline focus:underline"}
             href={`/${type}/${data[row.index]?.documentId}`}
           >
-            {
-              // @ts-ignore
-              row.original[columnData.heading]
-            }
+            {row.original[columnData.heading]}
           </a>
         );
       },

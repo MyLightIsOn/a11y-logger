@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import * as React from "react";
 import { chartConfig, chartColors } from "@/static/chart-setup";
 import { useRouter } from "next/navigation";
+import { SubNavConfigProps } from "@/types/subnav";
+import { Plus } from "lucide-react";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -120,9 +122,18 @@ function Page() {
     }
   };
 
+  const subNavConfig: SubNavConfigProps[] = [
+    {
+      action: () => onClickAction("add-issue"),
+      variant: "success",
+      text: "New Issue",
+      icon: <Plus />,
+    },
+  ];
+
   return (
     <div>
-      <Subnav add edit generate trash onClickAction={onClickAction} />
+      <Subnav config={subNavConfig} />
       <div className="container mx-auto py-10 px-10">
         <div className={"flex gap-5 mb-5 relative"}>
           {assessment && (

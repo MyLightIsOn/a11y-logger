@@ -1,15 +1,12 @@
 import React from "react";
-import { FileChartColumn, Edit, Trash2, Copy, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SubNavConfigProps } from "@/types/subnav";
 
-function Subnav({
-  edit = false,
-  generate = false,
-  duplicate = false,
-  trash = false,
-  add = false,
-  onClickAction,
-}) {
+interface SubnavProps {
+  config: SubNavConfigProps[];
+}
+
+function Subnav({ config }: SubnavProps) {
   return (
     <div
       className={
@@ -17,37 +14,17 @@ function Subnav({
       }
     >
       <div className={"flex gap-2"}>
-        {add && (
-          <Button
-            variant={"success"}
-            onClick={() => onClickAction("add-issue")}
-          >
-            Add <Plus />
-          </Button>
-        )}
-        {edit && (
-          <Button onClick={() => onClickAction("edit")}>
-            Edit <Edit />
-          </Button>
-        )}
-        {duplicate && (
-          <Button onClick={() => onClickAction("duplicate")}>
-            Duplicate <Copy />
-          </Button>
-        )}
-        {generate && (
-          <Button onClick={() => onClickAction("generate")}>
-            Generate Report <FileChartColumn />
-          </Button>
-        )}
-        {trash && (
-          <Button
-            variant={"destructive"}
-            onClick={() => onClickAction("trash")}
-          >
-            Delete <Trash2 />
-          </Button>
-        )}
+        {config.map((button: SubNavConfigProps) => {
+          return (
+            <Button
+              key={button.text}
+              variant={button.variant}
+              onClick={() => button.action()}
+            >
+              {button.text} {button.icon}
+            </Button>
+          );
+        })}
       </div>
     </div>
   );

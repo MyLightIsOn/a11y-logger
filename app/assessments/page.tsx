@@ -6,6 +6,10 @@ import { AlertCircleOutlinIcon } from "@/components/icons/circle-alert-2";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import Subnav from "@/components/custom/subnav";
+
+import { Plus } from "lucide-react";
+import { SubNavConfigProps } from "@/types/subnav";
 
 const fetchAssessments = async () => {
   const api_url = `/api/assessments`;
@@ -33,8 +37,19 @@ export default function DemoPage() {
 
   const columns = renderColumns(data, schema, "assessments");
 
+  const subNavConfig: SubNavConfigProps[] = [
+    {
+      action: () => console.log("add assessment"),
+      variant: "success",
+      text: "Add Assessment",
+      icon: <Plus />,
+    },
+  ];
+
   return (
-    <div className="container mx-auto py-10 px-10 h-full">
+    <div className="container mx-auto h-full">
+      <Subnav config={subNavConfig} />
+
       {isLoading ? (
         <>
           <div className={"flex justify-between mb-4"}>
@@ -61,7 +76,11 @@ export default function DemoPage() {
           </div>
         </div>
       ) : (
-        data && <DataTable columns={columns} data={data} />
+        data && (
+          <div className={"p-10"}>
+            <DataTable columns={columns} data={data} />
+          </div>
+        )
       )}
     </div>
   );

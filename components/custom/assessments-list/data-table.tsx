@@ -28,6 +28,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Plus } from "lucide-react";
+import Subnav from "@/components/custom/subnav";
 
 interface AssessmentDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -64,7 +66,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex justify-between py-4">
         <Input
           placeholder="Search..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
