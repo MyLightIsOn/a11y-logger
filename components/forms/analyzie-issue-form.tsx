@@ -13,7 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-import { analyzeIssueAction } from "@/data/actions/issue-actions";
+import { analyzeIssueAction } from "@/data/actions/analyze-issue-action";
 import { useActionState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -26,27 +26,16 @@ const INITIAL_STATE = {
   message: null,
 };
 
-interface AnalyzieIssueFormProps {
-  id: string;
-  description: string;
-}
-
 export function AnalyzieIssueForm({
-  data,
   className,
 }: {
-  readonly data: AnalyzieIssueFormProps;
   readonly className?: string;
 }) {
   const pathname = usePathname();
   const editIssuePath = pathname.replace("/add-issue", "");
   const assessment_id = editIssuePath.replace("/assessments/", "");
 
-  const updateIssueWithId = analyzeIssueAction.bind(
-    null,
-    data.id,
-    assessment_id,
-  );
+  const updateIssueWithId = analyzeIssueAction.bind(null, assessment_id);
 
   const [formState, formAction] = useActionState(
     updateIssueWithId,
@@ -70,7 +59,7 @@ export function AnalyzieIssueForm({
       )}
       action={formAction}
     >
-      <Card className={"bg-gray-100/30 dark:bg-gray-800/30"}>
+      <Card className={"bg-gray-100/40 dark:bg-gray-800/30"}>
         <CardHeader>
           <CardTitle>Issue Description Guide</CardTitle>
           <CardDescription>
@@ -115,7 +104,7 @@ export function AnalyzieIssueForm({
         name="description"
         placeholder="Write issue description here..."
         className="resize-none border rounded-md w-full h-[224px] p-2"
-        defaultValue={data?.description || ""}
+        defaultValue={""}
         required
       />
       <div className="flex justify-end">

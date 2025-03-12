@@ -5,6 +5,7 @@ import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 // Define an array of protected routes
 const protectedRoutes = [
   "/dashboard",
+  "/assessments",
   // Add more protected routes here
 ];
 
