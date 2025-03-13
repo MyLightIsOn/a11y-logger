@@ -94,7 +94,7 @@ export const renderColumns = (
 
   columns.push({
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -115,7 +115,14 @@ export const renderColumns = (
               Share <Feature />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View</DropdownMenuItem>
+            <DropdownMenuItem>
+              <a
+                className={"hover:underline focus:underline"}
+                href={`/${type}/${data[row.index]?.documentId}`}
+              >
+                View
+              </a>
+            </DropdownMenuItem>
             <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
