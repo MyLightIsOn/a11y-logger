@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Assessments } from "@/types/assessments";
 import { chartConfig } from "@/static/chart-setup";
+import React from "react";
+import { dialogTestContent } from "@/components/custom/dialog/dialog-content";
 
 interface RowProps {
   row: {
@@ -32,6 +34,8 @@ export const renderColumns = (
   data: { documentId: string }[],
   schema: Schema[],
   type: string,
+  setOpen,
+  setDialogContent,
 ) => {
   const columns: ColumnDef<Assessments>[] = [];
   schema.map((columnData) => {
@@ -81,7 +85,12 @@ export const renderColumns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log("share assessment")}>
+            <DropdownMenuItem
+              onClick={() => {
+                setDialogContent(dialogTestContent);
+                setOpen(true);
+              }}
+            >
               Share
             </DropdownMenuItem>
             <DropdownMenuSeparator />

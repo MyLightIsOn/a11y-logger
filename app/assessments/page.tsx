@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { renderColumns } from "@/components/custom/assessments-list/columns";
 import { DataTable } from "@/components/custom/assessments-list/data-table";
 import { AlertCircleOutlinIcon } from "@/components/icons/circle-alert-2";
@@ -7,6 +8,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Subnav from "@/components/custom/subnav";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import CustomDialog from "@/components/custom/dialog";
 
 import { Plus } from "lucide-react";
 import { SubNavConfigProps } from "@/types/subnav";
@@ -21,7 +37,10 @@ const fetchAssessments = async () => {
   }
 };
 
-export default function DemoPage() {
+export default function AssessmentPage() {
+  const [open, setOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState({});
+
   const { data, error, isLoading } = useQuery({
     queryKey: ["assessments"],
     queryFn: fetchAssessments,
@@ -35,7 +54,13 @@ export default function DemoPage() {
     { heading: "updatedAt", displayName: "Last Update", type: "date" },
   ];
 
-  const columns = renderColumns(data, schema, "assessments");
+  const columns = renderColumns(
+    data,
+    schema,
+    "assessments",
+    setOpen,
+    setDialogContent,
+  );
 
   const subNavConfig: SubNavConfigProps[] = [
     {
@@ -52,11 +77,13 @@ export default function DemoPage() {
 
       {isLoading ? (
         <>
-          <div className={"flex justify-between mb-4"}>
+          <div className={"flex justify-between mb-4 px-10 pt-10"}>
             <Skeleton className={"w-1/3 h-10"} />
             <Skeleton className={"w-[120px] h-10"} />
           </div>
-          <Skeleton className={"w-full h-[500px]"} />
+          <div className={"px-10"}>
+            <Skeleton className={"w-full h-[500px]"} />
+          </div>
         </>
       ) : error ? (
         <div className={"flex items-center align-middle h-full"}>
@@ -82,6 +109,12 @@ export default function DemoPage() {
           </div>
         )
       )}
+
+      <CustomDialog
+        open={open}
+        onOpenChange={setOpen}
+        content={dialogContent}
+      />
     </div>
   );
 }

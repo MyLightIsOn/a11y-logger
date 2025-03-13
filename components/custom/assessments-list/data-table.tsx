@@ -28,8 +28,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus } from "lucide-react";
-import Subnav from "@/components/custom/subnav";
 
 interface AssessmentDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
