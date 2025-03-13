@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Assessments } from "@/types/assessments";
 import { chartConfig } from "@/static/chart-setup";
-import React from "react";
-import { dialogTestContent } from "@/components/custom/dialog/dialog-content";
+import { sharingAssessments } from "@/components/custom/dialog/dialog-content";
+import { Feature } from "@/components/icons/feature";
 
 interface RowProps {
   row: {
@@ -37,6 +37,26 @@ export const renderColumns = (
   setOpen,
   setDialogContent,
 ) => {
+  const dialogActions = [
+    <Button
+      key={"submit-dialog"}
+      type="submit"
+      onClick={() => {
+        setOpen(false);
+        console.log("closing");
+      }}
+    >
+      Interested
+    </Button>,
+    <Button
+      key={"cancel-dialog"}
+      variant={"ghost"}
+      onClick={() => setOpen(false)}
+    >
+      Not Interested
+    </Button>,
+  ];
+
   const columns: ColumnDef<Assessments>[] = [];
   schema.map((columnData) => {
     columns.push({
@@ -87,11 +107,12 @@ export const renderColumns = (
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                setDialogContent(dialogTestContent);
+                sharingAssessments.actions = dialogActions;
+                setDialogContent(sharingAssessments);
                 setOpen(true);
               }}
             >
-              Share
+              Share <Feature />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View</DropdownMenuItem>
