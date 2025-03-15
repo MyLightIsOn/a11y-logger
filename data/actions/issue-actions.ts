@@ -6,21 +6,20 @@ import {
   fileUploadService,
 } from "@/data/services/file-service";
 
-export async function addIssueAction(prevState: any, formData: FormData) {
-  const rawFormData = formData;
+export async function addIssueAction(prevState: any) {
   const payload = {
     data: {
-      id: rawFormData.id,
-      title: rawFormData.title,
-      severity: rawFormData.severity,
-      original_description: rawFormData.original_description,
-      updated_description: rawFormData.updated_description,
-      impact: rawFormData.impact,
-      suggested_fix: rawFormData.suggested_fix,
+      id: prevState.id,
+      title: prevState.title,
+      severity: prevState.severity,
+      original_description: prevState.original_description,
+      updated_description: prevState.updated_description,
+      impact: prevState.impact,
+      suggested_fix: prevState.suggested_fix,
       assessment: {
-        connect: ["hhufelavdahk7s0vt5mqoidv"],
+        connect: [`${prevState.assessment_id}`],
       },
-      screenshots: rawFormData.screenshots?.split(","),
+      screenshots: prevState.screenshots,
     },
   };
 
@@ -127,7 +126,6 @@ export async function uploadIssueImageAction(formData: any) {
         console.log(error);
       });
   }
-
   return {
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,

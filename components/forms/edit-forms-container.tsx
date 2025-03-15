@@ -61,7 +61,7 @@ function EditFormsContainer() {
     if (imageFormState.success) {
       const form = document.getElementById("issue-form");
 
-      form.dispatchEvent(
+      form?.dispatchEvent(
         new Event("submit", { cancelable: true, bubbles: true }),
       );
     }
