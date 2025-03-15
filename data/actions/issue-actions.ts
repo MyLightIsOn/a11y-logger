@@ -7,7 +7,7 @@ import {
 } from "@/data/services/file-service";
 
 export async function addIssueAction(prevState: any, formData: FormData) {
-  const rawFormData = Object.fromEntries(formData);
+  const rawFormData = formData;
   const payload = {
     data: {
       id: rawFormData.id,
@@ -18,9 +18,9 @@ export async function addIssueAction(prevState: any, formData: FormData) {
       impact: rawFormData.impact,
       suggested_fix: rawFormData.suggested_fix,
       assessment: {
-        connect: [`${rawFormData.assessment_id}`],
+        connect: ["hhufelavdahk7s0vt5mqoidv"],
       },
-      screenshots: rawFormData.screenshots.split(","),
+      screenshots: rawFormData.screenshots?.split(","),
     },
   };
 
@@ -37,6 +37,7 @@ export async function addIssueAction(prevState: any, formData: FormData) {
     const responseData = await res.json();
 
     if (responseData.error) {
+      console.log(responseData.error);
       return {
         success: false,
         error: responseData.error,
@@ -52,6 +53,7 @@ export async function addIssueAction(prevState: any, formData: FormData) {
       };
     }
   } catch (error) {
+    console.log(error);
     return {
       success: false,
       error: error,

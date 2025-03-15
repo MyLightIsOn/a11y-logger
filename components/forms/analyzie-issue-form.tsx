@@ -21,6 +21,7 @@ import { usePathname, useRouter } from "next/navigation";
 import qs from "qs";
 
 const INITIAL_STATE = {
+  assessment_id: null,
   data: null,
   strapiErrors: null,
   message: null,
@@ -35,10 +36,8 @@ export function AnalyzieIssueForm({
   const editIssuePath = pathname.replace("/add-issue", "");
   const assessment_id = editIssuePath.replace("/assessments/", "");
 
-  const updateIssueWithId = analyzeIssueAction.bind(null, assessment_id);
-
-  const [formState, formAction] = useActionState(
-    updateIssueWithId,
+  const [formState, setFormState] = useActionState(
+    analyzeIssueAction,
     INITIAL_STATE,
   );
 
@@ -46,6 +45,7 @@ export function AnalyzieIssueForm({
 
   useEffect(() => {
     if (formState?.data?.success) {
+      formState.data.assessment_id = assessment_id;
       const query = qs.stringify(formState.data);
       router.push(`${editIssuePath}/edit-issue?${query}`);
     }
@@ -57,7 +57,7 @@ export function AnalyzieIssueForm({
         "space-y-4 w-[80%] max-w-[1440px] mx-auto mt-14",
         className,
       )}
-      action={formAction}
+      action={setFormState}
     >
       <Card className={"bg-gray-100/40 dark:bg-gray-800/30"}>
         <CardHeader>

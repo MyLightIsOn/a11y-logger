@@ -26,10 +26,10 @@ function EditFormsContainer() {
   const editFormDataTest = JSON.parse(searchParams.get("data") as string);
   editFormDataTest.assessment_id = searchParams.get("assessment_id");
 
-  /*const updateIssueWithId = addIssueAction.bind(null, editFormData);*/
   const [editFormData, setEditFormData] = useState(editFormDataTest);
+  const updateIssueWithId = addIssueAction.bind(null, editFormData);
   const [editFormState, editFormAction] = useActionState(
-    addIssueAction,
+    updateIssueWithId,
     editFormData,
   );
 
@@ -83,8 +83,8 @@ function EditFormsContainer() {
       />
       <SubmitButton
         form="issue-image-form"
-        text="Update Image"
-        loadingText="Saving Image"
+        text="Save Issue"
+        loadingText="Save Issue"
       />
     </div>
   );

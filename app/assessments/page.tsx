@@ -13,6 +13,7 @@ import CustomDialog from "@/components/custom/dialog";
 
 import { Plus } from "lucide-react";
 import { SubNavConfigProps } from "@/types/subnav";
+import { useRouter } from "next/navigation";
 
 const fetchAssessments = async () => {
   const api_url = `/api/assessments`;
@@ -33,6 +34,8 @@ export default function AssessmentPage() {
     queryFn: fetchAssessments,
   });
 
+  const router = useRouter();
+
   const schema = [
     { heading: "title", displayName: "Assessment", type: "string" },
     { heading: "progress", displayName: "Status", type: "string" },
@@ -51,7 +54,7 @@ export default function AssessmentPage() {
 
   const subNavConfig: SubNavConfigProps[] = [
     {
-      action: () => console.log("add assessment"),
+      action: () => router.push("/assessments/create"),
       variant: "success",
       text: "Add Assessment",
       icon: <Plus />,

@@ -1,14 +1,10 @@
 "use server";
 import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 
-export async function analyzeIssueAction(
-  formData: FormData,
-  assessment_id: string,
-) {
+export async function analyzeIssueAction(assessment_id: string, formData: any) {
   const user = await getUserMeLoader();
   if (!user.ok)
     throw new Error("You are not authorized to perform this action.");
-
   const rawFormData = Object.fromEntries(formData);
 
   const payload = {
@@ -23,13 +19,11 @@ export async function analyzeIssueAction(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        usmurInput: payload.description,
+        userInput: payload.description,
       }), // Example user input
     });
 
     const responseData = await res.json();
-    responseData.assessment_id = assessment_id;
-
     if (responseData.success) {
       return {
         message: "Success",
