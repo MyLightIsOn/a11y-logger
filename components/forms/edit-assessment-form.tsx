@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useActionState, useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
@@ -51,7 +51,7 @@ function EditAssessmentForm() {
 
   useEffect(() => {
     if (editAssessmentId) {
-      fetchAssessment(editAssessmentId)
+      fetchAssessment(editAssessmentId, null)
         .then((res) => {
           setFormData(res);
         })
@@ -68,6 +68,7 @@ function EditAssessmentForm() {
     }
 
     if (editFormState.error) {
+      console.log(editFormState);
       toast.error(
         "Uh oh! Something went wrong. If this error persists, contact support",
       );
@@ -114,16 +115,15 @@ function EditAssessmentForm() {
           }}
         />
         <SubmitButton text="Save Assessment" loadingText="Saving" />
-        {/*<StrapiErrors error={editFormState.error} />*/}
+        <StrapiErrors error={editFormState.error} />
       </form>
-      {/*
       {showDetails && <span>{editFormState.strapiErrors?.error}</span>}
 
       {editFormState.error && (
         <Button variant={"ghost"} onClick={() => setShowDetails(!showDetails)}>
           {showDetails ? "Hide Details" : "Show Details"}
         </Button>
-      )}*/}
+      )}
     </>
   );
 }

@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const authToken = await getAuthToken();
   if (!authToken) throw new Error("No auth token found");
-
   const api_url = `${API_URL}/assessments`;
 
   const config = {
@@ -44,7 +43,8 @@ export async function POST(request: NextRequest) {
     },
   };
 
-  const data = await request.json();
+  const data = await request?.json();
+
   try {
     const res = await axios.post(api_url, data, config);
     return NextResponse.json(res.data.data);
@@ -60,9 +60,10 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   const authToken = await getAuthToken();
   if (!authToken) throw new Error("No auth token found");
-  const data = await request.json();
 
-  const api_url = `${API_URL}/assessments/${data.data.documentId}`;
+  const data = await request?.json();
+
+  const api_url = `${API_URL}/assessments/rxw2zi2za62n10pbg11o8kuc'`;
   const dataWithoutId = {
     data: {
       title: data.data.title,
@@ -83,6 +84,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(res.data.data);
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.log(error);
       // Type assertion
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
