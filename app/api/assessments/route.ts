@@ -46,10 +46,11 @@ export async function POST(request: NextRequest) {
 
   const data = await request.json();
   try {
-    const res = await axios.post(api_url, { data: data }, config);
+    const res = await axios.post(api_url, data, config);
     return NextResponse.json(res.data.data);
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.log(error);
       // Type assertion
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
