@@ -56,3 +56,35 @@ export async function POST(request: NextRequest) {
     }
   }
 }
+
+export async function PUT(request: NextRequest) {
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+  const data = await request.json();
+
+  const api_url = `${API_URL}/assessments/${data.data.documentId}`;
+  const dataWithoutId = {
+    data: {
+      title: data.data.title,
+      description: data.data.description,
+      platform: data.data.platform,
+      standard: data.data.standard,
+    },
+  };
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  };
+
+  try {
+    const res = await axios.put(api_url, dataWithoutId, config);
+    return NextResponse.json(res.data.data);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Type assertion
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
+}

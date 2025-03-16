@@ -20,7 +20,7 @@ import * as React from "react";
 import { chartConfig, chartColors } from "@/static/chart-setup";
 import { useRouter } from "next/navigation";
 import { SubNavConfigProps } from "@/types/subnav";
-import { Plus } from "lucide-react";
+import { Edit, Plus } from "lucide-react";
 
 const fetchAssessment = async (url: string) => {
   const api_url = url
@@ -116,9 +116,12 @@ function Page() {
     );
   });
 
-  const onClickAction = (type) => {
+  const onClickAction = (type: string) => {
     if (type === "add-issue") {
       router.push(`/assessments/${assessment?.documentId}/add-issue`);
+    }
+    if (type === "edit-assessment") {
+      router.push(`/assessments/edit-assessment?id=${assessment?.documentId}`);
     }
   };
 
@@ -128,6 +131,12 @@ function Page() {
       variant: "success",
       text: "New Issue",
       icon: <Plus />,
+    },
+    {
+      action: () => onClickAction("edit-assessment"),
+      variant: "default",
+      text: "Edit Assessment",
+      icon: <Edit />,
     },
   ];
 

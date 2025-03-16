@@ -23,10 +23,10 @@ const IMAGE_FORM_INITIAL_STATE = {
 function EditFormsContainer() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const editFormDataTest = JSON.parse(searchParams.get("data") as string);
-  editFormDataTest.assessment_id = searchParams.get("assessment_id");
+  const searchParamData = JSON.parse(searchParams.get("data") as string);
+  searchParamData.assessment_id = searchParams.get("assessment_id");
 
-  const [editFormData, setEditFormData] = useState(editFormDataTest);
+  const [editFormData, setEditFormData] = useState(searchParamData);
   const updateIssueWithId = addIssueAction.bind(null, editFormData);
   const [editFormState, editFormAction] = useActionState(
     updateIssueWithId,

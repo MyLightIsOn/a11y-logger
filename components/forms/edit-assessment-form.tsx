@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { use, useActionState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/custom/submit-button";
 import { StrapiErrors } from "@/components/custom/strapi-errors";
 import { toast } from "sonner";
 import { addAssessmentAction } from "@/data/actions/assessment-actions";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const addAssessmentForm = {
   title: "",
@@ -16,7 +18,23 @@ const addAssessmentForm = {
   standard: "",
 };
 
+const fetchAssessment = async (url: string, formData) => {
+  if (url) {
+    const api_url = `/api/assessments?documentId=${url}`;
+
+    try {
+      const res = await axios.get(api_url);
+      return res.data;
+    } catch (err) {
+      throw new Error(`Failed to fetch issues: ${err}`);
+    }
+  }
+  return formData;
+};
+
 function EditAssessmentForm() {
+  const searchParams = useSearchParams();
+  const editAssessmentId = searchParams.get("id") as string;
   const [formData, setFormData] = React.useState(addAssessmentForm);
   const [showDetails, setShowDetails] = React.useState(false);
   const addAssessment = addAssessmentAction.bind(null, formData);
@@ -25,6 +43,23 @@ function EditAssessmentForm() {
     formData,
   );
   const router = useRouter();
+
+  let { data, error, isLoading } = useQuery({
+    queryKey: ["issues"],
+    queryFn: () => fetchAssessment(editAssessmentId, formData),
+  });
+
+  useEffect(() => {
+    if (editAssessmentId) {
+      fetchAssessment(editAssessmentId)
+        .then((res) => {
+          setFormData(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     if (editFormState.success) {
@@ -79,15 +114,16 @@ function EditAssessmentForm() {
           }}
         />
         <SubmitButton text="Save Assessment" loadingText="Saving" />
-        <StrapiErrors error={editFormState.error} />
+        {/*<StrapiErrors error={editFormState.error} />*/}
       </form>
+      {/*
       {showDetails && <span>{editFormState.strapiErrors?.error}</span>}
 
       {editFormState.error && (
         <Button variant={"ghost"} onClick={() => setShowDetails(!showDetails)}>
           {showDetails ? "Hide Details" : "Show Details"}
         </Button>
-      )}
+      )}*/}
     </>
   );
 }

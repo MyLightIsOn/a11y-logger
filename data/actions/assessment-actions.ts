@@ -1,6 +1,7 @@
 export async function addAssessmentAction(prevState: any) {
   const payload = {
     data: {
+      documentId: prevState.documentId,
       title: prevState.title,
       description: prevState.description,
       platform: prevState.platform,
@@ -8,17 +9,33 @@ export async function addAssessmentAction(prevState: any) {
     },
   };
 
+  let responseData;
+
   try {
     // Send a POST request to the API route
-    const res = await fetch(`http://localhost:3000/api/assessments`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload), // Example user input
-    });
+    if (!prevState.documentId) {
+      const res = await fetch(`http://localhost:3000/api/assessments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload), // Example user input
+      });
 
-    const responseData = await res.json();
+      responseData = await res.json();
+    }
+
+    if (prevState.documentId) {
+      const res = await fetch(`http://localhost:3000/api/assessments`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload), // Example user input
+      });
+
+      responseData = await res.json();
+    }
 
     if (responseData.error) {
       console.log(responseData.error);
