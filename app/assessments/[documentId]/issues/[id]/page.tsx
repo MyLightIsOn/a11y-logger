@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Subnav from "@/components/custom/subnav";
@@ -17,6 +17,8 @@ import { IMAGE_URL } from "@/static/const";
 import OctagonAlert from "@/components/icons/octagon-alert";
 import TriangleAlert from "@/components/icons/triangle-alert";
 import CircleAlert from "@/components/icons/circle-alert";
+import { SubNavConfigProps } from "@/types/subnav";
+import { Edit, TrashIcon } from "lucide-react";
 
 const renderSeverityIcon = (severity) => {
   const severityObject = {
@@ -85,9 +87,35 @@ function Page(props) {
   const screenshots = organizeScreenshots(issue?.screenshots);
   const { severityText, severityIcon } = renderSeverityIcon(issue?.severity);
 
+  const router = useRouter();
+
+  const onClickAction = (type: string) => {
+    if (type === "edit-issue") {
+      router.push(`/assessments/`);
+    }
+    if (type === "delete-issue") {
+      router.push(`/assessments/`);
+    }
+  };
+
+  const subNavConfig: SubNavConfigProps[] = [
+    {
+      action: () => onClickAction("add-issue"),
+      variant: "default",
+      text: "Edit Issue",
+      icon: <Edit />,
+    },
+    {
+      action: () => onClickAction("edit-assessment"),
+      variant: "destructive",
+      text: "Delete Issue",
+      icon: <TrashIcon />,
+    },
+  ];
+
   return (
     <div>
-      <Subnav edit duplicate trash />
+      <Subnav config={subNavConfig} />
       <div className="container mx-auto py-10 px-10">
         <div className={"flex gap-5 mb-5 relative"}>
           {issue && (
@@ -130,7 +158,7 @@ function Page(props) {
                     <div className={"text-sm flex w-1/2 mt-2"}>
                       <span className={"font-bold"}>Tags:</span>{" "}
                       <div>
-                        {issue.tags.map((tag) => {
+                        {issue.tags?.map((tag) => {
                           return (
                             <Badge
                               key={tag.slug}
