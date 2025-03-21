@@ -25,7 +25,7 @@ function EditFormsContainer() {
   const router = useRouter();
   const searchParamData = JSON.parse(searchParams.get("data") as string);
 
-  //searchParamData.assessment_id = searchParams.get("assessment_id");
+  searchParamData.assessment_id = searchParams.get("assessment_id");
 
   const [editFormData, setEditFormData] = useState(searchParamData);
   const updateIssueWithId = addIssueAction.bind(null, editFormData);
@@ -33,8 +33,6 @@ function EditFormsContainer() {
     updateIssueWithId,
     editFormData,
   );
-
-  console.log(editFormData);
 
   const [imageFormState, imageFormAction] = useActionState(
     uploadIssueImageAction,
@@ -50,7 +48,7 @@ function EditFormsContainer() {
   }, [selectedImages]);
 
   useEffect(() => {
-    if (imageFormState.success) {
+    if (imageFormState.data) {
       toast.success("Images saved");
       setEditFormData({
         ...editFormData,
@@ -58,9 +56,7 @@ function EditFormsContainer() {
       });
       setImageids(imageFormState.data);
     }
-  }, [imageFormState]);
 
-  useEffect(() => {
     if (imageFormState.success) {
       const form = document.getElementById("issue-form");
 
@@ -68,7 +64,7 @@ function EditFormsContainer() {
         new Event("submit", { cancelable: true, bubbles: true }),
       );
     }
-  }, [imageIds]);
+  }, [imageFormState]);
 
   return (
     <div className={"p-4"}>

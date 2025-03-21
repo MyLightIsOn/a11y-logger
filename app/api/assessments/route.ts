@@ -63,6 +63,7 @@ export async function PUT(request: NextRequest) {
 
   const data = await request?.json();
 
+  // Todo removed the hardcoded url
   const api_url = `${API_URL}/assessments/rxw2zi2za62n10pbg11o8kuc'`;
   const dataWithoutId = {
     data: {

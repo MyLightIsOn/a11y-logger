@@ -25,6 +25,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
+
+  // TODO rename variable
   const test = API_AUTH_TOKEN;
 
   try {

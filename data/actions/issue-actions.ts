@@ -5,11 +5,11 @@ import {
   fileDeleteService,
   fileUploadService,
 } from "@/data/services/file-service";
+import { mutateData } from "@/data/services/mutate-data";
 
 export async function addIssueAction(prevState: any) {
   const payload = {
     data: {
-      id: prevState.id,
       title: prevState.title,
       severity: prevState.severity,
       original_description: prevState.original_description,
@@ -23,45 +23,42 @@ export async function addIssueAction(prevState: any) {
     },
   };
 
-  try {
-    // Send a POST request to the API route
-    const res = await fetch(`http://localhost:3000/api/issues`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload), // Example user input
-    });
+  let responseData;
 
-    const responseData = await res.json();
+  if (prevState.documentId) {
+    responseData = await mutateData(
+      "PUT",
+      `/api/issues/${prevState.documentId}`,
+      payload,
+    );
+  }
 
-    if (responseData.error) {
-      console.log(responseData.error);
-      return {
-        success: false,
-        error: responseData.error,
-      };
-    }
+  if (!prevState.documentId) {
+    responseData = await mutateData("POST", `/api/issues`, payload);
+  }
 
-    if (responseData.data.id) {
-      return {
-        ...prevState,
-        success: true,
-        data: responseData.data.data,
-        strapiErrors: null,
-      };
-    }
-  } catch (error) {
-    console.log(error);
+  if (responseData.error) {
     return {
       success: false,
-      error: error,
+      error: {
+        message:
+          "Something went wrong while saving. If this persist, use the details panel below to report this to support.",
+      },
+      strapiErrors: responseData,
     };
   }
+
+  return {
+    ...prevState,
+    success: true,
+    message: "Issue Saved",
+    data: responseData.data,
+    strapiErrors: null,
+  };
 }
 
 export async function uploadIssueImageAction(formData: any) {
-  let zodErrors = null;
+  /*let zodErrors = null;
   let message = null;
   let strapiErrors = null;
   const images = formData.data;
@@ -131,6 +128,14 @@ export async function uploadIssueImageAction(formData: any) {
     zodErrors: zodErrors,
     message: message,
     success: true,
-    data: savedImagesIds,
+  };*/
+
+  console.log("IMAGE ACTION------------------------------->");
+
+  return {
+    strapiErrors: null,
+    zodErrors: null,
+    message: "none",
+    success: true,
   };
 }
