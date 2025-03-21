@@ -18,7 +18,21 @@ const buildForm = ({ editFormData, setEditFormData }: editFormData) => {
     const formValue = editFormData[key];
     let formElement;
 
-    if (formKey !== "specs") {
+    const formConfig = [
+      "id",
+      "original_description",
+      "description",
+      "documentId",
+      "updatedAt",
+      "createdAt",
+      "standard",
+      "publishedAt",
+      "date_reported",
+      "screenshots",
+      "tags",
+    ];
+
+    if (!formConfig.includes(formKey)) {
       formElement = (
         <Input
           key={formKey}
@@ -58,12 +72,12 @@ export function EditIssueForm({
   setEditFormData: any;
 }) {
   useEffect(() => {
-    if (editFormState.success) {
+    if (editFormState?.success) {
       toast.success("Issue saved");
       router.push(`/assessments/${editFormData.assessment_id}`);
     }
 
-    if (editFormState.error) {
+    if (editFormState?.error) {
       toast.error("Error while saving");
       console.log(editFormState.error);
     }

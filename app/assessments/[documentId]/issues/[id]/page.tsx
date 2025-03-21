@@ -19,6 +19,7 @@ import TriangleAlert from "@/components/icons/triangle-alert";
 import CircleAlert from "@/components/icons/circle-alert";
 import { SubNavConfigProps } from "@/types/subnav";
 import { Edit, TrashIcon } from "lucide-react";
+import qs from "qs";
 
 const renderSeverityIcon = (severity) => {
   const severityObject = {
@@ -91,22 +92,24 @@ function Page(props) {
 
   const onClickAction = (type: string) => {
     if (type === "edit-issue") {
-      router.push(`/assessments/`);
+      router.push(
+        `/assessments/${url[2]}/edit-issue?success=true&data=${JSON.stringify(issue)}`,
+      );
     }
     if (type === "delete-issue") {
-      router.push(`/assessments/`);
+      console.log("delete");
     }
   };
 
   const subNavConfig: SubNavConfigProps[] = [
     {
-      action: () => onClickAction("add-issue"),
+      action: () => onClickAction("edit-issue"),
       variant: "default",
       text: "Edit Issue",
       icon: <Edit />,
     },
     {
-      action: () => onClickAction("edit-assessment"),
+      action: () => onClickAction("delete-issue"),
       variant: "destructive",
       text: "Delete Issue",
       icon: <TrashIcon />,

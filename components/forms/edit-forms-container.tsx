@@ -24,7 +24,8 @@ function EditFormsContainer() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const searchParamData = JSON.parse(searchParams.get("data") as string);
-  searchParamData.assessment_id = searchParams.get("assessment_id");
+
+  //searchParamData.assessment_id = searchParams.get("assessment_id");
 
   const [editFormData, setEditFormData] = useState(searchParamData);
   const updateIssueWithId = addIssueAction.bind(null, editFormData);
@@ -32,6 +33,8 @@ function EditFormsContainer() {
     updateIssueWithId,
     editFormData,
   );
+
+  console.log(editFormData);
 
   const [imageFormState, imageFormAction] = useActionState(
     uploadIssueImageAction,
