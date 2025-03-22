@@ -41,6 +41,7 @@ function EditFormsContainer() {
 
   const [selectedImages, setSelectedImages] = useState();
 
+  // TODO put image ids back so you can connect images to issues.
   const [imageIds, setImageids] = useState([]);
 
   useEffect(() => {

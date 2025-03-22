@@ -58,7 +58,7 @@ export async function addIssueAction(prevState: any) {
 }
 
 export async function uploadIssueImageAction(formData: any) {
-  /*let zodErrors = null;
+  let zodErrors = null;
   let message = null;
   let strapiErrors = null;
   const images = formData.data;
@@ -127,15 +127,6 @@ export async function uploadIssueImageAction(formData: any) {
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,
     message: message,
-    success: true,
-  };*/
-
-  console.log("IMAGE ACTION------------------------------->");
-
-  return {
-    strapiErrors: null,
-    zodErrors: null,
-    message: "none",
     success: true,
   };
 }
