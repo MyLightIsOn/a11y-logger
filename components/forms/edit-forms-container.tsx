@@ -49,7 +49,7 @@ function EditFormsContainer() {
   }, [selectedImages]);
 
   useEffect(() => {
-    if (imageFormState.data) {
+    if (imageFormState.success) {
       toast.success("Images saved");
       setEditFormData({
         ...editFormData,
@@ -57,7 +57,9 @@ function EditFormsContainer() {
       });
       setImageids(imageFormState.data);
     }
+  }, [imageFormState]);
 
+  useEffect(() => {
     if (imageFormState.success) {
       const form = document.getElementById("issue-form");
 
@@ -65,7 +67,7 @@ function EditFormsContainer() {
         new Event("submit", { cancelable: true, bubbles: true }),
       );
     }
-  }, [imageFormState]);
+  }, [imageIds]);
 
   return (
     <div className={"p-4"}>

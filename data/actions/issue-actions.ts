@@ -8,24 +8,29 @@ import {
 import { mutateData } from "@/data/services/mutate-data";
 
 export async function addIssueAction(prevState: any) {
+  const data = JSON.parse(prevState.data);
+
   const payload = {
     data: {
-      title: prevState.title,
-      severity: prevState.severity,
-      original_description: prevState.original_description,
-      updated_description: prevState.updated_description,
-      impact: prevState.impact,
-      suggested_fix: prevState.suggested_fix,
+      title: data.title,
+      severity: data.severity,
+      original_description: data.original_description,
+      updated_description: data.updated_description,
+      impact: data.impact,
+      suggested_fix: data.suggested_fix,
       assessment: {
         connect: [`${prevState.assessment_id}`],
       },
-      screenshots: prevState.screenshots,
+      //screenshots: prevState.screenshots,
     },
   };
 
   let responseData;
-
+  console.log(payload);
+  console.log(payload.data.assessment);
+  console.log(prevState.assessment_id);
   if (prevState.documentId) {
+    payload.data.published = true;
     responseData = await mutateData(
       "PUT",
       `/api/issues/${prevState.documentId}`,
@@ -34,10 +39,13 @@ export async function addIssueAction(prevState: any) {
   }
 
   if (!prevState.documentId) {
+    console.log("POSTING ------------------>");
+    payload.data.published = false;
     responseData = await mutateData("POST", `/api/issues`, payload);
   }
 
   if (responseData.error) {
+    console.log(responseData.error);
     return {
       success: false,
       error: {
