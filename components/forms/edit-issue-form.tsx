@@ -74,7 +74,7 @@ export function EditIssueForm({
   useEffect(() => {
     if (editFormState?.success) {
       toast.success("Issue saved");
-      router.push(`/assessments/${editFormData.assessment_id}`);
+      router.push(`/assessments/${editFormState.assessment_id}`);
     }
 
     if (editFormState?.error) {

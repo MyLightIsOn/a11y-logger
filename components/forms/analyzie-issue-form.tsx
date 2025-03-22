@@ -61,7 +61,9 @@ export function AnalyzieIssueForm({
         }
 
         if (res.success) {
-          router.push(`${editIssuePath}/edit-issue?${query}`);
+          router.push(
+            `${editIssuePath}/edit-issue?documentId=${res.data.documentId}`,
+          );
         }
       });
     }

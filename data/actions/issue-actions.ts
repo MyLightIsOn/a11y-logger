@@ -21,14 +21,11 @@ export async function addIssueAction(prevState: any) {
       assessment: {
         connect: [`${prevState.assessment_id}`],
       },
-      //screenshots: prevState.screenshots,
+      screenshots: prevState.screenshots,
     },
   };
 
   let responseData;
-  console.log(payload);
-  console.log(payload.data.assessment);
-  console.log(prevState.assessment_id);
   if (prevState.documentId) {
     payload.data.published = true;
     responseData = await mutateData(
@@ -39,7 +36,6 @@ export async function addIssueAction(prevState: any) {
   }
 
   if (!prevState.documentId) {
-    console.log("POSTING ------------------>");
     payload.data.published = false;
     responseData = await mutateData("POST", `/api/issues`, payload);
   }
