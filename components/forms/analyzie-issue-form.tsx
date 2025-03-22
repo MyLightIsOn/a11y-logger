@@ -18,7 +18,6 @@ import { useActionState } from "react";
 
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-import qs from "qs";
 import { addIssueAction } from "@/data/actions/issue-actions";
 import { toast } from "sonner";
 
@@ -27,12 +26,6 @@ const INITIAL_STATE = {
   data: null,
   strapiErrors: null,
   message: null,
-};
-
-const test = {
-  success: true,
-  data: '{"title":"Insufficient Color Contrast in Footer Text","severity":"severity2","original_description":"Footer Text does not meet color contrast minimum.","updated_description":"The text in the footer does not have enough contrast with the background, making it difficult for users to read.","url":"","impact":"Insufficient color contrast makes it difficult for users with visual impairments, such as color blindness or low vision, to read the footer text. This can hinder their ability to access important information or links in that section, potentially causing them to miss out on crucial content.","suggested_fix":"Adjust the color of the footer text or the background to ensure that the contrast ratio meets the minimum requirement of 4.5:1 for normal text or 3:1 for large text. Use tools like WebAIM\'s contrast checker to verify compliance.","criteria_reference":"[\'WCAG 1.4.3\']"}',
-  assessment_id: "xujh4oeucmebzurdf6sx5miv",
 };
 
 export function AnalyzieIssueForm({
@@ -54,8 +47,7 @@ export function AnalyzieIssueForm({
   useEffect(() => {
     if (formState?.data?.success) {
       formState.data.assessment_id = assessment_id;
-      const query = qs.stringify(formState.data);
-      addIssueAction(test).then((res) => {
+      addIssueAction(formState.data).then((res) => {
         if (res.error) {
           return toast.error(res.error);
         }

@@ -93,7 +93,7 @@ function Page(props) {
   const onClickAction = (type: string) => {
     if (type === "edit-issue") {
       router.push(
-        `/assessments/${url[2]}/edit-issue?success=true&data=${JSON.stringify(issue)}&issue_id=${issue.documentId}&assessment_id=${url[2]}`,
+        `/assessments/${url[2]}/edit-issue?documentId=${issue.documentId}&assessment_id=${url[2]}`,
       );
     }
     if (type === "delete-issue") {
