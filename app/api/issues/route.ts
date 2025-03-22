@@ -1,12 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 import { API_AUTH_TOKEN, API_URL } from "@/static/const";
 import axios from "axios";
-import { getStrapiURL } from "@/lib/utils";
-import { getAuthToken } from "@/data/services/get-token";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const query = searchParams?.get("documentId");
+  const query = searchParams?.get("issue_id");
   const url = `${API_URL}/issues/${query}`;
 
   try {
@@ -26,16 +24,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const data = await request.json();
 
-  // TODO rename variable
-  const test = API_AUTH_TOKEN;
-
   try {
     const res = await fetch(`${API_URL}/issues`, {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
-        Authorization: test.Authorization,
+        Authorization: API_AUTH_TOKEN.Authorization,
       },
     });
 

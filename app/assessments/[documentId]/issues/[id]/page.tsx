@@ -19,7 +19,6 @@ import TriangleAlert from "@/components/icons/triangle-alert";
 import CircleAlert from "@/components/icons/circle-alert";
 import { SubNavConfigProps } from "@/types/subnav";
 import { Edit, TrashIcon } from "lucide-react";
-import qs from "qs";
 
 const renderSeverityIcon = (severity) => {
   const severityObject = {
@@ -51,7 +50,7 @@ const renderSeverityIcon = (severity) => {
 };
 
 const fetchIssue = async (url: string) => {
-  const api_url = `/api/issues?documentId=${url}`;
+  const api_url = `/api/issues?issue_id=${url}`;
 
   try {
     const res = await axios.get(api_url);
@@ -93,7 +92,7 @@ function Page(props) {
   const onClickAction = (type: string) => {
     if (type === "edit-issue") {
       router.push(
-        `/assessments/${url[2]}/edit-issue?documentId=${issue.documentId}&assessment_id=${url[2]}`,
+        `/assessments/${url[2]}/edit-issue?issue_id=${issue.documentId}&assessment_id=${url[2]}`,
       );
     }
     if (type === "delete-issue") {

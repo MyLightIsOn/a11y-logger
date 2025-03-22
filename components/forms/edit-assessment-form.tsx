@@ -20,7 +20,7 @@ const addAssessmentForm = {
 
 const fetchAssessment = async (url: string, formData) => {
   if (url) {
-    const api_url = `/api/assessments?documentId=${url}`;
+    const api_url = `/api/assessments?assessment_id=${url}`;
 
     try {
       const res = await axios.get(api_url);

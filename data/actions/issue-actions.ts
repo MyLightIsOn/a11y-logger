@@ -21,10 +21,10 @@ export async function addIssueAction(prevState: any) {
       assessment: {
         connect: [`${prevState.assessment_id}`],
       },
-      screenshots: prevState.screenshots,
+      screenshots: data.screenshots,
     },
   };
-
+  console.log(payload);
   let responseData;
   if (prevState.documentId) {
     payload.data.published = true;
@@ -111,7 +111,6 @@ export async function uploadIssueImageAction(formData: any) {
 
         values.map((value: any) => {
           savedImagesIds.push(value[0].id);
-          console.log(savedImagesIds);
         });
 
         return {

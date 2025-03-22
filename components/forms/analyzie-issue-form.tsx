@@ -54,7 +54,7 @@ export function AnalyzieIssueForm({
 
         if (res.success) {
           router.push(
-            `${editIssuePath}/edit-issue?documentId=${res.data.documentId}`,
+            `${editIssuePath}/edit-issue?issue_id=${res.data.documentId}`,
           );
         }
       });

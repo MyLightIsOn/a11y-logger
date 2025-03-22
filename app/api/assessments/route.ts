@@ -7,7 +7,7 @@ import { getAuthToken } from "@/data/services/get-token";
 export async function GET(request: NextRequest) {
   const user = await getUserMeLoader();
   const searchParams = request.nextUrl.searchParams;
-  const query = searchParams?.get("documentId");
+  const query = searchParams?.get("assessment_id");
   const url = query
     ? `${API_URL}/assessments/${query}`
     : `${API_URL}/assessments`;
@@ -62,7 +62,6 @@ export async function PUT(request: NextRequest) {
   if (!authToken) throw new Error("No auth token found");
 
   const data = await request?.json();
-
   // Todo removed the hardcoded url
   const api_url = `${API_URL}/assessments/rxw2zi2za62n10pbg11o8kuc'`;
   const dataWithoutId = {

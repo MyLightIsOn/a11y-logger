@@ -26,7 +26,7 @@ const IMAGE_FORM_INITIAL_STATE = {
 };
 
 const fetchIssue = async (url: string) => {
-  const api_url = `/api/issues?documentId=${url}`;
+  const api_url = `/api/issues?issue_id=${url}`;
 
   try {
     const res = await axios.get(api_url);
@@ -41,7 +41,7 @@ function EditFormsContainer() {
   const pathname = usePathname();
   const url = pathname.split("/");
 
-  const documentId = searchParams.get("documentId");
+  const documentId = searchParams.get("issue_id");
 
   let { data, error, isLoading } = useQuery({
     queryKey: ["issues"],
@@ -85,16 +85,16 @@ function EditFormsContainer() {
       toast.success("Images saved");
       setEditFormData({
         ...editFormData,
-        screenshots: imageFormState.data,
+        screenshots: imageFormState.data || [],
       });
       setImageids(imageFormState.data);
     }
   }, [imageFormState]);
 
   useEffect(() => {
-    if (imageFormState.success) {
+    console.log(editFormData);
+    if (imageFormState.success && editFormData.screenshots) {
       const form = document.getElementById("issue-form");
-
       form?.dispatchEvent(
         new Event("submit", { cancelable: true, bubbles: true }),
       );
