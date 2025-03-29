@@ -67,6 +67,7 @@ function EditFormsContainer() {
       let imageArray = [];
       data.screenshots.map((image) => {
         imageArray.push({
+          id: image.id,
           url: image.url,
           file: null,
         });

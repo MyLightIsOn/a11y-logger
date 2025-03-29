@@ -106,7 +106,7 @@ export async function uploadIssueImageAction(formData: any) {
             return "Failed to Upload File.";
           });
       } else {
-        return "ignore this image";
+        return [image];
       }
     });
 
@@ -114,9 +114,7 @@ export async function uploadIssueImageAction(formData: any) {
       .then((values) => {
         // Every promise has resolved
         values.map((value: any) => {
-          if (Array.isArray(value)) {
-            savedImagesIds.push(value[0].id);
-          }
+          savedImagesIds.push(value[0].id);
         });
 
         return {
