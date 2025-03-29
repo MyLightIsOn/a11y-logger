@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, use, useEffect } from "react";
 import { StrapiImage } from "./strapi-image";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { all } from "axios";
 
 interface ImagePickerProps {
   id: string;
@@ -80,10 +81,9 @@ function MultipleImageCard({
   readonly fileInput: React.RefObject<HTMLInputElement>;
 }) {
   const imagePreview: React.JSX.Element[] = [];
-
   if (dataUrl) {
     dataUrl.map((url: string) => {
-      const el = <IssueImagePreview dataUrl={url} key={url} />;
+      const el = <IssueImagePreview dataUrl={url.url} key={url.url} />;
 
       imagePreview.push(el);
     });
@@ -110,6 +110,7 @@ export default function ImagePicker({
   label,
   defaultValue,
   multiple,
+  selectedImages,
   setSelectedImages,
 }: Readonly<ImagePickerProps>) {
   const fileInput = useRef<HTMLInputElement>(null);
@@ -117,22 +118,55 @@ export default function ImagePicker({
   const [multipleDataUrl, setMultipleDataUrl] =
     useState<Array<string> | null>();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setMultipleDataUrl(selectedImages);
+  }, [selectedImages]);
+
+  /*const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (multiple) {
       const files = e.target.files;
       let fileArray = [];
+      let allImages = [];
       if (!files) return;
-
       for (let i = 0; i < files.length; i++) {
         const reader = new FileReader();
         reader.readAsDataURL(files[i]);
         reader.onload = () => {
-          fileArray.push(reader.result as string);
-          setMultipleDataUrl(fileArray);
+          const formImages = (reader.result as string);
+
+          fileArray.push(formImages);
+          allImages = selectedImages.concat(fileArray)
+          setMultipleDataUrl(allImages);
         };
       }
 
-      setSelectedImages(files);
+      setSelectedImages(allImages);
+
+    } else {
+      const file = e.target.files?.[0];
+      if (file) generateDataUrl(file, setDataUrl);
+    }
+  };
+*/
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (multiple) {
+      const files = e.target.files;
+      let fileArray = [];
+      let allImageURLs = [];
+      if (!files) return;
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.readAsDataURL(files[i]);
+        reader.onload = () => {
+          const formImages = reader.result as string;
+          allImageURLs.push({
+            url: formImages,
+            file: files[i],
+          });
+          const test = selectedImages?.concat(allImageURLs);
+          setSelectedImages(test);
+        };
+      }
     } else {
       const file = e.target.files?.[0];
       if (file) generateDataUrl(file, setDataUrl);
@@ -158,6 +192,7 @@ export default function ImagePicker({
       )}
       {multiple && (
         <MultipleImageCard
+          selectedImages={selectedImages}
           dataUrl={multipleDataUrl ?? ""}
           fileInput={fileInput}
         />

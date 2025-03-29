@@ -153,73 +153,69 @@ function Page() {
               <Subnav config={subNavConfig} />
               <div className="container mx-auto py-10 px-10">
                 <div className={"flex gap-5 mb-5 relative"}>
-                  {assessment && (
-                    <Card className={"w-full"}>
-                      <CardHeader className={"flex flex-row"}>
-                        <div className={"w-3/4"}>
-                          <CardTitle className={"mb-2"}>
-                            {assessment.title}
-                          </CardTitle>
-                          <CardDescription>
-                            {assessment.description}
-                          </CardDescription>
-                          <div className={"flex mt-5"}>
-                            <p className={"text-sm"}>
-                              <span className={"font-bold"}>Standard:</span>{" "}
-                              {assessment.standard}
-                            </p>
-                          </div>
-                          {assessment?.tags && (
-                            <div className={"text-sm flex w-1/2 mt-2"}>
-                              <span className={"font-bold"}>Tags:</span>{" "}
-                              <div>
-                                {assessment.tags.map((tag) => {
-                                  return (
-                                    <Badge
-                                      key={tag.slug}
-                                      className={"mx-1 my-1 bg-tags dark"}
-                                    >
-                                      {tag.title}
-                                    </Badge>
-                                  );
-                                })}
-                              </div>
+                  <Card className={"w-full"}>
+                    <CardHeader className={"flex flex-row"}>
+                      <div className={"w-3/4"}>
+                        <CardTitle className={"mb-2"}>
+                          {assessment.title}
+                        </CardTitle>
+                        <CardDescription>
+                          {assessment.description}
+                        </CardDescription>
+                        <div className={"flex mt-5"}>
+                          <p className={"text-sm"}>
+                            <span className={"font-bold"}>Standard:</span>{" "}
+                            {assessment.standard}
+                          </p>
+                        </div>
+                        {assessment?.tags && (
+                          <div className={"text-sm flex w-1/2 mt-2"}>
+                            <span className={"font-bold"}>Tags:</span>{" "}
+                            <div>
+                              {assessment.tags.map((tag) => {
+                                return (
+                                  <Badge
+                                    key={tag.slug}
+                                    className={"mx-1 my-1 bg-tags dark"}
+                                  >
+                                    {tag.title}
+                                  </Badge>
+                                );
+                              })}
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
+                      </div>
 
-                        <div
-                          className={
-                            "w-1/4 h-fit w-fit text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5 absolute top-3 right-5 rounded-lg border-border border"
-                          }
-                        >
+                      <div
+                        className={
+                          "w-1/4 h-fit w-fit text-sm bg-gray-100/40 dark:bg-gray-800/40 p-5 absolute top-3 right-5 rounded-lg border-border border"
+                        }
+                      >
+                        <p>
+                          <span className={"font-bold"}>Date Created:</span>{" "}
+                          {formatDate(assessment.createdAt)}
+                        </p>
+                        {assessment.date_completed && (
                           <p>
-                            <span className={"font-bold"}>Date Created:</span>{" "}
-                            {formatDate(assessment.createdAt)}
+                            <span className={"font-bold"}>Date Completed:</span>{" "}
+                            {formatDate(assessment.date_completed)}
                           </p>
-                          {assessment.date_completed && (
-                            <p>
-                              <span className={"font-bold"}>
-                                Date Completed:
-                              </span>{" "}
-                              {formatDate(assessment.date_completed)}
-                            </p>
-                          )}
-                          {assessment.updatedAt && (
-                            <p>
-                              <span className={"font-bold"}>Last Update:</span>{" "}
-                              {formatDate(assessment.updatedAt)}
-                            </p>
-                          )}
+                        )}
+                        {assessment.updatedAt && (
                           <p>
-                            <span className={"font-bold"}>Status:</span>{" "}
-                            {assessment.progress.charAt(0).toUpperCase() +
-                              assessment.progress.slice(1)}
+                            <span className={"font-bold"}>Last Update:</span>{" "}
+                            {formatDate(assessment.updatedAt)}
                           </p>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  )}
+                        )}
+                        <p>
+                          <span className={"font-bold"}>Status:</span>{" "}
+                          {assessment.progress.charAt(0).toUpperCase() +
+                            assessment.progress.slice(1)}
+                        </p>
+                      </div>
+                    </CardHeader>
+                  </Card>
                 </div>
 
                 <div className={"flex gap-5"}>

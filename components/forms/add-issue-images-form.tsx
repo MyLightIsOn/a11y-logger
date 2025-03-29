@@ -8,6 +8,7 @@ export function AddIssueImagesForm({
   className,
   imageFormState,
   imageFormAction,
+  selectedImages,
   setSelectedImages,
 }: {
   className?: string;
@@ -27,6 +28,7 @@ export function AddIssueImagesForm({
           name="image"
           label="Profile Image"
           multiple
+          selectedImages={selectedImages}
           setSelectedImages={setSelectedImages}
         />
         <ZodErrors error={imageFormState?.zodErrors?.image} />

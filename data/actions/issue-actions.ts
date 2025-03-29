@@ -9,7 +9,6 @@ import { mutateData } from "@/data/services/mutate-data";
 
 export async function addIssueAction(prevState: any) {
   const data = JSON.parse(prevState.data);
-
   const payload = {
     data: {
       title: data.title,
@@ -24,7 +23,7 @@ export async function addIssueAction(prevState: any) {
       screenshots: data.screenshots,
     },
   };
-  console.log(payload);
+
   let responseData;
   if (prevState.documentId) {
     payload.data.published = true;
@@ -41,7 +40,6 @@ export async function addIssueAction(prevState: any) {
   }
 
   if (responseData.error) {
-    console.log(responseData.error);
     return {
       success: false,
       error: {
@@ -67,12 +65,15 @@ export async function uploadIssueImageAction(formData: any) {
   let strapiErrors = null;
   const images = formData.data;
   const savedImagesIds: Array<string> = [];
-
   if (images) {
     images.map((image: any) => {
       // VALIDATE THE IMAGE
+      if (!image.file) {
+        return;
+      }
+
       const validatedFields = imageSchema.safeParse({
-        image: image,
+        image: image.file,
       });
       if (!validatedFields.success) {
         zodErrors = validatedFields.error.flatten().fieldErrors;
@@ -82,35 +83,40 @@ export async function uploadIssueImageAction(formData: any) {
 
     const promises = images.map((image: any) => {
       // Return the Promise created by the async function
-      return fileUploadService(image)
-        .then((fileUploadResponse) => {
-          // Handle successful response
-          if (!fileUploadResponse) {
-            message = "Ops! Something went wrong. Please try again.";
-            return "Ops! Something went wrong. Please try again.";
-          }
-          if (fileUploadResponse.error) {
-            // Handle error in response
-            strapiErrors = fileUploadResponse.error;
-            message = "Failed to Upload File.";
-            return "Failed to Upload File.";
-          }
+      if (image.file) {
+        return fileUploadService(image.file)
+          .then((fileUploadResponse) => {
+            // Handle successful response
+            if (!fileUploadResponse) {
+              message = "Ops! Something went wrong. Please try again.";
+              return "Ops! Something went wrong. Please try again.";
+            }
+            if (fileUploadResponse.error) {
+              // Handle error in response
+              strapiErrors = fileUploadResponse.error;
+              message = "Failed to Upload File.";
+              return "Failed to Upload File.";
+            }
 
-          // Handle successful upload
-          return fileUploadResponse;
-        })
-        .catch((_err) => {
-          // Handle error during the API call
-          return "Failed to Upload File.";
-        });
+            // Handle successful upload
+            return fileUploadResponse;
+          })
+          .catch((_err) => {
+            // Handle error during the API call
+            return "Failed to Upload File.";
+          });
+      } else {
+        return "ignore this image";
+      }
     });
 
     return Promise.all(promises)
       .then((values) => {
         // Every promise has resolved
-
         values.map((value: any) => {
-          savedImagesIds.push(value[0].id);
+          if (Array.isArray(value)) {
+            savedImagesIds.push(value[0].id);
+          }
         });
 
         return {
@@ -126,6 +132,7 @@ export async function uploadIssueImageAction(formData: any) {
         console.log(error);
       });
   }
+
   return {
     strapiErrors: strapiErrors,
     zodErrors: zodErrors,

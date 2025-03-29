@@ -41,6 +41,8 @@ function EditFormsContainer() {
   const pathname = usePathname();
   const url = pathname.split("/");
 
+  const [imagesFiles, setImagesFiles] = useState([]);
+
   const documentId = searchParams.get("issue_id");
 
   let { data, error, isLoading } = useQuery({
@@ -61,6 +63,16 @@ function EditFormsContainer() {
   );
 
   useEffect(() => {
+    if (data?.screenshots) {
+      let imageArray = [];
+      data.screenshots.map((image) => {
+        imageArray.push({
+          url: image.url,
+          file: null,
+        });
+      });
+      setSelectedImages(imageArray);
+    }
     setEditFormData(data);
   }, [data]);
 
@@ -71,12 +83,13 @@ function EditFormsContainer() {
     IMAGE_FORM_INITIAL_STATE,
   );
 
-  const [selectedImages, setSelectedImages] = useState();
+  const [selectedImages, setSelectedImages] = useState([]);
 
   // TODO put image ids back so you can connect images to issues.
   const [imageIds, setImageids] = useState([]);
 
   useEffect(() => {
+    setEditFormData(data);
     IMAGE_FORM_INITIAL_STATE.data = selectedImages;
   }, [selectedImages]);
 
@@ -92,7 +105,6 @@ function EditFormsContainer() {
   }, [imageFormState]);
 
   useEffect(() => {
-    console.log(editFormData);
     if (imageFormState.success && editFormData.screenshots) {
       const form = document.getElementById("issue-form");
       form?.dispatchEvent(
@@ -100,7 +112,6 @@ function EditFormsContainer() {
       );
     }
   }, [imageIds]);
-
   return (
     <>
       {isLoading ? (
@@ -136,6 +147,7 @@ function EditFormsContainer() {
             <AddIssueImagesForm
               imageFormState={imageFormState}
               imageFormAction={imageFormAction}
+              selectedImages={selectedImages}
               setSelectedImages={setSelectedImages}
             />
             <EditIssueForm
