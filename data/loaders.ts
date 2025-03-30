@@ -1,12 +1,12 @@
 import qs from "qs";
 import { getStrapiURL } from "@/lib/utils";
+import axios from "axios";
 
 const baseUrl = getStrapiURL();
 
-async function fetchData(url: string) {
-  const authToken = null; // we will implement this later getAuthToken() later
+export async function fetchData(url: string) {
+  const authToken = null; // we will implement this getAuthToken() later
   const headers = {
-    method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
@@ -14,12 +14,12 @@ async function fetchData(url: string) {
   };
 
   try {
-    const response = await fetch(url, authToken ? headers : {});
-    const data = await response.json();
+    const response = await axios.get(url, authToken ? headers : {});
+    const data = response.data;
     return data;
   } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error; // or return null;
+    console.error(`Error fetching data: ${error}`);
+    //throw error; // or return null;
   }
 }
 
