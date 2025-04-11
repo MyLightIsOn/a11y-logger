@@ -1,5 +1,6 @@
 import axios from "axios";
 import useAssessmentServices from "./assessments"; // replace with the correct path
+import { API_AUTH_TOKEN, API_URL } from "@/static/const";
 
 jest.mock("axios");
 
@@ -12,13 +13,10 @@ describe("useAssessmentServices", () => {
     it("fetches successfully data from an API", async () => {
       const data = "true";
       get.mockImplementationOnce(() => Promise.resolve(data));
-
       const { getAssessments } = useAssessmentServices();
       const actualValue = await getAssessments();
-      expect(get).toHaveBeenCalledWith("undefined/assessments", {
-        headers: {
-          Authorization: "Bearer undefined",
-        },
+      expect(get).toHaveBeenCalledWith(`${API_URL}/assessments`, {
+        headers: API_AUTH_TOKEN,
       });
       expect(actualValue).toEqual(data);
 
