@@ -18,8 +18,7 @@ export async function fetchData(url: string) {
     const data = response.data;
     return data;
   } catch (error) {
-    console.error(`Error fetching data: ${error}`);
-    //throw error; // or return null;
+    throw error;
   }
 }
 
