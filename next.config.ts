@@ -2,9 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  serverActions: {
+  /*serverActions: {
     bodySizeLimit: "2mb",
-  },
+  },*/
   images: {
     remotePatterns: [
       {
