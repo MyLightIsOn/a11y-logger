@@ -15,8 +15,8 @@ body {
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 253.67 63.52% 46.95%;
+    --primary-foreground: 240, 7%, 11%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
@@ -49,7 +49,7 @@ body {
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
+    --primary: 253.67 63.52% 46.95%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -86,6 +86,13 @@ body {
 
 #main {
   min-height: calc(100vh - 140px);
+}
+
+a, button, link {
+  /*&:focus-visible, &:focus {
+    outline: dashed 2px var(--primary-foreground);
+    outline-offset: 2px;
+  }*/
 }
 
 #a11y-bug-form > div {

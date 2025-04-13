@@ -44,7 +44,11 @@ export async function Header({ data }: Readonly<HeaderProps>) {
           <LoggedInUser userData={user.data} />
         ) : (
           <Link href={ctaButton.url}>
-            <Button>{ctaButton.text}</Button>
+            <Button
+              className={"text-white hover:bg-gray-100 hover:text-primary"}
+            >
+              {ctaButton.text}
+            </Button>
           </Link>
         )}
       </div>

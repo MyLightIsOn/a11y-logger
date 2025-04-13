@@ -1,11 +1,17 @@
 function getIcon(name: string) {
   switch (name) {
     case "CLOCK_ICON":
-      return <ClockIcon className="w-12 h-12 mb-4 text-gray-900" />;
+      return (
+        <ClockIcon className="w-12 h-12 mb-4 text-primary dark:text-primarys" />
+      );
     case "CHECK_ICON":
-      return <CheckIcon className="w-12 h-12 mb-4 text-gray-900" />;
+      return (
+        <CheckIcon className="w-12 h-12 mb-4 text-primary dark:text-primary" />
+      );
     case "CLOUD_ICON":
-      return <CloudIcon className="w-12 h-12 mb-4 text-gray-900" />;
+      return (
+        <CloudIcon className="w-12 h-12 mb-4 text-primary dark:text-primary" />
+      );
     default:
       return null;
   }
@@ -44,7 +50,9 @@ export function FeatureSection({
               >
                 {getIcon(feature.icon)}
                 <h2 className="mb-4 text-2xl font-bold">{feature.heading}</h2>
-                <p className="text-gray-500">{feature.subHeading}</p>
+                <p className="text-gray-500 dark:text-gray-200">
+                  {feature.subHeading}
+                </p>
               </div>
             ))}
           </div>
