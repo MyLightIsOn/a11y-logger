@@ -2,15 +2,15 @@ function getIcon(name: string) {
   switch (name) {
     case "CLOCK_ICON":
       return (
-        <ClockIcon className="w-12 h-12 mb-4 text-primary dark:text-primarys" />
+        <ClockIcon className="w-12 h-12 mb-4 text-primary dark:text-purple-200" />
       );
     case "CHECK_ICON":
       return (
-        <CheckIcon className="w-12 h-12 mb-4 text-primary dark:text-primary" />
+        <CheckIcon className="w-12 h-12 mb-4 text-primary dark:text-purple-200" />
       );
     case "CLOUD_ICON":
       return (
-        <CloudIcon className="w-12 h-12 mb-4 text-primary dark:text-primary" />
+        <CloudIcon className="w-12 h-12 mb-4 text-primary dark:text-purple-200" />
       );
     default:
       return null;

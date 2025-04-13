@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getUserMeLoader } from "@/data/services/get-user-me-loader";
 import { StrapiImage } from "@/components/custom/strapi-image";
+import AnimatedBackground from "@/components/custom/animated-background";
 
 interface Image {
   id: number;
@@ -45,17 +46,21 @@ export async function HeroSection({
         height={1080}
         width={1920}
       />
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white bg-black bg-opacity-80">
-        <h1 className="text-4xl font-bold max-w-[800px]">{heading}</h1>
-        <p className="mt-4 text-lg md:text-xl lg:text-2xl max-w-[800px]">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white bg-black bg-opacity-70">
+        <h1 className="text-4xl font-bold max-w-[800px] relative z-10">
+          {heading}
+        </h1>
+        <p className="mt-4 text-lg md:text-xl lg:text-2xl max-w-[800px] relative z-10">
           {subheading}
         </p>
         <Link
-          className="mt-8 inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-primary rounded-md shadow hover:bg-gray-100 hover:text-primary hover:underline"
+          className="mt-8 inline-flex items-center justify-center px-6 py-3 text-base font-medium text-black bg-white rounded-md shadow hover:bg-gray-100 hover:text-primary hover:underline relative z-10"
           href={linkUrl}
         >
           {userLoggedIn ? "Dashboard" : link.text}
         </Link>
+        <AnimatedBackground />
+        <div className="bg-gradient-to-r from-transparent  to-purple-400 absolute w-full h-full top-0 left-0 opacity-30" />
       </div>
     </header>
   );

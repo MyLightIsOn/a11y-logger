@@ -15,7 +15,7 @@ body {
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 253.67 63.52% 46.95%;
+    --primary: 240, 7%, 11%;
     --primary-foreground: 240, 7%, 11%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -93,6 +93,13 @@ a, button, link {
     outline: dashed 2px var(--primary-foreground);
     outline-offset: 2px;
   }*/
+}
+
+#homepage-background {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 #a11y-bug-form > div {
