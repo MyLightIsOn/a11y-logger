@@ -29,15 +29,15 @@ function selectSocialIcon(url: string) {
 export function Footer({ data }: Readonly<FooterProps>) {
   const { logoText, socialLink, text } = data;
   return (
-    <div className="dark bg-gray-900 text-white py-8">
-      <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between">
+    <div className="text-black bg-black/5 dark:text-white dark:bg-card py-8">
+      <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between text-black dark:text-white ">
         <Logo dark text={logoText.text} />
-        <p className="mt-4 md:mt-0 text-sm text-gray-300">{text}</p>
+        <p className="mt-4 md:mt-0 text-sm">{text}</p>
         <div className="flex items-center space-x-4">
           {socialLink.map((link) => {
             return (
               <Link
-                className="text-white hover:text-gray-300"
+                className="text-black dark:text-white hover:text-gray-300"
                 href={link.url}
                 key={link.id}
               >

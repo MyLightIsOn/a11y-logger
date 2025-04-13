@@ -27,7 +27,6 @@ export function LoggedInUser({ userData }: { readonly userData: User }) {
   return (
     <div className="flex gap-2 items-center">
       <UserProfileMenu user={userData.email} />
-      <LightDarkToggle />
     </div>
   );
 }
@@ -37,9 +36,10 @@ export async function Header({ data }: Readonly<HeaderProps>) {
   const user = await getUserMeLoader();
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white shadow-md dark:bg-gray-800">
+    <div className="flex items-center justify-between px-4 py-3 bg-white shadow-md dark:bg-card">
       <Logo text={logoText.text} />
       <div className="flex items-center gap-4">
+        <LightDarkToggle />
         {user.ok ? (
           <LoggedInUser userData={user.data} />
         ) : (
