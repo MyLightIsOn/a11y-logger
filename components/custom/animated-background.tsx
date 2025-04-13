@@ -5,7 +5,7 @@ import Script from "next/script";
 const AnimatedBackground = () => {
   return (
     <div className={"w-full h-full absolute top-0 left-0"}>
-      <div id="homepage-background" className={"w-full h-full opacity-60"} />
+      <div id="homepage-background" className={"opacity-60"} />
       <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
         strategy="beforeInteractive"
