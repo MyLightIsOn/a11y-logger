@@ -7,7 +7,7 @@ function BugIcon({ width, height }: { width: number; height: number }) {
       width={width}
       height={height}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={"hsl(270, 100%, 92%)"}
       stroke={"currentColor"}
       strokeWidth="2"
       strokeLinecap="round"
@@ -32,12 +32,14 @@ function BugIcon({ width, height }: { width: number; height: number }) {
 interface LogoProps {
   text?: string;
   dark?: boolean;
-  color?: string;
 }
 
 export function Logo({ text }: Readonly<LogoProps>) {
   return (
-    <Link className="flex items-center gap-2" href="/">
+    <Link
+      className="flex items-center gap-2 hover:text-primary hover:outline-2 hover:outline-offset-4 hover:outline-dashed focus:outline-primary focus:outline-2 focus:outline-offset-4 focus:outline-dashed rounded-sm"
+      href="/"
+    >
       <BugIcon width={24} height={24} />
       <span className={`text-lg font-semibold`}>{text}</span>
     </Link>

@@ -37,7 +37,7 @@ export function Footer({ data }: Readonly<FooterProps>) {
           {socialLink.map((link) => {
             return (
               <Link
-                className="text-black dark:text-white hover:text-gray-300"
+                className="text-black border-transparent dark:text-white hover:text-primary hover:outline-2 hover:outline-offset-4 hover:outline-dashed focus:text-primary focus:outline-2 focus:outline-offset-4 focus:outline-dashed"
                 href={link.url}
                 key={link.id}
               >

@@ -43,15 +43,9 @@ export async function Header({ data }: Readonly<HeaderProps>) {
         {user.ok ? (
           <LoggedInUser userData={user.data} />
         ) : (
-          <Link href={ctaButton.url}>
-            <Button
-              className={
-                "text-white dark:bg-white dark:text-black hover:bg-gray-100 hover:text-primary"
-              }
-            >
-              {ctaButton.text}
-            </Button>
-          </Link>
+          <Button variant={"default"} asChild>
+            <Link href={ctaButton.url}>{ctaButton.text}</Link>
+          </Button>
         )}
       </div>
     </div>
