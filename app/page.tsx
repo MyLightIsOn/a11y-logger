@@ -1,6 +1,7 @@
 import { getHomePageData } from "@/data/loaders/home";
 import { HeroSection } from "@/components/custom/hero-section";
 import { FeatureSection } from "@/components/custom/features-section";
+import { Block } from "@/types/blocks";
 
 // The Home component is an async function that serves as the main entry point for the homepage.
 export default async function Home() {
@@ -23,7 +24,15 @@ const blockComponents = {
 // Helper function that takes a block object and returns the appropriate component with its data.
 // It checks the block type and dynamically renders the associated React component.
 // If the block type isn't recognized, it returns null to skip rendering.
-function blockRenderer(block: any) {
+interface ComponentProps {
+  data?: Block;
+}
+
+interface ComponentProps {
+  data?: Block;
+}
+
+function blockRenderer(block: Block) {
   const Component =
     blockComponents[block.__component as keyof typeof blockComponents];
   return Component ? <Component key={block.id} data={block} /> : null;

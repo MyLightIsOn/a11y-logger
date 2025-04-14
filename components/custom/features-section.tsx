@@ -1,3 +1,12 @@
+import { Block } from "@/types/blocks";
+import CheckIcon from "@/components/icons/check";
+import ClockIcon from "@/components/icons/clock";
+import CloudIcon from "@/components/icons/cloud";
+
+/**
+ * Returns a matching icon component based on the string identifier.
+ * Icons are styled with Tailwind classes to maintain visual consistency.
+ */
 function getIcon(name: string) {
   switch (name) {
     case "CLOCK_ICON":
@@ -13,36 +22,28 @@ function getIcon(name: string) {
         <CloudIcon className="w-12 h-12 mb-4 text-primary dark:text-secondary" />
       );
     default:
-      return null;
+      return null; // Gracefully handle unknown icon names
   }
 }
 
-interface FeatureProps {
-  id: number;
-  heading: string;
-  subHeading: string;
-  icon: string;
-}
+/**
+ * The FeatureSection component is responsible for rendering a grid of features,
+ * each with an icon, heading, and subheading.
+ * Data is provided from Strapi via the layout.features-section block.
+ */
+export function FeatureSection({ data }: { readonly data: Block }) {
+  // Guard: Ensure we're rendering the correct block type
+  if (data.__component !== "layout.features-section") return null;
 
-interface FeatureSectionProps {
-  id: number;
-  __component: string;
-  title: string;
-  description: string;
-  feature: FeatureProps[];
-}
-
-export function FeatureSection({
-  data,
-}: {
-  readonly data: FeatureSectionProps;
-}) {
+  // Destructure necessary content fields from CMS block
   const { feature } = data;
+
   return (
     <div className="">
       <div className="flex-1">
         <section className="container px-4 py-6 mx-auto md:px-6 lg:py-24">
           <div className="grid gap-8 md:grid-cols-3">
+            {/* Render each feature as a styled card */}
             {feature.map((feature) => (
               <div
                 key={feature.id}
@@ -59,63 +60,5 @@ export function FeatureSection({
         </section>
       </div>
     </div>
-  );
-}
-
-function CheckIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
-function ClockIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  );
-}
-
-function CloudIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-    </svg>
   );
 }
