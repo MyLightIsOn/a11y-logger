@@ -5,7 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import { Toaster } from "sonner";
 
-import { getGlobalData, getGlobalPageMetadata } from "@/data/loaders";
+import { getGlobalData, getGlobalPageMetadata } from "@/data/loaders/global";
 
 export async function generateMetadata(): Promise<Metadata> {
   const metadata = await getGlobalPageMetadata();

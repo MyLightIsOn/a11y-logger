@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import Home from "@/app/page";
-import { getHomePageData } from "@/data/loaders";
+import { getHomePageData } from "@/data/loaders/home";
 
 interface DataType {
   data: {
@@ -9,7 +9,7 @@ interface DataType {
 }
 
 // Mock the data loader to control what the component receives during testing.
-jest.mock("../data/loaders", () => ({
+jest.mock("../data/loaders/home", () => ({
   getHomePageData: jest.fn(),
 }));
 

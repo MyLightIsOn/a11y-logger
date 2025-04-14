@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
@@ -14,6 +15,10 @@ const customJestConfig = {
     "**/*.{ts,tsx}",
     "!**/node_modules/**",
     "!**/vendor/**",
+  ],
+  testMatch: [
+    "**/?(*.)+(test).[jt]s?(x)", // Matches *.test.ts, *.test.tsx
+    "**/__tests__/**/*.[jt]s?(x)", // Optional if you keep some tests in __tests__
   ],
 };
 
