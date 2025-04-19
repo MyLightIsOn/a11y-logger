@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SigninForm renders correctly (snapshot) 1`] = `
+<div>
+  <div
+    class="w-full max-w-md"
+  >
+    <form
+      action="javascript:throw new Error('A React form was unexpectedly submitted. If you called form.submit() manually, consider using form.requestSubmit() instead. If you\\'re trying to use event.stopPropagation() in a submit event handler, consider also calling event.preventDefault().')"
+    >
+      <div
+        class="rounded-xl border bg-card text-card-foreground shadow"
+      >
+        <div
+          class="flex flex-col p-6 space-y-1"
+        >
+          <div
+            class="tracking-tight text-3xl font-bold"
+          >
+            Sign In
+          </div>
+        </div>
+        <div
+          class="p-6 pt-0 space-y-4"
+        >
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-sm font-bold text-right leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              for="identifier"
+            >
+              Email
+            </label>
+            <input
+              class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              id="identifier"
+              name="identifier"
+              placeholder="username or email"
+              type="text"
+            />
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <label
+              class="text-sm font-bold text-right leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              for="password"
+            >
+              Password
+            </label>
+            <input
+              class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              id="password"
+              name="password"
+              placeholder="password"
+              type="password"
+            />
+          </div>
+        </div>
+        <div
+          class="items-center p-6 pt-0 flex flex-col"
+        >
+          <button
+            class="inline-flex rounded-sm items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:underline focus:outline-2 focus:outline-offset-4 focus:outline-dashed border bg-primary border-primary text-primary-foreground shadow hover:bg-primary-foreground hover:border-primary hover:text-primary focus:bg-primary-foreground focus:text-primary focus:outline-primary h-9 px-4 py-2 w-full"
+            type="submit"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+`;

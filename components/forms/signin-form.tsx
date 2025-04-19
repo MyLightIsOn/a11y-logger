@@ -1,12 +1,10 @@
 "use client";
 
-// import Link from "next/link";
 import { useActionState } from "react";
 import { loginUserAction } from "@/data/actions/auth-actions";
 
 import {
   CardTitle,
-  // CardDescription,
   CardHeader,
   CardContent,
   CardFooter,
@@ -37,13 +35,10 @@ export function SigninForm() {
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
-            {/*<CardDescription>
-              Enter your details to sign in to your account
-            </CardDescription>*/}
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="identifier">Email</Label>
               <Input
                 id="identifier"
                 name="identifier"
