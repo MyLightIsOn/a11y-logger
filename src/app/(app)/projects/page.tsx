@@ -18,7 +18,7 @@ export default function ProjectsPage() {
           <Button asChild>
             <Link href="/projects/new">
               <Plus className="mr-2 h-4 w-4" />
-              Create Project
+              New Project
             </Link>
           </Button>
         </div>

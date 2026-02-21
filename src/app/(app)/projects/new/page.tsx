@@ -37,7 +37,7 @@ export default function NewProjectPage() {
         <ChevronLeft className="h-4 w-4" />
         Back to Projects
       </Link>
-      <h1 className="text-2xl font-bold">Create Project</h1>
+      <h1 className="text-2xl font-bold">New Project</h1>
       <ProjectForm onSubmit={handleSubmit} loading={loading} />
     </div>
   );
