@@ -100,7 +100,7 @@ describe('POST /api/ai/generate-report-summary', () => {
       testConnection: vi.fn(),
     });
 
-    const project = createProject({ name: 'Test Project' });
+    const project = createProject({ name: 'Test Project', product_url: undefined });
     const report = createReport({
       project_id: project.id,
       title: 'Test Report',
@@ -130,8 +130,8 @@ describe('POST /api/ai/generate-report-summary', () => {
       testConnection: vi.fn(),
     });
 
-    const project1 = createProject({ name: 'Project 1' });
-    const project2 = createProject({ name: 'Project 2' });
+    const project1 = createProject({ name: 'Project 1', product_url: undefined });
+    const project2 = createProject({ name: 'Project 2', product_url: undefined });
     const reportForProject2 = createReport({
       project_id: project2.id,
       title: 'Report for Project 2',
@@ -161,7 +161,7 @@ describe('POST /api/ai/generate-report-summary', () => {
       testConnection: vi.fn(),
     });
 
-    const project = createProject({ name: 'Test Project 2' });
+    const project = createProject({ name: 'Test Project 2', product_url: undefined });
     const report = createReport({
       project_id: project.id,
       title: 'Test Report 2',
