@@ -83,7 +83,7 @@ export default async function VpatDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <VpatCriteriaTable criteria={criteriaRows} onChange={() => {}} readOnly />
+          <VpatCriteriaTable criteria={criteriaRows} readOnly />
         </div>
 
         {/* Sidebar */}

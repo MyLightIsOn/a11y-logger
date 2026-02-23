@@ -39,6 +39,7 @@ export function StatusTransitionButton({
       if (!json.success) throw new Error(json.error);
       toast.success(`Assessment marked as ${transition.status.replaceAll('_', ' ')}`);
       router.refresh();
+      setLoading(false);
     } catch {
       toast.error('Failed to update status');
       setLoading(false);

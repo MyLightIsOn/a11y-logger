@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ChevronLeft } from 'lucide-react';
@@ -7,14 +7,16 @@ import Link from 'next/link';
 import { ProjectForm } from '@/components/projects/project-form';
 import type { Project } from '@/lib/db/projects';
 
-export default function EditProjectPage({ params }: { params: { projectId: string } }) {
+export default function EditProjectPage() {
   const router = useRouter();
+  const params = useParams<{ projectId: string }>();
+  const projectId = params.projectId;
   const [loading, setLoading] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/projects/${params.projectId}`)
+    fetch(`/api/projects/${projectId}`)
       .then((res) => res.json())
       .then((json) => {
         if (json.success) {
@@ -29,12 +31,12 @@ export default function EditProjectPage({ params }: { params: { projectId: strin
         router.push('/projects');
       })
       .finally(() => setFetching(false));
-  }, [params.projectId, router]);
+  }, [projectId, router]);
 
   const handleSubmit = async (data: { name: string; description: string; product_url: string }) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/projects/${params.projectId}`, {
+      const res = await fetch(`/api/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -42,7 +44,7 @@ export default function EditProjectPage({ params }: { params: { projectId: strin
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
       toast.success('Project updated');
-      router.push(`/projects/${params.projectId}`);
+      router.push(`/projects/${projectId}`);
     } catch {
       toast.error('Failed to update project');
       setLoading(false);
@@ -65,7 +67,7 @@ export default function EditProjectPage({ params }: { params: { projectId: strin
   return (
     <div className="space-y-6">
       <Link
-        href={`/projects/${params.projectId}`}
+        href={`/projects/${projectId}`}
         className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ChevronLeft className="h-4 w-4" />

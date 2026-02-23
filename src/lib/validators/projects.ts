@@ -3,7 +3,10 @@ import { z } from 'zod';
 export const CreateProjectSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),
-  product_url: z.string().url().optional(),
+  product_url: z
+    .union([z.string().url(), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   status: z.enum(['active', 'archived']).optional(),
 });
 

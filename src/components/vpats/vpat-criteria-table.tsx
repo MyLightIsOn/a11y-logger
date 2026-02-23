@@ -34,7 +34,7 @@ export interface CriterionRow {
 
 interface VpatCriteriaTableProps {
   criteria: CriterionRow[];
-  onChange: (criteria: CriterionRow[]) => void;
+  onChange?: (criteria: CriterionRow[]) => void;
   readOnly?: boolean;
   /** When provided, shows AI Generate buttons per criterion */
   projectId?: string;
@@ -52,7 +52,7 @@ export function VpatCriteriaTable({
   const [aiError, setAiError] = useState<string | null>(null);
 
   const updateRow = (criterion_code: string, field: keyof CriterionRow, value: string) => {
-    onChange(
+    onChange?.(
       criteria.map((r) => (r.criterion_code === criterion_code ? { ...r, [field]: value } : r))
     );
   };
