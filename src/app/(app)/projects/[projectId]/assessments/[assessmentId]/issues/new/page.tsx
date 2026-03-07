@@ -43,7 +43,7 @@ export default function NewIssuePage() {
         Back to Issues
       </Link>
       <h1 className="text-2xl font-bold">New Issue</h1>
-      <IssueForm onSubmit={handleSubmit} loading={loading} />
+      <IssueForm projectId={projectId} onSubmit={handleSubmit} loading={loading} />
     </div>
   );
 }

@@ -1,11 +1,14 @@
 import Link from 'next/link';
-import { ChevronLeft, Download, ExternalLink, Pencil } from 'lucide-react';
+import { ChevronLeft, Download, ExternalLink, Pencil, Plus } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getProject } from '@/lib/db/projects';
+import { getAssessments } from '@/lib/db/assessments';
 import { getIssuesByProject } from '@/lib/db/issues';
 import { DeleteProjectButton } from '@/components/projects/delete-project-button';
+import { AssessmentsTable } from '@/components/assessments/assessments-table';
+import { IssueStatistics } from '@/components/dashboard/issue-statistics';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +21,7 @@ export default async function ProjectDetailPage({
   const project = getProject(projectId);
   if (!project) notFound();
 
+  const assessments = getAssessments(projectId);
   const issues = getIssuesByProject(projectId);
 
   const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
@@ -78,42 +82,23 @@ export default async function ProjectDetailPage({
       <div className="flex gap-6">
         <div className="flex-1 space-y-6">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Assessments</CardTitle>
+              <Button asChild size="sm">
+                <Link href={`/projects/${projectId}/assessments/new`}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Assessment
+                </Link>
+              </Button>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Assessments will appear here once created.
-              </p>
+              <AssessmentsTable assessments={assessments} projectId={projectId} />
             </CardContent>
           </Card>
         </div>
 
-        <aside className="w-72 shrink-0 space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Issue Statistics</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {[
-                { key: 'critical', label: 'Critical', color: 'text-red-400' },
-                { key: 'high', label: 'High', color: 'text-orange-400' },
-                { key: 'medium', label: 'Medium', color: 'text-yellow-400' },
-                { key: 'low', label: 'Low', color: 'text-blue-400' },
-              ].map(({ key, label, color }) => (
-                <div key={key} className="flex justify-between text-sm">
-                  <span className={`font-medium ${color}`}>{label}</span>
-                  <span className="font-bold">
-                    {severityCounts[key as keyof typeof severityCounts]}
-                  </span>
-                </div>
-              ))}
-              <div className="border-t pt-2 flex justify-between text-sm">
-                <span className="text-muted-foreground">Total</span>
-                <span className="font-bold">{issues.length}</span>
-              </div>
-            </CardContent>
-          </Card>
+        <aside className="w-72 shrink-0">
+          <IssueStatistics total={issues.length} severityBreakdown={severityCounts} />
         </aside>
       </div>
     </div>

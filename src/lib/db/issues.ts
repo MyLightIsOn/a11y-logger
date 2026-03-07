@@ -16,6 +16,10 @@ export interface Issue {
   browser: string | null;
   operating_system: string | null;
   assistive_technology: string | null;
+  user_impact: string | null;
+  selector: string | null;
+  code_snippet: string | null;
+  suggested_fix: string | null;
   evidence_media: string[];
   tags: string[];
   created_by: string | null;
@@ -23,6 +27,12 @@ export interface Issue {
   resolved_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface IssueWithContext extends Issue {
+  project_id: string;
+  project_name: string;
+  assessment_name: string;
 }
 
 // Raw row from SQLite — JSON fields are strings
@@ -51,6 +61,33 @@ export interface IssueFilters {
   status?: 'open' | 'resolved' | 'wont_fix';
   wcag_code?: string;
   tag?: string;
+}
+
+export function getAllIssues(): IssueWithContext[] {
+  type IssueWithContextRow = Omit<
+    IssueWithContext,
+    'wcag_codes' | 'ai_suggested_codes' | 'evidence_media' | 'tags'
+  > & {
+    wcag_codes: string;
+    ai_suggested_codes: string;
+    evidence_media: string;
+    tags: string;
+  };
+  const rows = getDb()
+    .prepare(
+      `SELECT i.*, p.id AS project_id, p.name AS project_name, a.name AS assessment_name
+       FROM issues i
+       JOIN assessments a ON a.id = i.assessment_id
+       JOIN projects p ON p.id = a.project_id
+       ORDER BY i.created_at DESC`
+    )
+    .all() as IssueWithContextRow[];
+  return rows.map((row) => ({
+    ...deserializeIssue(row),
+    project_id: row.project_id,
+    project_name: row.project_name,
+    assessment_name: row.assessment_name,
+  }));
 }
 
 export function getIssue(id: string): Issue | null {
@@ -93,8 +130,9 @@ export function createIssue(assessmentId: string, input: CreateIssueInput): Issu
       `INSERT INTO issues (
         id, assessment_id, title, description, url, severity, status,
         wcag_codes, device_type, browser, operating_system, assistive_technology,
+        user_impact, selector, code_snippet, suggested_fix,
         evidence_media, tags, created_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(
       id,
@@ -109,6 +147,10 @@ export function createIssue(assessmentId: string, input: CreateIssueInput): Issu
       input.browser ?? null,
       input.operating_system ?? null,
       input.assistive_technology ?? null,
+      input.user_impact ?? null,
+      input.selector ?? null,
+      input.code_snippet ?? null,
+      input.suggested_fix ?? null,
       JSON.stringify(input.evidence_media ?? []),
       JSON.stringify(input.tags ?? []),
       input.created_by ?? null
@@ -162,6 +204,22 @@ export function updateIssue(id: string, input: UpdateIssueInput): Issue | null {
   if (input.assistive_technology !== undefined) {
     fields.push('assistive_technology = ?');
     values.push(input.assistive_technology);
+  }
+  if (input.user_impact !== undefined) {
+    fields.push('user_impact = ?');
+    values.push(input.user_impact);
+  }
+  if (input.selector !== undefined) {
+    fields.push('selector = ?');
+    values.push(input.selector);
+  }
+  if (input.code_snippet !== undefined) {
+    fields.push('code_snippet = ?');
+    values.push(input.code_snippet);
+  }
+  if (input.suggested_fix !== undefined) {
+    fields.push('suggested_fix = ?');
+    values.push(input.suggested_fix);
   }
   if (input.evidence_media !== undefined) {
     fields.push('evidence_media = ?');
