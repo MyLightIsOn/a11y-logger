@@ -1,10 +1,9 @@
 export const dynamic = 'force-dynamic';
 
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { getReport } from '@/lib/db/reports';
 import { ReportForm } from '@/components/reports/report-form';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -22,14 +21,13 @@ export default async function EditReportPage({ params }: PageProps) {
 
   return (
     <div>
-      <Link
-        href={`/reports/${id}`}
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Back to Report
-      </Link>
-
+      <Breadcrumbs
+        items={[
+          { label: 'Reports', href: '/reports' },
+          { label: report.title, href: `/reports/${id}` },
+          { label: 'Edit' },
+        ]}
+      />
       <h1 className="text-2xl font-bold mb-6">Edit Report</h1>
 
       <ReportForm report={report} />

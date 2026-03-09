@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VpatCriteriaTable, type CriterionRow } from '@/components/vpats/vpat-criteria-table';
 import { buildDefaultCriteriaRows, CONFORMANCE_DB_VALUE } from '@/lib/vpats/wcag-criteria';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 function buildInitialCriteria(): CriterionRow[] {
   return buildDefaultCriteriaRows().map((r) => ({
@@ -80,14 +80,7 @@ export default function NewVpatPage() {
 
   return (
     <div>
-      <Link
-        href="/vpats"
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Back to VPATs
-      </Link>
-
+      <Breadcrumbs items={[{ label: 'VPATs', href: '/vpats' }, { label: 'New VPAT' }]} />
       <h1 className="text-2xl font-bold mb-6">New VPAT</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">

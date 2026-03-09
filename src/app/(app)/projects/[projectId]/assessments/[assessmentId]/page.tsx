@@ -3,14 +3,15 @@ import { Pencil } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getProject } from '@/lib/db/projects';
 import { getAssessment } from '@/lib/db/assessments';
 import { getIssues } from '@/lib/db/issues';
+import type { IssueFilters } from '@/lib/db/issues';
 import { DeleteAssessmentButton } from '@/components/assessments/delete-assessment-button';
 import { StatusTransitionButton } from '@/components/assessments/status-transition-button';
-import { IssuesTable } from '@/components/issues/issues-table';
+import { AssessmentIssuesCard } from '@/components/issues/assessment-issues-card';
 import { IssueStatistics } from '@/components/dashboard/issue-statistics';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,31 +21,33 @@ const statusConfig = {
   completed: { label: 'Completed', className: 'bg-green-100 text-green-700' },
 };
 
-function formatDate(iso: string | null): string {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+const VALID_SEVERITIES = ['critical', 'high', 'medium', 'low'] as const;
 
 export default async function AssessmentDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ projectId: string; assessmentId: string }>;
+  searchParams: Promise<{ severity?: string }>;
 }) {
   const { projectId, assessmentId } = await params;
+  const { severity } = await searchParams;
 
   const project = getProject(projectId);
   if (!project) notFound();
   const assessment = getAssessment(assessmentId);
   if (!assessment) notFound();
 
-  const issues = getIssues(assessmentId);
+  const allIssues = getIssues(assessmentId);
+
+  const filters: IssueFilters = {};
+  if (severity && (VALID_SEVERITIES as readonly string[]).includes(severity)) {
+    filters.severity = severity as IssueFilters['severity'];
+  }
+  const filteredIssues = filters.severity ? getIssues(assessmentId, filters) : allIssues;
 
   const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-  for (const issue of issues) {
+  for (const issue of allIssues) {
     severityCounts[issue.severity]++;
   }
 
@@ -52,22 +55,14 @@ export default async function AssessmentDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1 text-sm text-muted-foreground">
-        <Link href="/projects" className="hover:text-foreground">
-          Projects
-        </Link>
-        <span>/</span>
-        <Link href={`/projects/${projectId}`} className="hover:text-foreground">
-          {project.name}
-        </Link>
-        <span>/</span>
-        <Link href={`/projects/${projectId}/assessments`} className="hover:text-foreground">
-          Assessments
-        </Link>
-        <span>/</span>
-        <span className="text-foreground">{assessment.name}</span>
-      </nav>
+      <Breadcrumbs
+        items={[
+          { label: 'Projects', href: '/projects' },
+          { label: project.name, href: `/projects/${projectId}` },
+          { label: 'Assessments' },
+          { label: assessment.name },
+        ]}
+      />
 
       {/* Header */}
       <div className="flex items-start justify-between">
@@ -79,9 +74,6 @@ export default async function AssessmentDetailPage({
           {assessment.description && (
             <p className="text-muted-foreground">{assessment.description}</p>
           )}
-          <p className="text-sm text-muted-foreground">
-            {formatDate(assessment.test_date_start)} — {formatDate(assessment.test_date_end)}
-          </p>
         </div>
         <div className="flex gap-2">
           <StatusTransitionButton
@@ -104,26 +96,18 @@ export default async function AssessmentDetailPage({
       </div>
 
       <div className="flex gap-6">
-        {/* Issues table */}
         <div className="flex-1">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Issues ({issues.length})</CardTitle>
-              <Button asChild size="sm">
-                <Link href={`/projects/${projectId}/assessments/${assessmentId}/issues/new`}>
-                  Add Issue
-                </Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <IssuesTable issues={issues} projectId={projectId} assessmentId={assessmentId} />
-            </CardContent>
-          </Card>
+          <AssessmentIssuesCard
+            projectId={projectId}
+            assessmentId={assessmentId}
+            issues={filteredIssues}
+            selectedSeverity={severity}
+          />
         </div>
 
         {/* Sidebar */}
         <aside className="w-64 shrink-0">
-          <IssueStatistics total={issues.length} severityBreakdown={severityCounts} />
+          <IssueStatistics total={allIssues.length} severityBreakdown={severityCounts} />
         </aside>
       </div>
     </div>

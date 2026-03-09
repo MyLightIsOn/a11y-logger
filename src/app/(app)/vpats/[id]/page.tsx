@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft, Download, Pencil } from 'lucide-react';
+import { Download, Pencil } from 'lucide-react';
 import { getVpat } from '@/lib/db/vpats';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { VpatCriteriaTable } from '@/components/vpats/vpat-criteria-table';
 import { DeleteVpatButton } from '@/components/vpats/delete-vpat-button';
 import { PublishVpatButton } from '@/components/vpats/publish-vpat-button';
 import { WCAG_CRITERIA, buildDefaultCriteriaRows } from '@/lib/vpats/wcag-criteria';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 function getStatusBadgeClass(status: string): string {
   return status === 'published'
@@ -48,14 +49,7 @@ export default async function VpatDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/vpats"
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Back to VPATs
-      </Link>
-
+      <Breadcrumbs items={[{ label: 'VPATs', href: '/vpats' }, { label: vpat.title }]} />
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-2xl font-bold">{vpat.title}</h1>
         <div className="flex items-center gap-2 shrink-0">

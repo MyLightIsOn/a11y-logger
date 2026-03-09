@@ -26,10 +26,9 @@ export const CreateAssessmentSchema = AssessmentBaseSchema.refine(
   dateRangeRefineOptions
 );
 
-export const UpdateAssessmentSchema = AssessmentBaseSchema.partial().refine(
-  dateRangeRefine,
-  dateRangeRefineOptions
-);
+export const UpdateAssessmentSchema = AssessmentBaseSchema.partial()
+  .extend({ project_id: z.string().uuid().optional() })
+  .refine(dateRangeRefine, dateRangeRefineOptions);
 
 export type CreateAssessmentInput = z.infer<typeof CreateAssessmentSchema>;
 export type UpdateAssessmentInput = z.infer<typeof UpdateAssessmentSchema>;

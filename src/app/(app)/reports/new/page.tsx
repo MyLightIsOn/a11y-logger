@@ -1,23 +1,16 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { getProjects } from '@/lib/db/projects';
 import { ReportForm } from '@/components/reports/report-form';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 export default function NewReportPage() {
   const projects = getProjects().map((p) => ({ id: p.id, name: p.name }));
 
   return (
     <div>
-      <Link
-        href="/reports"
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Back to Reports
-      </Link>
-
+      <Breadcrumbs items={[{ label: 'Reports', href: '/reports' }, { label: 'New Report' }]} />
       <h1 className="text-2xl font-bold mb-6">New Report</h1>
 
       {projects.length === 0 ? (

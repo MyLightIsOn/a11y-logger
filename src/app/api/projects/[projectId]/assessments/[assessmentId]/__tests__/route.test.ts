@@ -163,6 +163,23 @@ describe('PUT /api/projects/[projectId]/assessments/[id]', () => {
     const response = await PUT(request, makeContext(otherProject.id, assessmentId));
     expect(response.status).toBe(404);
   });
+
+  it('returns 404 when reassigning to a non-existent project', async () => {
+    const nonExistentProjectId = '00000000-0000-0000-0000-000000000000';
+    const request = new Request(
+      `http://localhost/api/projects/${projectId}/assessments/${assessmentId}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: nonExistentProjectId }),
+      }
+    );
+    const response = await PUT(request, makeContext(projectId, assessmentId));
+    expect(response.status).toBe(404);
+    const body = await response.json();
+    expect(body.code).toBe('NOT_FOUND');
+    expect(body.error).toBe('Target project not found');
+  });
 });
 
 describe('DELETE /api/projects/[projectId]/assessments/[id]', () => {

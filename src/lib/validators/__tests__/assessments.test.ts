@@ -90,6 +90,15 @@ describe('CreateAssessmentSchema', () => {
     const result = CreateAssessmentSchema.safeParse({ name: 'Audit', assigned_to: 'Jane' });
     expect(result.success).toBe(true);
   });
+
+  it('does not accept project_id', () => {
+    const result = CreateAssessmentSchema.safeParse({
+      name: 'Test',
+      project_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    });
+    expect(result.success).toBe(true);
+    expect((result.data as Record<string, unknown>).project_id).toBeUndefined();
+  });
 });
 
 describe('UpdateAssessmentSchema', () => {
@@ -110,6 +119,19 @@ describe('UpdateAssessmentSchema', () => {
       test_date_start: '2024-01-20T00:00:00.000Z',
       test_date_end: '2024-01-10T00:00:00.000Z',
     });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts project_id as a UUID', () => {
+    const result = UpdateAssessmentSchema.safeParse({
+      project_id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.project_id).toBe('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11');
+  });
+
+  it('rejects non-UUID project_id', () => {
+    const result = UpdateAssessmentSchema.safeParse({ project_id: 'not-a-uuid' });
     expect(result.success).toBe(false);
   });
 });

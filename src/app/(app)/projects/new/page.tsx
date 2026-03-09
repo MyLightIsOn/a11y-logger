@@ -2,10 +2,9 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProjectForm } from '@/components/projects/project-form';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -31,13 +30,7 @@ export default function NewProjectPage() {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/projects"
-        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        Back to Projects
-      </Link>
+      <Breadcrumbs items={[{ label: 'Projects', href: '/projects' }, { label: 'New Project' }]} />
       <h1 className="text-2xl font-bold">New Project</h1>
       <Card className="max-w-2xl">
         <CardContent>
