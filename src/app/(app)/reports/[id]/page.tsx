@@ -2,19 +2,34 @@ export const dynamic = 'force-dynamic';
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Download, Pencil } from 'lucide-react';
-import { getReport } from '@/lib/db/reports';
-import type { ReportSection } from '@/lib/db/reports';
+import { Download, Pencil, ChevronDown } from 'lucide-react';
+import { getReport, getReportStats, parseReportContent } from '@/lib/db/reports';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { DeleteReportButton } from '@/components/reports/delete-report-button';
 import { PublishReportButton } from '@/components/reports/publish-report-button';
-import { getTypeBadgeClass, getStatusBadgeClass } from '@/components/reports/report-badge-utils';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { IssueStatistics } from '@/components/dashboard/issue-statistics';
+import { ReportWcagCriteriaList } from '@/components/reports/report-wcag-criteria-list';
+import DOMPurify from 'isomorphic-dompurify';
 
 type PageProps = { params: Promise<{ id: string }> };
+
+const PERSONA_LABELS: Record<string, string> = {
+  screen_reader: 'Screen reader user',
+  low_vision: 'Low vision / magnification',
+  color_vision: 'Color vision deficiency',
+  keyboard_only: 'Keyboard-only / motor',
+  cognitive: 'Cognitive / attention',
+  deaf_hard_of_hearing: 'Deaf / hard of hearing',
+};
 
 export default async function ReportDetailPage({ params }: PageProps) {
   const { id } = await params;
@@ -24,113 +39,173 @@ export default async function ReportDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // content is stored as JSON: [{title, body}]
-  // Filter out any entries missing required fields to avoid silent empty renders
-  let sections: ReportSection[] = [];
-  try {
-    const raw = JSON.parse(report.content);
-    sections = Array.isArray(raw)
-      ? raw.filter(
-          (s): s is ReportSection => typeof s?.title === 'string' && typeof s?.body === 'string'
-        )
-      : [];
-  } catch {
-    sections = [];
-  }
+  const content = parseReportContent(report.content);
 
+  const stats = getReportStats(id);
+  const hasContent = Object.keys(content).length > 0;
   const isPublished = report.status === 'published';
 
   return (
-    <div>
+    <div className="space-y-6">
       <Breadcrumbs items={[{ label: 'Reports', href: '/reports' }, { label: report.title }]} />
-      <div className="flex flex-col gap-6 lg:flex-row">
-        {/* Main content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <h1 className="text-2xl font-bold">{report.title}</h1>
-            <div className="flex items-center gap-2 shrink-0">
-              <Button asChild variant="outline" size="sm">
+
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">{report.title}</h1>
+          <Badge variant="outline">{isPublished ? 'Published' : 'Draft'}</Badge>
+        </div>
+        <div className="flex gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                Export HTML
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
                 <a
                   href={`/api/reports/${report.id}/export?format=html`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Export HTML
+                  Default
                 </a>
-              </Button>
-              {!isPublished && (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/reports/${report.id}/edit`}>
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </Link>
-                </Button>
-              )}
-              <PublishReportButton reportId={report.id} isPublished={isPublished} />
-              <DeleteReportButton reportId={report.id} reportTitle={report.title} />
-            </div>
-          </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a
+                  href={`/api/reports/${report.id}/export?format=html&variant=with-chart`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  With Chart
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a
+                  href={`/api/reports/${report.id}/export?format=html&variant=with-issues`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  With Issues
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a
+                  href={`/api/reports/${report.id}/export?format=html&variant=with-all`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  All (Chart + Issues)
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {!isPublished && (
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/reports/${report.id}/edit`}>
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit
+              </Link>
+            </Button>
+          )}
+          <PublishReportButton reportId={report.id} isPublished={isPublished} />
+          <DeleteReportButton reportId={report.id} reportTitle={report.title} />
+        </div>
+      </div>
 
-          <Separator className="mb-6" />
-
-          {sections.length === 0 ? (
+      <div className="flex gap-6">
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          {!hasContent ? (
             <p className="text-muted-foreground italic">
-              No sections yet. Edit this report to add content.
+              No content yet. Edit this report to add content.
             </p>
           ) : (
             <div className="space-y-8">
-              {sections.map((section, i) => (
-                <div key={i}>
-                  <h2 className="text-xl font-semibold mb-3">{section.title}</h2>
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{section.body}</p>
+              {content.executive_summary && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Executive Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div
+                      className="text-sm leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-1 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-1 [&_blockquote]:border-l-2 [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_strong]:font-semibold [&_em]:italic"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(content.executive_summary.body),
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {(content.top_risks || content.quick_wins) && (
+                <div
+                  className={`grid grid-cols-1 gap-4 ${content.top_risks && content.quick_wins ? 'sm:grid-cols-2' : ''}`}
+                >
+                  {content.top_risks && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Top Risks</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="list-disc list-inside space-y-1 text-sm leading-relaxed">
+                          {content.top_risks.items.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+                  {content.quick_wins && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Quick Wins</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="list-disc list-inside space-y-1 text-sm leading-relaxed">
+                          {content.quick_wins.items.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
-              ))}
+              )}
+
+              {/* Persona Summaries */}
+              {content.user_impact && (
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">Persona Summaries</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {(
+                      Object.keys(content.user_impact) as Array<keyof typeof content.user_impact>
+                    ).map((key) => (
+                      <Card key={key}>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-semibold">
+                            {PERSONA_LABELS[key] ?? key}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm leading-relaxed">{content.user_impact![key]}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
 
         {/* Sidebar */}
-        <aside className="lg:w-64 shrink-0">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Report Info
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Type</span>
-                <Badge className={getTypeBadgeClass(report.type)} variant="outline">
-                  {report.type}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Status</span>
-                <Badge className={getStatusBadgeClass(report.status)} variant="outline">
-                  {report.status}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Sections</span>
-                <span>{sections.length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Created</span>
-                <span>{new Date(report.created_at).toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Updated</span>
-                <span>{new Date(report.updated_at).toLocaleDateString()}</span>
-              </div>
-              {report.published_at && (
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Published</span>
-                  <span>{new Date(report.published_at).toLocaleDateString()}</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        <aside className="w-72 shrink-0 space-y-4 self-start sticky top-6">
+          <IssueStatistics total={stats.total} severityBreakdown={stats.severityBreakdown} />
+          <ReportWcagCriteriaList criteria={stats.wcagCriteriaCounts} />
         </aside>
       </div>
     </div>

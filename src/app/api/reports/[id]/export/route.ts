@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getReport } from '@/lib/db/reports';
+import { getReport, getReportStats, getReportIssues } from '@/lib/db/reports';
 import { getProject } from '@/lib/db/projects';
+import { getAssessment } from '@/lib/db/assessments';
 import { generateReportHtml } from '@/lib/export/report-template';
+import type { ExportVariant } from '@/lib/export/report-template';
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -36,6 +38,25 @@ export async function GET(request: Request, { params }: RouteContext) {
     );
   }
 
+  const VALID_VARIANTS = [
+    'default',
+    'with-chart',
+    'with-issues',
+    'with-all',
+  ] as const satisfies readonly ExportVariant[];
+  const rawVariant = url.searchParams.get('variant') ?? 'default';
+  if (!(VALID_VARIANTS as readonly string[]).includes(rawVariant)) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Unsupported variant "${rawVariant}". Supported variants: default, with-chart, with-issues`,
+        code: 'BAD_REQUEST',
+      },
+      { status: 400 }
+    );
+  }
+  const variant = rawVariant as ExportVariant;
+
   try {
     const report = getReport(id);
     if (!report) {
@@ -45,22 +66,41 @@ export async function GET(request: Request, { params }: RouteContext) {
       );
     }
 
-    const project = getProject(report.project_id);
+    // Guard: report must have at least one linked assessment
+    if (report.assessment_ids.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Report has no linked assessments', code: 'UNPROCESSABLE_ENTITY' },
+        { status: 422 }
+      );
+    }
+
+    // Derive the project from the first linked assessment
+    const firstId = report.assessment_ids[0];
+    const assessment = firstId ? getAssessment(firstId) : null;
+    const project = assessment ? getProject(assessment.project_id) : null;
     if (!project) {
       return NextResponse.json(
-        { success: false, error: 'Project not found', code: 'NOT_FOUND' },
+        { success: false, error: 'No project found for linked assessments', code: 'NOT_FOUND' },
         { status: 404 }
       );
     }
 
-    const html = generateReportHtml(report, project);
+    const needsStats = variant === 'with-chart' || variant === 'with-all';
+    const needsIssues = variant === 'with-issues' || variant === 'with-all';
+    const extras = {
+      ...(needsStats ? { stats: getReportStats(report.id) } : {}),
+      ...(needsIssues ? { issues: getReportIssues(report.id) } : {}),
+    };
+    const baseUrl = new URL(request.url).origin;
+    const html = generateReportHtml(report, project, variant, extras, baseUrl);
 
     // Sanitize title for use in filename
-    const safeTitle = report.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
-      .slice(0, 80);
+    const safeTitle =
+      report.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '')
+        .slice(0, 80) || 'untitled';
     const filename = `report-${safeTitle}.html`;
 
     return new Response(html, {

@@ -95,6 +95,34 @@ export class OpenAIProvider implements AIProvider {
     return data.choices[0].message.content as string;
   }
 
+  async generateExecutiveSummaryHtml(context: string): Promise<string> {
+    if (!this.apiKey) throw new Error('No API key configured');
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.apiKey}` },
+      body: JSON.stringify({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are an accessibility report writer. Return only valid HTML using <p>, <ul>, <li>, and <strong> tags. No markdown. No surrounding code blocks. No other HTML elements.',
+          },
+          {
+            role: 'user',
+            content: `Write an Executive Summary for an accessibility audit report using the data below. Follow this exact structure:\n\n1. A single opening <p> (max 300 words) describing what was audited, its purpose (WCAG compliance), and the total number of issues found.\n2. A <ul> listing only the count of issues per severity level that has at least one issue (e.g. <li><strong>High Severity Issues (6):</strong></li>). Do not list individual issues.\n3. A single closing <p> about the importance of addressing these issues for users with disabilities and WCAG compliance.\n\nData:\n${context}`,
+          },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData?.error?.message ?? 'API request failed');
+    }
+    const data = await res.json();
+    return data.choices[0].message.content as string;
+  }
+
   async generateVpatRemarks(issueSummary: string, criterion: string): Promise<string> {
     if (!this.apiKey) throw new Error('No API key configured');
     const res = await fetch('https://api.openai.com/v1/chat/completions', {

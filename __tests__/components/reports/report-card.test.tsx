@@ -4,11 +4,11 @@ import type { Report } from '@/lib/db/reports';
 
 const mockReport: Report = {
   id: 'r1',
-  project_id: 'p1',
+  assessment_ids: [],
   title: 'Accessibility Report Q1',
   type: 'detailed',
   status: 'draft',
-  content: '[]',
+  content: '{}',
   template_id: null,
   ai_generated: 0,
   created_by: null,
@@ -24,9 +24,8 @@ describe('ReportCard', () => {
     expect(screen.getByText('Accessibility Report Q1')).toBeInTheDocument();
   });
 
-  it('renders type and status badges', () => {
+  it('renders status badge', () => {
     render(<ReportCard report={mockReport} />);
-    expect(screen.getByText('detailed')).toBeInTheDocument();
     expect(screen.getByText('draft')).toBeInTheDocument();
   });
 
