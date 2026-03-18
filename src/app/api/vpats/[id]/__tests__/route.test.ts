@@ -23,7 +23,14 @@ beforeEach(() => {
   getDb().prepare('DELETE FROM projects').run();
   const project = createProject({ name: 'Test Project' });
   projectId = project.id;
-  const vpat = createVpat({ title: 'Existing VPAT', project_id: projectId });
+  const vpat = createVpat({
+    title: 'Existing VPAT',
+    project_id: projectId,
+    standard_edition: 'WCAG',
+    wcag_version: '2.1',
+    wcag_level: 'AA',
+    product_scope: ['web'],
+  });
   vpatId = vpat.id;
 });
 
@@ -42,6 +49,7 @@ describe('GET /api/vpats/[id]', () => {
     expect(body.success).toBe(true);
     expect(body.data.id).toBe(vpatId);
     expect(body.data.title).toBe('Existing VPAT');
+    expect(body.data.criterion_rows).toBeDefined();
   });
 
   it('returns 404 for nonexistent id', async () => {
@@ -82,26 +90,6 @@ describe('PUT /api/vpats/[id]', () => {
     expect(body.code).toBe('VALIDATION_ERROR');
   });
 
-  it('returns 400 when criteria_rows contains nonexistent issue ids', async () => {
-    const request = new Request(`http://localhost/api/vpats/${vpatId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        criteria_rows: [
-          {
-            criterion_code: '1.1.1',
-            conformance: 'supports',
-            related_issue_ids: ['fake-issue-id'],
-          },
-        ],
-      }),
-    });
-    const response = await PUT(request, makeContext(vpatId));
-    expect(response.status).toBe(400);
-    const body = await response.json();
-    expect(body.code).toBe('VALIDATION_ERROR');
-  });
-
   it('returns 404 for nonexistent id', async () => {
     const request = new Request('http://localhost/api/vpats/nonexistent', {
       method: 'PUT',
@@ -110,6 +98,18 @@ describe('PUT /api/vpats/[id]', () => {
     });
     const response = await PUT(request, makeContext('nonexistent'));
     expect(response.status).toBe(404);
+  });
+
+  it('returns 400 for empty body PUT', async () => {
+    const request = new Request(`http://localhost/api/vpats/${vpatId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const response = await PUT(request, makeContext(vpatId));
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.code).toBe('VALIDATION_ERROR');
   });
 });
 
