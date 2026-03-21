@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { generateReportHtml } from '../report-template';
-import type { Report } from '@/lib/db/reports';
+import type { Report, ReportStats } from '@/lib/db/reports';
 import type { Project } from '@/lib/db/projects';
+import type { IssueWithContext } from '@/lib/db/issues';
 
 const mockProject: Project = {
   id: 'project-1',
@@ -32,6 +33,45 @@ const mockReport: Report = {
   published_at: '2024-03-01T00:00:00Z',
   created_at: '2024-02-01T00:00:00Z',
   updated_at: '2024-03-01T00:00:00Z',
+};
+
+const mockStats: ReportStats = {
+  total: 3,
+  severityBreakdown: { critical: 1, high: 1, medium: 1, low: 0 },
+  wcagCriteriaCounts: [{ code: '1.1.1', name: 'Non-text Content', count: 2 }],
+};
+
+const mockIssue: IssueWithContext = {
+  id: 'issue-1',
+  project_id: 'project-1',
+  project_name: 'Acme Corp Website',
+  assessment_id: 'assessment-1',
+  assessment_name: 'Q1 Audit',
+  title: 'Missing alt text',
+  description: 'Images lack alt attributes.',
+  url: null,
+  severity: 'critical',
+  status: 'open',
+  wcag_codes: ['1.1.1'],
+  section_508_codes: [],
+  eu_codes: [],
+  ai_suggested_codes: [],
+  ai_confidence_score: null,
+  tags: ['images'],
+  user_impact: 'Screen reader users cannot perceive images.',
+  suggested_fix: 'Add descriptive alt text.',
+  selector: null,
+  code_snippet: null,
+  evidence_media: [],
+  device_type: 'desktop',
+  browser: 'Chrome',
+  operating_system: 'macOS',
+  assistive_technology: 'VoiceOver',
+  created_by: null,
+  resolved_by: null,
+  resolved_at: null,
+  created_at: '2024-01-01T00:00:00Z',
+  updated_at: '2024-01-01T00:00:00Z',
 };
 
 describe('generateReportHtml', () => {
@@ -76,10 +116,37 @@ describe('generateReportHtml', () => {
     expect(result).toContain('@media print');
   });
 
-  it('includes semantic heading structure', () => {
+  it('includes h1 title and summary section headers', () => {
     const result = generateReportHtml(mockReport, mockProject);
     expect(result).toContain('<h1');
-    expect(result).toContain('<h2');
+    expect(result).toContain('<summary>');
+  });
+
+  it('uses details/summary for collapsible sections', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('<details');
+    expect(result).toContain('<summary>');
+  });
+
+  it('expands content sections by default', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toMatch(/<details id="section-[^"]+" class="report-section" open>/);
+  });
+
+  it('collapses issues section by default', () => {
+    const result = generateReportHtml(
+      { ...mockReport, content: '{}' },
+      mockProject,
+      'with-issues',
+      { issues: [mockIssue] }
+    );
+    expect(result).toContain('<summary>Issues (');
+    expect(result).not.toMatch(/<details class="report-section" open>[^<]*<summary>Issues/);
+  });
+
+  it('includes print CSS to force all details open', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('details { display: block');
   });
 
   it('handles a report with empty content gracefully', () => {
@@ -116,7 +183,178 @@ describe('generateReportHtml', () => {
   it('escapes HTML-special characters in the report title', () => {
     const xssReport = { ...mockReport, title: '<script>alert("xss")</script>' };
     const result = generateReportHtml(xssReport, mockProject);
-    expect(result).not.toContain('<script>');
+    // Checks the specific payload — can't use not.toContain('<script>') since the template always injects a legitimate script tag
+    expect(result).not.toContain('<script>alert("xss")</script>');
     expect(result).toContain('&lt;script&gt;');
+  });
+
+  it('uses system-ui sans-serif font stack', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('system-ui');
+  });
+
+  it('embeds app CSS custom property tokens', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('--background:');
+    expect(result).toContain('--foreground:');
+    expect(result).toContain('--card:');
+    expect(result).toContain('--border:');
+  });
+
+  it('uses CSS custom properties for body and card colors', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('var(--background)');
+    expect(result).toContain('var(--card)');
+    expect(result).toContain('var(--border)');
+  });
+
+  it('does not use Georgia serif font', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).not.toContain('Georgia');
+  });
+
+  it('does not use hardcoded #64748b color in stats section', () => {
+    const result = generateReportHtml({ ...mockReport, content: '{}' }, mockProject, 'with-chart', {
+      stats: mockStats,
+    });
+    expect(result).not.toContain('color:#64748b');
+    expect(result).not.toContain('color: #64748b');
+  });
+
+  it('does not use hardcoded #334155 color in issues section', () => {
+    const result = generateReportHtml(
+      { ...mockReport, content: '{}' },
+      mockProject,
+      'with-issues',
+      { issues: [mockIssue] }
+    );
+    expect(result).not.toContain('color:#334155');
+    expect(result).not.toContain('color: #334155');
+  });
+
+  it('does not include auto-print script by default', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).not.toContain('window.print()');
+  });
+
+  it('includes auto-print script when autoPrint is true', () => {
+    const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+    expect(result).toContain('window.print()');
+    const bodyEnd = result.indexOf('</body>');
+    expect(result.substring(0, bodyEnd)).toContain('window.print()');
+  });
+
+  it('always includes beforeprint script to open all details for printing', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('beforeprint');
+    expect(result).toContain('d.open = true');
+  });
+
+  it('includes page-break CSS for print sections', () => {
+    const result = generateReportHtml(mockReport, mockProject);
+    expect(result).toContain('break-before: page');
+  });
+
+  it('quick wins section has report-section-continued class to share page with top risks', () => {
+    const reportWithQuickWins = {
+      ...mockReport,
+      content: JSON.stringify({
+        top_risks: { items: ['Risk 1'] },
+        quick_wins: { items: ['Win 1'] },
+      }),
+    };
+    const result = generateReportHtml(reportWithQuickWins, mockProject);
+    expect(result).toContain('report-section-continued');
+  });
+
+  describe('Table of Contents (autoPrint)', () => {
+    it('does not include a TOC when autoPrint is false', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', false);
+      expect(result).not.toContain('Table of Contents');
+    });
+
+    it('includes a Table of Contents heading when autoPrint is true', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+      expect(result).toContain('Table of Contents');
+    });
+
+    it('TOC page has page-break-after so it occupies the first page', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+      expect(result).toContain('page-break-after');
+    });
+
+    it('TOC appears before the main content', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+      const tocIndex = result.indexOf('Table of Contents');
+      const mainIndex = result.indexOf('<main');
+      expect(tocIndex).toBeGreaterThan(-1);
+      expect(tocIndex).toBeLessThan(mainIndex);
+    });
+
+    it('TOC contains skip links to each present content section', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+      expect(result).toContain('href="#section-executive-summary"');
+      expect(result).toContain('href="#section-top-risks"');
+      expect(result).toContain('href="#section-quick-wins"');
+    });
+
+    it('TOC does not include links to sections not present', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+      expect(result).not.toContain('href="#section-user-impact"');
+      expect(result).not.toContain('href="#section-issue-statistics"');
+      expect(result).not.toContain('href="#section-issues"');
+    });
+
+    it('each content section has matching id for TOC skip links', () => {
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', true);
+      expect(result).toContain('id="section-executive-summary"');
+      expect(result).toContain('id="section-top-risks"');
+      expect(result).toContain('id="section-quick-wins"');
+    });
+
+    it('TOC includes user impact link when user_impact content is present', () => {
+      const reportWithImpact = {
+        ...mockReport,
+        content: JSON.stringify({
+          user_impact: { screen_reader: 'Screen reader impact.' },
+        }),
+      };
+      const result = generateReportHtml(reportWithImpact, mockProject, 'default', {}, '', true);
+      expect(result).toContain('href="#section-user-impact"');
+      expect(result).toContain('id="section-user-impact"');
+    });
+
+    it('TOC includes issue statistics link when variant includes chart', () => {
+      const result = generateReportHtml(
+        { ...mockReport, content: '{}' },
+        mockProject,
+        'with-chart',
+        { stats: mockStats },
+        '',
+        true
+      );
+      expect(result).toContain('href="#section-issue-statistics"');
+      expect(result).toContain('id="section-issue-statistics"');
+    });
+
+    it('TOC includes issues link when variant includes issues', () => {
+      const result = generateReportHtml(
+        { ...mockReport, content: '{}' },
+        mockProject,
+        'with-issues',
+        { issues: [mockIssue] },
+        '',
+        true
+      );
+      expect(result).toContain('href="#section-issues"');
+      expect(result).toContain('id="section-issues"');
+    });
+
+    it('section ids are present regardless of autoPrint when variant includes extras', () => {
+      // ids must be on the sections even when not in autoPrint mode
+      // (harmless but ensures consistent HTML structure)
+      const result = generateReportHtml(mockReport, mockProject, 'default', {}, '', false);
+      expect(result).toContain('id="section-executive-summary"');
+    });
   });
 });

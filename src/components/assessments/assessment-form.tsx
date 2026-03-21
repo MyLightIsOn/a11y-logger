@@ -1,6 +1,7 @@
 'use client';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +22,7 @@ interface AssessmentFormProps {
   loading?: boolean;
   projects?: { id: string; name: string }[];
   defaultProjectId?: string;
+  cancelHref?: string;
 }
 
 function toDateInputValue(iso: string | null | undefined): string {
@@ -34,6 +36,7 @@ export function AssessmentForm({
   loading,
   projects,
   defaultProjectId,
+  cancelHref,
 }: AssessmentFormProps) {
   const {
     register,
@@ -45,7 +48,7 @@ export function AssessmentForm({
     defaultValues: {
       name: assessment?.name ?? '',
       description: assessment?.description ?? '',
-      status: assessment?.status ?? 'planning',
+      status: assessment?.status ?? 'ready',
       test_date_start: toDateInputValue(assessment?.test_date_start),
       test_date_end: toDateInputValue(assessment?.test_date_end),
       project_id: defaultProjectId ?? '',
@@ -125,7 +128,7 @@ export function AssessmentForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="planning">Planning</SelectItem>
+                <SelectItem value="ready">Ready</SelectItem>
                 <SelectItem value="in_progress">In Progress</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
@@ -134,9 +137,16 @@ export function AssessmentForm({
         />
       </div>
 
-      <Button type="submit" disabled={loading}>
-        {loading ? 'Saving…' : 'Save Assessment'}
-      </Button>
+      <div className="flex gap-2">
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Saving…' : 'Save Assessment'}
+        </Button>
+        {cancelHref && (
+          <Button asChild variant="outline">
+            <Link href={cancelHref}>Cancel</Link>
+          </Button>
+        )}
+      </div>
     </form>
   );
 }

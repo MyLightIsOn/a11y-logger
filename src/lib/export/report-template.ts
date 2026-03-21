@@ -68,12 +68,55 @@ const SEVERITY_CHART = [
   { key: 'low' as const, label: 'Low', color: '#3b82f6' },
 ];
 
+export type ExportVariant = 'default' | 'with-chart' | 'with-issues' | 'with-all';
+
+const TOC_SECTIONS = [
+  { id: 'section-executive-summary', label: 'Executive Summary' },
+  { id: 'section-top-risks', label: 'Top Risks' },
+  { id: 'section-quick-wins', label: 'Quick Wins' },
+  { id: 'section-user-impact', label: 'User Impact' },
+  { id: 'section-issue-statistics', label: 'Issue Statistics' },
+  { id: 'section-issues', label: 'Issues' },
+] as const;
+
+function buildTocHtml(
+  content: ReportContent,
+  variant: ExportVariant,
+  extras: { stats?: ReportStats; issues?: IssueWithContext[] }
+): string {
+  const present = new Set<string>();
+  if (content.executive_summary) present.add('section-executive-summary');
+  if (content.top_risks) present.add('section-top-risks');
+  if (content.quick_wins) present.add('section-quick-wins');
+  if (content.user_impact) present.add('section-user-impact');
+  if ((variant === 'with-chart' || variant === 'with-all') && extras.stats)
+    present.add('section-issue-statistics');
+  if ((variant === 'with-issues' || variant === 'with-all') && extras.issues)
+    present.add('section-issues');
+
+  const items = TOC_SECTIONS.filter(({ id }) => present.has(id))
+    .map(
+      ({ id, label }, i) =>
+        `<li style="margin-bottom:8px"><a href="#${id}" style="color:var(--foreground);text-decoration:none;font-size:1rem">${i + 1}. ${escapeHtml(label)}</a></li>`
+    )
+    .join('\n        ');
+
+  return `
+    <div class="toc-page" style="page-break-after:always">
+      <h2 style="font-size:1.25rem;font-weight:700;margin:0 0 20px;color:var(--foreground)">Table of Contents</h2>
+      <ol style="list-style:none;padding:0;margin:0">
+        ${items}
+      </ol>
+    </div>`;
+}
+
 function buildStatsHtml(stats: ReportStats): string {
   const { total, severityBreakdown, wcagCriteriaCounts } = stats;
 
   let donutSvg = '';
   if (total === 0) {
-    donutSvg = '<p style="color:#666;font-style:italic">No issues linked to this report.</p>';
+    donutSvg =
+      '<p style="color:var(--muted-foreground);font-style:italic">No issues linked to this report.</p>';
   } else {
     const cx = 100,
       cy = 100,
@@ -96,11 +139,11 @@ function buildStatsHtml(stats: ReportStats): string {
             ${paths}
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
-            <span style="font-size:28pt;font-weight:bold;line-height:1">${total}</span>
-            <span style="font-size:9pt;color:#64748b">Total</span>
+            <span style="font-size:1.75rem;font-weight:bold;line-height:1;color:var(--foreground)">${total}</span>
+            <span style="font-size:0.6875rem;color:var(--muted-foreground)">Total</span>
           </div>
         </div>
-        <table style="border-collapse:collapse;font-size:11pt">
+        <table style="border-collapse:collapse;font-size:0.9375rem">
           <tbody>
             ${SEVERITY_CHART.map(
               ({ key, label, color }) => `
@@ -121,33 +164,35 @@ function buildStatsHtml(stats: ReportStats): string {
     criteriaTableBody = wcagCriteriaCounts
       .map(
         ({ code, name, count }) =>
-          `<tr style="border-bottom:1px solid #eee">
-          <td style="padding:5px 12px 5px 0;font-size:10pt">${escapeHtml(code)}${name ? ` — ${escapeHtml(name)}` : ''}</td>
+          `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:5px 12px 5px 0;font-size:0.875rem;color:var(--foreground)">${escapeHtml(code)}${name ? ` — ${escapeHtml(name)}` : ''}</td>
           <td style="padding:5px 0;font-weight:bold;text-align:right;white-space:nowrap">${count}</td>
         </tr>`
       )
       .join('\n');
   } else {
-    criteriaTableBody = `<tr><td colspan="2" style="padding:5px 0;font-size:10pt;color:#666;font-style:italic">No WCAG criteria linked to issues.</td></tr>`;
+    criteriaTableBody = `<tr><td colspan="2" style="padding:5px 0;font-size:0.875rem;color:var(--muted-foreground);font-style:italic">No WCAG criteria linked to issues.</td></tr>`;
   }
   const criteriaTable = `
-      <h3 style="font-size:12pt;font-weight:bold;margin:0 0 8px 0;padding-bottom:4px;border-bottom:1px solid #ccc">WCAG Criteria Breakdown</h3>
-      <table style="border-collapse:collapse;width:100%;font-size:11pt">
+      <h3 style="font-size:0.875rem;font-weight:600;margin:0 0 8px 0;padding-bottom:4px;border-bottom:1px solid var(--border);color:var(--foreground)">WCAG Criteria Breakdown</h3>
+      <table style="border-collapse:collapse;width:100%;font-size:0.9375rem">
         <thead>
           <tr>
-            <th style="text-align:left;padding:5px 12px 5px 0;color:#555;font-weight:600;border-bottom:2px solid #ccc">Criterion</th>
-            <th style="text-align:right;padding:5px 0;color:#555;font-weight:600;border-bottom:2px solid #ccc">Count</th>
+            <th style="text-align:left;padding:5px 12px 5px 0;color:var(--muted-foreground);font-weight:600;border-bottom:2px solid var(--border)">Criterion</th>
+            <th style="text-align:right;padding:5px 0;color:var(--muted-foreground);font-weight:600;border-bottom:2px solid var(--border)">Count</th>
           </tr>
         </thead>
         <tbody>${criteriaTableBody}</tbody>
       </table>`;
 
   return `
-    <section class="report-section">
-      <h2>Issue Statistics</h2>
-      ${donutSvg}
-      ${criteriaTable}
-    </section>`;
+    <details id="section-issue-statistics" class="report-section" open>
+      <summary>Issue Statistics</summary>
+      <div class="report-section-body">
+        ${donutSvg}
+        ${criteriaTable}
+      </div>
+    </details>`;
 }
 
 const SEVERITY_BADGE_STYLES: Record<string, string> = {
@@ -160,10 +205,12 @@ const SEVERITY_BADGE_STYLES: Record<string, string> = {
 function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
   if (issues.length === 0) {
     return `
-      <section class="report-section">
-        <h2>Issues</h2>
-        <p style="color:#666;font-style:italic">No issues linked to this report.</p>
-      </section>`;
+      <details id="section-issues" class="report-section">
+        <summary>Issues</summary>
+        <div class="report-section-body">
+          <p style="color:var(--muted-foreground);font-style:italic">No issues linked to this report.</p>
+        </div>
+      </details>`;
   }
 
   const badgeStyle =
@@ -171,7 +218,7 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
   const pillStyle =
     'display:inline-block;padding:2px 8px;border-radius:4px;font-size:9pt;font-weight:600;background:#e0e7ff;color:#4f46e5';
   const sectionHeading =
-    'margin:0 0 4px;font-size:8pt;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;font-weight:600';
+    'margin:0 0 4px;font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted-foreground);font-weight:600';
 
   const articles = issues
     .map((issue, i) => {
@@ -186,7 +233,7 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
       const tagPills = issue.tags
         .map(
           (t) =>
-            `<span style="${badgeStyle};background:#f1f5f9;color:#475569;border:1px solid #e2e8f0">${escapeHtml(t)}</span>`
+            `<span style="${badgeStyle};background:var(--muted);color:var(--muted-foreground);border:1px solid var(--border)">${escapeHtml(t)}</span>`
         )
         .join(' ');
 
@@ -210,7 +257,7 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
         sections.push(`
         <div style="margin-bottom:16px">
           <h3 style="${sectionHeading}">Description</h3>
-          <p style="margin:0;line-height:1.6;color:#334155;font-size:10pt">${escapeHtml(issue.description)}</p>
+          <p style="margin:0;line-height:1.6;color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.description)}</p>
         </div>`);
       }
 
@@ -218,7 +265,7 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
         sections.push(`
         <div style="margin-bottom:16px">
           <h3 style="${sectionHeading}">User Impact</h3>
-          <p style="margin:0;line-height:1.6;color:#334155;font-size:10pt">${escapeHtml(issue.user_impact)}</p>
+          <p style="margin:0;line-height:1.6;color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.user_impact)}</p>
         </div>`);
       }
 
@@ -226,7 +273,7 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
         const items = issue.wcag_codes
           .map((code) => {
             const name = getWcagCriterionName(code);
-            return `<li style="color:#334155;font-size:10pt">${escapeHtml(code)}${name ? ` — ${escapeHtml(name)}` : ''}</li>`;
+            return `<li style="color:var(--card-foreground);font-size:0.875rem">${escapeHtml(code)}${name ? ` — ${escapeHtml(name)}` : ''}</li>`;
           })
           .join('\n');
         sections.push(`
@@ -240,26 +287,26 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
         sections.push(`
         <div style="margin-bottom:16px">
           <h3 style="${sectionHeading}">Suggested Fix</h3>
-          <p style="margin:0;line-height:1.6;color:#334155;font-size:10pt">${escapeHtml(issue.suggested_fix)}</p>
+          <p style="margin:0;line-height:1.6;color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.suggested_fix)}</p>
         </div>`);
       }
 
       const contextRows: string[] = [];
       if (issue.device_type)
         contextRows.push(
-          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:#64748b;font-weight:600;white-space:nowrap;font-size:10pt">Device</th><td style="color:#334155;font-size:10pt">${escapeHtml(issue.device_type)}</td></tr>`
+          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:var(--muted-foreground);font-weight:600;white-space:nowrap;font-size:0.875rem">Device</th><td style="color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.device_type)}</td></tr>`
         );
       if (issue.browser)
         contextRows.push(
-          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:#64748b;font-weight:600;white-space:nowrap;font-size:10pt">Browser</th><td style="color:#334155;font-size:10pt">${escapeHtml(issue.browser)}</td></tr>`
+          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:var(--muted-foreground);font-weight:600;white-space:nowrap;font-size:0.875rem">Browser</th><td style="color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.browser)}</td></tr>`
         );
       if (issue.operating_system)
         contextRows.push(
-          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:#64748b;font-weight:600;white-space:nowrap;font-size:10pt">OS</th><td style="color:#334155;font-size:10pt">${escapeHtml(issue.operating_system)}</td></tr>`
+          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:var(--muted-foreground);font-weight:600;white-space:nowrap;font-size:0.875rem">OS</th><td style="color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.operating_system)}</td></tr>`
         );
       if (issue.assistive_technology)
         contextRows.push(
-          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:#64748b;font-weight:600;white-space:nowrap;font-size:10pt">Assistive Technology</th><td style="color:#334155;font-size:10pt">${escapeHtml(issue.assistive_technology)}</td></tr>`
+          `<tr><th scope="row" style="text-align:left;padding-right:16px;color:var(--muted-foreground);font-weight:600;white-space:nowrap;font-size:0.875rem">Assistive Technology</th><td style="color:var(--card-foreground);font-size:0.875rem">${escapeHtml(issue.assistive_technology)}</td></tr>`
         );
 
       if (contextRows.length > 0) {
@@ -271,10 +318,10 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
       }
 
       return `
-      <article aria-labelledby="issue-${i + 1}-title" style="margin-bottom:24px;padding:16px 20px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;page-break-inside:avoid">
+      <article aria-labelledby="issue-${i + 1}-title" style="margin-bottom:16px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);page-break-inside:avoid">
         <header style="margin-bottom:12px">
-          <h3 id="issue-${i + 1}-title" style="margin:0 0 8px;font-size:11pt;font-weight:bold;color:#0f172a;line-height:1.4">
-            <span style="color:#94a3b8;font-weight:400;margin-right:6px">#${i + 1}</span>${
+          <h3 id="issue-${i + 1}-title" style="margin:0 0 8px;font-size:0.9375rem;font-weight:600;color:var(--card-foreground);line-height:1.4">
+            <span style="color:var(--muted-foreground);font-weight:400;margin-right:6px">#${i + 1}</span>${
               baseUrl
                 ? `<a href="${escapeHtml(baseUrl)}/projects/${escapeHtml(issue.project_id)}/assessments/${escapeHtml(issue.assessment_id)}/issues/${escapeHtml(issue.id)}" style="color:inherit;text-decoration:underline;text-underline-offset:2px">${escapeHtml(issue.title)}</a>`
                 : escapeHtml(issue.title)
@@ -283,16 +330,18 @@ function buildIssuesHtml(issues: IssueWithContext[], baseUrl = ''): string {
           <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">${badges}</div>
         </header>
         ${sections.join('')}
-        <footer style="font-size:8pt;color:#94a3b8;margin-top:8px">Saved ${escapeHtml(savedDate)}</footer>
+        <footer style="font-size:0.75rem;color:var(--muted-foreground);margin-top:8px">Saved ${escapeHtml(savedDate)}</footer>
       </article>`;
     })
     .join('\n');
 
   return `
-    <section class="report-section">
-      <h2>Issues (${issues.length})</h2>
-      ${articles}
-    </section>`;
+    <details id="section-issues" class="report-section">
+      <summary>Issues (${issues.length})</summary>
+      <div class="report-section-body">
+        ${articles}
+      </div>
+    </details>`;
 }
 
 const USER_IMPACT_LABELS: Record<string, string> = {
@@ -309,10 +358,12 @@ function buildSectionsHtml(content: ReportContent): string {
 
   if (content.executive_summary) {
     parts.push(`
-      <section class="report-section">
-        <h2>Executive Summary</h2>
-        <div class="section-body">${DOMPurify.sanitize(content.executive_summary.body)}</div>
-      </section>`);
+      <details id="section-executive-summary" class="report-section" open>
+        <summary>Executive Summary</summary>
+        <div class="report-section-body">
+          <div class="section-body">${DOMPurify.sanitize(content.executive_summary.body)}</div>
+        </div>
+      </details>`);
   }
 
   if (content.top_risks) {
@@ -320,12 +371,14 @@ function buildSectionsHtml(content: ReportContent): string {
       .map((item) => `<li>${escapeHtml(item)}</li>`)
       .join('\n        ');
     parts.push(`
-      <section class="report-section">
-        <h2>Top Risks</h2>
-        <ol class="section-list">
-          ${items}
-        </ol>
-      </section>`);
+      <details id="section-top-risks" class="report-section" open>
+        <summary>Top Risks</summary>
+        <div class="report-section-body">
+          <ol class="section-list">
+            ${items}
+          </ol>
+        </div>
+      </details>`);
   }
 
   if (content.quick_wins) {
@@ -333,12 +386,14 @@ function buildSectionsHtml(content: ReportContent): string {
       .map((item) => `<li>${escapeHtml(item)}</li>`)
       .join('\n        ');
     parts.push(`
-      <section class="report-section">
-        <h2>Quick Wins</h2>
-        <ol class="section-list">
-          ${items}
-        </ol>
-      </section>`);
+      <details id="section-quick-wins" class="report-section report-section-continued" open><!-- report-section-continued: no page break, shares page with Top Risks in print -->
+        <summary>Quick Wins</summary>
+        <div class="report-section-body">
+          <ol class="section-list">
+            ${items}
+          </ol>
+        </div>
+      </details>`);
   }
 
   if (content.user_impact) {
@@ -352,12 +407,14 @@ function buildSectionsHtml(content: ReportContent): string {
       )
       .join('\n');
     parts.push(`
-      <section class="report-section">
-        <h2>User Impact</h2>
-        <dl class="impact-grid">
-          ${grid}
-        </dl>
-      </section>`);
+      <details id="section-user-impact" class="report-section" open>
+        <summary>User Impact</summary>
+        <div class="report-section-body">
+          <dl class="impact-grid">
+            ${grid}
+          </dl>
+        </div>
+      </details>`);
   }
 
   return parts.join('\n');
@@ -367,14 +424,13 @@ function buildSectionsHtml(content: ReportContent): string {
  * Generates a complete, standalone HTML document for a report.
  * Suitable for direct download or browser print-to-PDF.
  */
-export type ExportVariant = 'default' | 'with-chart' | 'with-issues' | 'with-all';
-
 export function generateReportHtml(
   report: Report,
   project: Project,
   variant: ExportVariant = 'default',
   extras: { stats?: ReportStats; issues?: IssueWithContext[] } = {},
-  baseUrl = ''
+  baseUrl = '',
+  autoPrint = false
 ): string {
   const content = parseContent(report.content);
   const sectionsHtml = buildSectionsHtml(content);
@@ -386,6 +442,7 @@ export function generateReportHtml(
     extraParts.push(buildIssuesHtml(extras.issues, baseUrl));
   }
   const extrasHtml = extraParts.join('\n');
+  const tocHtml = autoPrint ? buildTocHtml(content, variant, extras) : '';
   const hasContent = Object.keys(content).length > 0;
 
   const generatedDate = new Date().toLocaleDateString('en-US', {
@@ -412,17 +469,28 @@ export function generateReportHtml(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${escapeHtml(report.title)}</title>
   <style>
-    /* Base styles */
-    *, *::before, *::after {
-      box-sizing: border-box;
+    /* App design tokens */
+    :root {
+      --radius: 0.5rem;
+      --background: oklch(0.977 0 0);
+      --foreground: oklch(0.137 0.036 258.5);
+      --card: oklch(1 0 0);
+      --card-foreground: oklch(0.137 0.036 258.5);
+      --muted: oklch(0.968 0.0068 247.9);
+      --muted-foreground: oklch(0.383 0.0157 257.4);
+      --border: oklch(0.22 0.0076 285.8);
+      --success: oklch(0.527 0.129 151);
     }
 
+    /* Base */
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 12pt;
-      line-height: 1.6;
-      color: #1a1a1a;
-      background: #ffffff;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--foreground);
+      background: var(--background);
       margin: 0;
       padding: 0;
     }
@@ -430,111 +498,146 @@ export function generateReportHtml(
     .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 40px 48px;
+      padding: 32px 24px;
     }
 
     /* Header */
     .report-header {
-      border-bottom: 3px solid #1a1a1a;
-      padding-bottom: 24px;
-      margin-bottom: 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
     }
 
     .report-header h1 {
-      font-size: 24pt;
-      font-weight: bold;
-      margin: 0 0 16px 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0;
+      padding: 24px 24px 16px;
       line-height: 1.2;
+      color: var(--card-foreground);
     }
 
     .report-meta {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px 24px;
-      font-size: 10pt;
-      color: #444;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 24px;
+      font-size: 0.8125rem;
+      color: var(--muted-foreground);
+      background: var(--muted);
+      padding: 12px 24px;
     }
 
     .report-meta dt {
-      font-weight: bold;
-      color: #1a1a1a;
+      font-weight: 600;
+      color: var(--foreground);
     }
 
-    .report-meta dd {
-      margin: 0;
-    }
+    .report-meta dd { margin: 0; }
 
-    .meta-pair {
-      display: flex;
-      gap: 8px;
-    }
+    .meta-pair { display: flex; gap: 6px; }
 
-    /* Content */
+    /* Sections */
     .report-section {
-      margin-bottom: 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
     }
 
-    .report-section h2 {
-      font-size: 16pt;
-      font-weight: bold;
-      margin: 0 0 12px 0;
-      padding-bottom: 4px;
-      border-bottom: 1px solid #ccc;
+    .report-section > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--foreground);
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .report-section > summary::-webkit-details-marker { display: none; }
+    .report-section > summary::marker { display: none; }
+
+    .report-section > summary::after {
+      content: '›';
+      font-size: 1.25rem;
+      color: var(--muted-foreground);
+      transition: transform 0.15s ease;
+      display: inline-block;
+    }
+
+    .report-section[open] > summary::after {
+      transform: rotate(90deg);
+    }
+
+    .report-section[open] > summary {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .report-section-body {
+      padding: 20px 24px 24px;
     }
 
     .section-body {
-      font-size: 11pt;
+      font-size: 0.9375rem;
+      color: var(--card-foreground);
+      line-height: 1.6;
     }
 
     .section-list {
-      font-size: 11pt;
+      font-size: 0.9375rem;
       padding-left: 1.5em;
+      margin: 0;
+      color: var(--card-foreground);
+      line-height: 1.8;
     }
 
-    .section-list li {
-      margin-bottom: 6px;
-    }
+    .section-list li { margin-bottom: 4px; }
 
     /* User impact grid */
     .impact-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 12px;
       margin: 0;
     }
 
     .impact-card {
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 2px);
+      background: var(--muted);
       padding: 12px 16px;
     }
 
     .impact-card dt {
-      font-size: 9pt;
-      font-weight: bold;
+      font-size: 0.6875rem;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #6b7280;
+      color: var(--muted-foreground);
       margin-bottom: 4px;
     }
 
     .impact-card dd {
       margin: 0;
-      font-size: 11pt;
+      font-size: 0.875rem;
+      color: var(--card-foreground);
     }
 
-    .no-content {
-      color: #666;
-      font-style: italic;
-    }
+    .no-content { color: var(--muted-foreground); font-style: italic; }
 
     /* Footer */
     .report-footer {
-      margin-top: 48px;
+      margin-top: 32px;
       padding-top: 16px;
-      border-top: 1px solid #ccc;
-      font-size: 9pt;
-      color: #666;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
       text-align: center;
     }
 
@@ -542,17 +645,17 @@ export function generateReportHtml(
     .status-badge {
       display: inline-block;
       padding: 2px 8px;
-      border-radius: 3px;
-      font-size: 9pt;
-      font-weight: bold;
+      border-radius: calc(var(--radius) - 2px);
+      font-size: 0.6875rem;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     .status-published {
-      background: #d1fae5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
+      background: oklch(0.527 0.129 151 / 0.15);
+      color: var(--success);
+      border: 1px solid oklch(0.527 0.129 151 / 0.4);
     }
 
     .status-draft {
@@ -561,37 +664,54 @@ export function generateReportHtml(
       border: 1px solid #fde68a;
     }
 
-    /* Print styles */
+    /* Print */
     @media print {
-      body {
-        font-size: 11pt;
-      }
+      details { display: block; }
+      details > * { display: block; }
 
-      .container {
-        max-width: 100%;
+      body { background: white; font-size: 11pt; }
+
+      .container { max-width: 100%; padding: 0; }
+
+      /* Strip card styling for print — individual rules below re-add specific borders */
+      .report-header,
+      .report-section {
+        background: white;
+        border: none;
+        border-radius: 0;
         padding: 0;
+        margin-bottom: 24pt;
       }
 
       .report-header {
+        border-bottom: 2px solid #000;
+        padding-bottom: 12pt;
         page-break-after: avoid;
       }
+
+      .report-header h1 { padding: 0 0 12pt 0; }
+
+      .report-meta { background: transparent; padding: 0; }
 
       .report-section {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 12pt;
         page-break-inside: avoid;
+        break-before: page;
       }
 
-      .report-section h2 {
-        page-break-after: avoid;
-      }
+      .report-section > summary { padding: 0; cursor: default; }
+      .report-section-body { padding: 0; }
+      .report-section-continued { break-before: auto; }
+
+      .impact-card { border: 1px solid #ccc; background: white; }
 
       .report-footer {
+        border-top: 1px solid #ccc;
         page-break-before: avoid;
       }
 
-      @page {
-        margin: 2cm 2.5cm;
-        size: A4;
-      }
+      @page { margin: 2cm 2.5cm; size: A4; }
     }
   </style>
 </head>
@@ -639,6 +759,7 @@ export function generateReportHtml(
       </div>
     </header>
 
+    ${tocHtml}
     <main>
       ${sectionsHtml}
       ${noSectionsHtml}
@@ -649,6 +770,8 @@ export function generateReportHtml(
       <p>Generated by A11y Logger &mdash; ${escapeHtml(generatedDate)}</p>
     </footer>
   </div>
+<script>window.addEventListener('beforeprint', () => { document.querySelectorAll('details').forEach(function(d) { d.open = true; }); });</script>
+${autoPrint ? "<script>window.addEventListener('load', () => window.print());</script>" : ''}
 </body>
 </html>`;
 }

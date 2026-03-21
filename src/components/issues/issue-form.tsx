@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 import { WcagSelector } from './wcag-selector';
 import { Section508Selector } from './section508-selector';
 import { EuSelector } from './eu-selector';
@@ -24,14 +25,32 @@ import { CreateIssueSchema } from '@/lib/validators/issues';
 import type { CreateIssueInput, UpdateIssueInput } from '@/lib/validators/issues';
 import type { Issue } from '@/lib/db/issues';
 
+export interface AssessmentOption {
+  id: string;
+  name: string;
+  projectId: string;
+  projectName: string;
+}
+
 interface IssueFormProps {
   issue?: Issue;
   projectId: string;
+  assessmentOptions?: AssessmentOption[];
+  onAssessmentChange?: (assessmentId: string, projectId: string) => void;
   onSubmit: (data: CreateIssueInput | UpdateIssueInput) => void;
   loading?: boolean;
+  cancelHref?: string;
 }
 
-export function IssueForm({ issue, projectId, onSubmit, loading }: IssueFormProps) {
+export function IssueForm({
+  issue,
+  projectId,
+  assessmentOptions,
+  onAssessmentChange,
+  onSubmit,
+  loading,
+  cancelHref,
+}: IssueFormProps) {
   // AI assistance state — not part of the submitted form
   const [aiDescription, setAiDescription] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -142,6 +161,30 @@ export function IssueForm({ issue, projectId, onSubmit, loading }: IssueFormProp
         {/* Left column: all form fields */}
         <Card className="lg:col-span-2">
           <CardContent className="space-y-4 pt-6">
+            {/* Assessment selector — shown only on the global new issue route */}
+            {assessmentOptions && (
+              <div className="space-y-1.5">
+                <Label htmlFor="assessment-select">Assessment</Label>
+                <Select
+                  onValueChange={(value) => {
+                    const option = assessmentOptions.find((a) => a.id === value);
+                    if (option) onAssessmentChange?.(option.id, option.projectId);
+                  }}
+                >
+                  <SelectTrigger id="assessment-select" aria-label="Assessment">
+                    <SelectValue placeholder="Select an assessment…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {assessmentOptions.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.projectName} / {a.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             {/* AI Assistance Section */}
             <div className="rounded-md border border-border bg-muted/30 p-4 space-y-3">
               <p className="text-sm text-muted-foreground">
@@ -435,9 +478,16 @@ export function IssueForm({ issue, projectId, onSubmit, loading }: IssueFormProp
               />
             </div>
 
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving…' : 'Save Issue'}
-            </Button>
+            <div className="flex gap-2">
+              <Button type="submit" disabled={loading}>
+                {loading ? 'Saving…' : 'Save Issue'}
+              </Button>
+              {cancelHref && (
+                <Button asChild variant="outline">
+                  <Link href={cancelHref}>Cancel</Link>
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -459,7 +509,10 @@ export function IssueForm({ issue, projectId, onSubmit, loading }: IssueFormProp
                     projectId={projectId}
                     issueId={uploadId}
                     urls={(field.value ?? []) as string[]}
-                    onUpload={(url) => field.onChange([...(field.value ?? []), url])}
+                    onUpload={(url) => {
+                      const current = (getValues('evidence_media') as string[]) ?? [];
+                      field.onChange([...current, url]);
+                    }}
                     onRemove={(url) => field.onChange((field.value ?? []).filter((u) => u !== url))}
                   />
                 )}

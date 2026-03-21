@@ -1,5 +1,5 @@
 'use client';
-import { Sparkles, Trash2 } from 'lucide-react';
+import { Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
@@ -39,18 +39,31 @@ export function ExecutiveSummarySection({
             variant="ghost"
             size="icon"
             onClick={onDelete}
+            disabled={isGenerating}
             aria-label="Delete section"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        <RichTextEditor
-          value={body}
-          onChange={onChange}
-          placeholder="Write your executive summary…"
-        />
+      <CardContent className="relative">
+        {isGenerating && (
+          <div
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/80 backdrop-blur-sm rounded-b-lg"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Generating with AI...</p>
+          </div>
+        )}
+        <div data-testid="section-fields" inert={isGenerating || undefined}>
+          <RichTextEditor
+            value={body}
+            onChange={onChange}
+            placeholder="Write your executive summary…"
+          />
+        </div>
       </CardContent>
     </Card>
   );

@@ -116,6 +116,41 @@ test('includes evidence_media in submitted data after upload', async () => {
   );
 }, 15000);
 
+test('includes all urls in evidence_media when multiple files are uploaded', async () => {
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      json: () => Promise.resolve({ success: true, data: { url: '/api/media/p1/tmp/a.png' } }),
+    } as Response)
+    .mockResolvedValueOnce({
+      json: () => Promise.resolve({ success: true, data: { url: '/api/media/p1/tmp/b.png' } }),
+    } as Response);
+
+  const onSubmit = vi.fn();
+  render(<IssueForm onSubmit={onSubmit} projectId="p1" />);
+
+  const input = screen.getByLabelText(/choose file/i);
+  const files = [
+    new File(['img1'], 'a.png', { type: 'image/png' }),
+    new File(['img2'], 'b.png', { type: 'image/png' }),
+  ];
+  fireEvent.change(input, { target: { files } });
+
+  await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+
+  await userEvent.type(screen.getByLabelText(/^title \*/i), 'Test');
+  fireEvent.click(screen.getByRole('button', { name: /save/i }));
+
+  await waitFor(() =>
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        evidence_media: ['/api/media/p1/tmp/a.png', '/api/media/p1/tmp/b.png'],
+      }),
+      expect.anything()
+    )
+  );
+}, 15000);
+
 test('renders Section 508 Criteria section', () => {
   render(<IssueForm onSubmit={vi.fn()} projectId="p1" />);
   expect(screen.getByText('Section 508 Criteria')).toBeInTheDocument();
@@ -124,6 +159,18 @@ test('renders Section 508 Criteria section', () => {
 test('renders EU EN 301 549 Criteria section', () => {
   render(<IssueForm onSubmit={vi.fn()} projectId="p1" />);
   expect(screen.getByText('EU EN 301 549 Criteria')).toBeInTheDocument();
+}, 15000);
+
+test('renders cancel link when cancelHref is provided', () => {
+  render(<IssueForm onSubmit={vi.fn()} projectId="p1" cancelHref="/projects/p1/assessments/a1" />);
+  const cancelLink = screen.getByRole('link', { name: /cancel/i });
+  expect(cancelLink).toBeInTheDocument();
+  expect(cancelLink).toHaveAttribute('href', '/projects/p1/assessments/a1');
+}, 15000);
+
+test('does not render cancel link when cancelHref is omitted', () => {
+  render(<IssueForm onSubmit={vi.fn()} projectId="p1" />);
+  expect(screen.queryByRole('link', { name: /cancel/i })).not.toBeInTheDocument();
 }, 15000);
 
 test('removes media url when remove button is clicked', async () => {
