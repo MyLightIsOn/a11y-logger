@@ -4,8 +4,22 @@ import { getProject } from '@/lib/db/projects';
 import { getAssessment } from '@/lib/db/assessments';
 import { generateReportHtml } from '@/lib/export/report-template';
 import type { ExportVariant } from '@/lib/export/report-template';
+import { generateReportDocx } from '@/lib/export/report-docx';
 
 type RouteContext = { params: Promise<{ id: string }> };
+
+const SUPPORTED_FORMATS = ['html', 'pdf', 'docx'] as const;
+type SupportedFormat = (typeof SUPPORTED_FORMATS)[number];
+
+function safeTitle(title: string): string {
+  return (
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 80) || 'untitled'
+  );
+}
 
 export async function GET(request: Request, { params }: RouteContext) {
   const { id } = await params;
@@ -14,11 +28,11 @@ export async function GET(request: Request, { params }: RouteContext) {
   const autoPrint = url.searchParams.get('autoprint') === 'true';
 
   // Validate format
-  if (format !== 'html' && format !== 'pdf') {
+  if (!(SUPPORTED_FORMATS as readonly string[]).includes(format)) {
     return NextResponse.json(
       {
         success: false,
-        error: `Unsupported format "${format}". Supported formats: html, pdf`,
+        error: `Unsupported format "${format}". Supported formats: html, pdf, docx`,
         code: 'BAD_REQUEST',
       },
       { status: 400 }
@@ -86,6 +100,21 @@ export async function GET(request: Request, { params }: RouteContext) {
       );
     }
 
+    if ((format as SupportedFormat) === 'docx') {
+      const [stats, issues] = await Promise.all([
+        getReportStats(report.id),
+        getReportIssues(report.id),
+      ]);
+      const buffer = await generateReportDocx(report, project, stats, issues);
+      return new Response(new Uint8Array(buffer), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'Content-Disposition': `attachment; filename="report-${safeTitle(report.title)}.docx"`,
+        },
+      });
+    }
+
     const needsStats = variant === 'with-chart' || variant === 'with-all';
     const needsIssues = variant === 'with-issues' || variant === 'with-all';
     const extras = {
@@ -95,14 +124,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     const baseUrl = new URL(request.url).origin;
     const html = generateReportHtml(report, project, variant, extras, baseUrl, autoPrint);
 
-    // Sanitize title for use in filename
-    const safeTitle =
-      report.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '')
-        .slice(0, 80) || 'untitled';
-    const filename = `report-${safeTitle}.html`;
+    const filename = `report-${safeTitle(report.title)}.html`;
 
     return new Response(html, {
       status: 200,
