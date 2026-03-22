@@ -5,6 +5,7 @@ import { runMigrations } from './migrate';
 import { loadMigrations } from './load-migrations';
 import { seedDefaultSettings } from './settings';
 import { seedCriteria } from './criteria-seed';
+import { initDbClient, closeDbClient } from './client';
 
 let db: Database.Database | null = null;
 
@@ -33,10 +34,19 @@ export function getDb(dbPath?: string): Database.Database {
   return db;
 }
 
-export function initDb(dbPath?: string): Database.Database {
+export async function initDb(dbPath?: string): Promise<Database.Database> {
+  return initDbSync(dbPath);
+}
+
+/**
+ * Synchronous initialization — safe because better-sqlite3, migrations, and seeding
+ * are all synchronous. Used by getDbClient() for lazy init when instrumentation hasn't run.
+ */
+export function initDbSync(dbPath?: string): Database.Database {
   const database = getDb(dbPath);
   const migrations = loadMigrations(MIGRATIONS_DIR);
   runMigrations(database, migrations);
+  initDbClient(database);
   seedDefaultSettings();
   seedCriteria();
   return database;
@@ -44,6 +54,7 @@ export function initDb(dbPath?: string): Database.Database {
 
 export function closeDb(): void {
   if (db) {
+    closeDbClient();
     db.close();
     db = null;
   }
