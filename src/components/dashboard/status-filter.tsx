@@ -1,0 +1,43 @@
+'use client';
+import { Button } from '@/components/ui/button';
+
+const STATUS_OPTIONS = [
+  { value: 'open', label: 'Open' },
+  { value: 'resolved', label: 'Resolved' },
+  { value: 'wont_fix', label: "Won't Fix" },
+] as const;
+
+interface StatusFilterProps {
+  statuses: string[];
+  onChange: (statuses: string[]) => void;
+}
+
+export function StatusFilter({ statuses, onChange }: StatusFilterProps) {
+  function toggle(value: string) {
+    const next = statuses.includes(value)
+      ? statuses.filter((s) => s !== value)
+      : [...statuses, value];
+    if (next.length === 0) return; // always keep at least one selected
+    onChange(next);
+  }
+
+  return (
+    <div
+      role="group"
+      aria-label="Filter by status"
+      className="flex gap-1 p-1 bg-card border rounded-full shadow-sm"
+    >
+      {STATUS_OPTIONS.map(({ value, label }) => (
+        <Button
+          type="button"
+          key={value}
+          variant={statuses.includes(value) ? 'default' : 'secondary'}
+          onClick={() => toggle(value)}
+          aria-pressed={statuses.includes(value)}
+        >
+          {label}
+        </Button>
+      ))}
+    </div>
+  );
+}

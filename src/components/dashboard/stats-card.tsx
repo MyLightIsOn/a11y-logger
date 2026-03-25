@@ -5,19 +5,30 @@ interface StatsCardProps {
   label: string;
   count: number;
   href: string;
+  subtitle?: string;
+  trend?: string;
+  showAlert?: boolean;
 }
 
-export function StatsCard({ label, count, href }: StatsCardProps) {
+export function StatsCard({ label, count, href, subtitle, trend, showAlert }: StatsCardProps) {
   return (
     <Card>
       <CardContent className="pt-2">
-        <Link href={href} aria-label={`Total ${label} ${count}`} className="block">
+        <Link href={href} aria-label={`${label} ${count}`} className="block">
           <dl>
-            <dt className="text-sm text-muted-foreground w">
-              Total
-              <br /> {label}
+            <dt className="text-sm text-muted-foreground flex items-center gap-1.5">
+              {label}
+              {showAlert && (
+                <span
+                  className="inline-block w-2 h-2 rounded-full bg-destructive shrink-0"
+                  role="img"
+                  aria-label="alert"
+                />
+              )}
             </dt>
             <dd className="text-4xl font-bold m-0">{count}</dd>
+            {subtitle && <dd className="text-xs text-muted-foreground">{subtitle}</dd>}
+            {trend && <dd className="text-xs text-muted-foreground">{trend}</dd>}
           </dl>
         </Link>
       </CardContent>

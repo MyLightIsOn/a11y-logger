@@ -1,42 +1,46 @@
 import { StatsCard } from '@/components/dashboard/stats-card';
-import { IssueStatistics } from '@/components/dashboard/issue-statistics';
 import { ActivityChart } from '@/components/dashboard/activity-chart';
-import { WcagCriteria } from '@/components/dashboard/wcag-criteria';
-import { getDashboardStats } from '@/lib/db/dashboard';
+import { IssueAnalysisSection } from '@/components/dashboard/issue-analysis-section';
+import { getActionableStats } from '@/lib/db/dashboard';
 
 export default async function DashboardPage() {
-  const stats = await getDashboardStats();
+  const actionableStats = await getActionableStats();
 
   return (
-    <div className="space-y-6 max-w-300">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      {/* Two-column layout: left (stats + chart) | right (donut full height) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: stats row stacked above line chart */}
-        <div className="lg:col-span-9 flex flex-col gap-4">
-          <div className="grid grid-cols-5 gap-4">
-            <StatsCard label="Projects" count={stats.total_projects} href="/projects" />
-            <StatsCard label="Assessments" count={stats.total_assessments} href="/assessments" />
-            <StatsCard label="Issues" count={stats.total_issues} href="/issues" />
-            <StatsCard label="Reports" count={stats.total_reports} href="/reports" />
-            <StatsCard label="VPATs" count={stats.total_vpats} href="/vpats" />
-          </div>
-          <div className="flex-1">
-            <ActivityChart />
-          </div>
-        </div>
-
-        {/* Right: Issue Statistics spanning full height */}
-        <div className="lg:col-span-3">
-          <IssueStatistics
-            total={stats.total_issues}
-            severityBreakdown={stats.severity_breakdown}
+    <main className="p-6 space-y-6">
+      {/* Section 1: Activity */}
+      <section aria-labelledby="activity-heading">
+        <h1 id="activity-heading" className="sr-only">
+          Dashboard
+        </h1>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
+          <StatsCard
+            label="Open Critical Issues"
+            count={actionableStats.open_critical_issues}
+            href="/issues?severity=critical&status=open"
+            showAlert={actionableStats.open_critical_issues > 0}
+          />
+          <StatsCard
+            label="In-Progress Assessments"
+            count={actionableStats.in_progress_assessments}
+            href="/assessments?status=in_progress"
+          />
+          <StatsCard
+            label="Resolved This Month"
+            count={actionableStats.resolved_this_month}
+            href="/issues?status=resolved"
+          />
+          <StatsCard
+            label="Active Projects"
+            count={actionableStats.active_projects}
+            subtitle={`of ${actionableStats.total_projects} total`}
+            href="/projects"
           />
         </div>
-      </div>
+        <ActivityChart />
+      </section>
 
-      {/* WCAG Criteria */}
-      <WcagCriteria />
-    </div>
+      <IssueAnalysisSection />
+    </main>
   );
 }
