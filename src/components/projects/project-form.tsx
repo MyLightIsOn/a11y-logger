@@ -1,7 +1,9 @@
 'use client';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,9 +17,19 @@ interface ProjectFormProps {
   onSubmit: (data: CreateProjectInput) => void;
   loading?: boolean;
   cancelHref?: string;
+  deleteButton?: React.ReactNode;
+  /** When set, the form renders with this id and hides its internal buttons so the caller can render them externally via the `form` attribute. */
+  externalButtons?: string;
 }
 
-export function ProjectForm({ project, onSubmit, loading, cancelHref }: ProjectFormProps) {
+export function ProjectForm({
+  project,
+  onSubmit,
+  loading,
+  cancelHref,
+  deleteButton,
+  externalButtons,
+}: ProjectFormProps) {
   const {
     register,
     handleSubmit,
@@ -32,7 +44,7 @@ export function ProjectForm({ project, onSubmit, loading, cancelHref }: ProjectF
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form id={externalButtons} onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-1.5">
         <Label htmlFor="name">Project Name *</Label>
         <Input id="name" {...register('name')} placeholder="e.g. Mobile App Redesign" />
@@ -56,7 +68,7 @@ export function ProjectForm({ project, onSubmit, loading, cancelHref }: ProjectF
           </p>
         )}
       </div>
-      <div className="space-y-1.5 mb-8">
+      <div className="space-y-1.5">
         <Label htmlFor="product_url">Product URL</Label>
         <Input
           id="product_url"
@@ -70,16 +82,23 @@ export function ProjectForm({ project, onSubmit, loading, cancelHref }: ProjectF
           </p>
         )}
       </div>
-      <div className="flex gap-2">
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Saving…' : 'Save Project'}
-        </Button>
-        {cancelHref && (
-          <Button asChild variant="outline">
-            <Link href={cancelHref}>Cancel</Link>
+      {!externalButtons && (
+        <div className="flex items-center gap-2">
+          <Button type="submit" disabled={loading}>
+            <Save className="h-4 w-4" />
+            {loading ? 'Saving…' : 'Save Project'}
           </Button>
-        )}
-      </div>
+          {cancelHref && (
+            <Button asChild variant="cancel">
+              <Link href={cancelHref}>
+                <X className="h-4 w-4" />
+                Cancel
+              </Link>
+            </Button>
+          )}
+          {deleteButton && <div className="ml-auto">{deleteButton}</div>}
+        </div>
+      )}
     </form>
   );
 }

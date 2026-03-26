@@ -213,16 +213,16 @@ export function ImportIssuesModal({
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <DialogFooter>
-            <Button variant="ghost" onClick={handleClose}>
+            <Button variant="cancel" onClick={handleClose}>
               Cancel
             </Button>
             {step === 'upload' && (
-              <Button onClick={() => setStep('mapping')} disabled={csvRows.length === 0}>
+              <Button size="sm" onClick={() => setStep('mapping')} disabled={csvRows.length === 0}>
                 Next
               </Button>
             )}
             {step === 'mapping' && (
-              <Button onClick={handleImport} disabled={loading}>
+              <Button size="sm" onClick={handleImport} disabled={loading}>
                 {loading ? 'Importing…' : `Import ${csvRows.length} rows`}
               </Button>
             )}
