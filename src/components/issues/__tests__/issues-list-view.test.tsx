@@ -147,6 +147,87 @@ describe('IssuesListView New Issue button', () => {
   });
 });
 
+describe('IssuesListView search input component', () => {
+  beforeEach(() => {
+    mockSeverity = null;
+  });
+
+  it('search input uses the Input component (has data-slot="input")', () => {
+    render(<IssuesListView issues={searchIssues} />);
+    const searchbox = screen.getByRole('searchbox');
+    expect(searchbox).toHaveAttribute('data-slot', 'input');
+  });
+
+  it('search input uses the Input component in grid view', () => {
+    render(<IssuesListView issues={searchIssues} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Grid view' }));
+    const searchbox = screen.getByRole('searchbox');
+    expect(searchbox).toHaveAttribute('data-slot', 'input');
+  });
+});
+
+describe('IssuesListView layout and style', () => {
+  beforeEach(() => {
+    mockSeverity = null;
+  });
+
+  it('renders a section with aria-labelledby pointing to the Issues heading', () => {
+    const { container } = render(<IssuesListView issues={[]} />);
+    const section = container.querySelector('section[aria-labelledby]');
+    expect(section).toBeInTheDocument();
+    const headingId = section!.getAttribute('aria-labelledby');
+    expect(document.getElementById(headingId!)).toHaveTextContent('Issues');
+  });
+
+  it('New Issue button does not have the outline variant class', () => {
+    render(<IssuesListView issues={[]} />);
+    const link = screen.getByRole('link', { name: /new issue/i });
+    expect(link.className).not.toContain('border-input');
+  });
+
+  it('shows an empty state message when no issues match the filter', () => {
+    render(<IssuesListView issues={[]} />);
+    expect(screen.getByText(/no issues found/i)).toBeInTheDocument();
+  });
+
+  it('does not show empty state when issues are present', () => {
+    render(<IssuesListView issues={[makeIssue('i1', 'high')]} />);
+    expect(screen.queryByText(/no issues found/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('IssuesListView filter/search placement by view', () => {
+  beforeEach(() => {
+    mockSeverity = null;
+  });
+
+  it('in table view (default), filter and search are inside the table card, not sibling to it', () => {
+    const { container } = render(<IssuesListView issues={searchIssues} />);
+    const section = container.querySelector('section')!;
+    const searchbox = screen.getByRole('searchbox');
+
+    // header + card = 2 direct children (filter is inside the card)
+    expect(Array.from(section.children)).toHaveLength(2);
+    // The card (second child) contains the searchbox
+    expect(section.children[1]).toContainElement(searchbox as HTMLElement);
+  });
+
+  it('in grid view, filter and search are outside the grid', () => {
+    const { container } = render(<IssuesListView issues={searchIssues} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Grid view' }));
+
+    const section = container.querySelector('section')!;
+    const searchbox = screen.getByRole('searchbox');
+
+    // header + filter bar + grid = 3 direct children
+    expect(Array.from(section.children)).toHaveLength(3);
+    // Filter bar (second child) contains the searchbox
+    expect(section.children[1]).toContainElement(searchbox as HTMLElement);
+    // Grid (third child) does NOT contain the searchbox
+    expect(section.children[2]).not.toContainElement(searchbox as HTMLElement);
+  });
+});
+
 describe('IssuesListView severity filter', () => {
   beforeEach(() => {
     mockSeverity = null;

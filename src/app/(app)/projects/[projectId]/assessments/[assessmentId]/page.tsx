@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { Badge } from '@/components/ui/badge';
 import { getProject } from '@/lib/db/projects';
 import { getAssessment } from '@/lib/db/assessments';
 import { getIssues } from '@/lib/db/issues';
@@ -8,14 +7,9 @@ import { AssessmentSettingsMenu } from '@/components/assessments/assessment-sett
 import { AssessmentIssuesCard } from '@/components/issues/assessment-issues-card';
 import { IssueStatistics } from '@/components/dashboard/issue-statistics';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { AssessmentStatusBadge } from '@/components/assessments/assessment-status-badge';
 
 export const dynamic = 'force-dynamic';
-
-const statusConfig = {
-  ready: { label: 'Ready', className: 'bg-gray-100 text-gray-700' },
-  in_progress: { label: 'In Progress', className: 'bg-blue-100 text-blue-700' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-700' },
-};
 
 const VALID_SEVERITIES = ['critical', 'high', 'medium', 'low'] as const;
 
@@ -47,8 +41,6 @@ export default async function AssessmentDetailPage({
     severityCounts[issue.severity]++;
   }
 
-  const status = statusConfig[assessment.status];
-
   return (
     <div className="space-y-6">
       <Breadcrumbs
@@ -63,14 +55,9 @@ export default async function AssessmentDetailPage({
       {/* Hero card */}
       <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 px-6 shadow-sm">
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">{assessment.name}</h1>
-              <Badge className={status.className}>{status.label}</Badge>
-            </div>
-            {assessment.description && (
-              <p className="text-muted-foreground">{assessment.description}</p>
-            )}
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold">{assessment.name}</h1>
+            <AssessmentStatusBadge status={assessment.status} />
           </div>
           <div className="flex items-center gap-2">
             <AssessmentSettingsMenu
@@ -80,6 +67,9 @@ export default async function AssessmentDetailPage({
             />
           </div>
         </div>
+        {assessment.description && (
+          <p className="text-muted-foreground">{assessment.description}</p>
+        )}
       </div>
 
       <div className="flex gap-6">
