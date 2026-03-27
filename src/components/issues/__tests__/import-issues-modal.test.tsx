@@ -84,6 +84,59 @@ describe('ImportIssuesModal', () => {
     });
   });
 
+  it('does not render trigger button when open prop is provided (controlled mode)', () => {
+    render(
+      <ImportIssuesModal
+        projectId="p1"
+        assessmentId="a1"
+        onImportComplete={vi.fn()}
+        open={false}
+        onOpenChange={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole('button', { name: /import/i })).not.toBeInTheDocument();
+  });
+
+  it('dialog is open when controlled open=true', () => {
+    render(
+      <ImportIssuesModal
+        projectId="p1"
+        assessmentId="a1"
+        onImportComplete={vi.fn()}
+        open={true}
+        onOpenChange={vi.fn()}
+      />
+    );
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('renders trigger button in uncontrolled mode (no open prop)', () => {
+    render(<ImportIssuesModal projectId="p1" assessmentId="a1" onImportComplete={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /import/i })).toBeInTheDocument();
+  });
+
+  it('does not show dialog close (X) button', async () => {
+    render(<ImportIssuesModal {...defaultProps} />);
+    await userEvent.click(screen.getByRole('button', { name: /import/i }));
+    expect(screen.queryByRole('button', { name: /^close$/i })).not.toBeInTheDocument();
+  });
+
+  it('Cancel button in dialog has X icon', async () => {
+    render(<ImportIssuesModal {...defaultProps} />);
+    await userEvent.click(screen.getByRole('button', { name: /import/i }));
+    const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+    expect(cancelBtn.querySelector('svg')).toBeInTheDocument();
+  });
+
+  it('Next button has an icon', async () => {
+    render(<ImportIssuesModal {...defaultProps} />);
+    await userEvent.click(screen.getByRole('button', { name: /import/i }));
+    const file = new File(['title\nIssue 1'], 'issues.csv', { type: 'text/csv' });
+    await userEvent.upload(screen.getByLabelText(/csv file/i), file);
+    const nextBtn = screen.getByRole('button', { name: /next/i });
+    expect(nextBtn.querySelector('svg')).toBeInTheDocument();
+  });
+
   it('shows error message when import fails', async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: false,

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Papa from 'papaparse';
-import { Upload } from 'lucide-react';
+import { Upload, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -24,6 +24,8 @@ interface ImportIssuesModalProps {
   projectId: string;
   assessmentId: string;
   onImportComplete: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 type Step = 'upload' | 'mapping';
@@ -34,8 +36,16 @@ export function ImportIssuesModal({
   projectId,
   assessmentId,
   onImportComplete,
+  open: controlledOpen,
+  onOpenChange: onControlledOpenChange,
 }: ImportIssuesModalProps) {
-  const [open, setOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isControlled ? controlledOpen! : internalOpen;
+  const setOpen = (v: boolean) => {
+    if (isControlled) onControlledOpenChange?.(v);
+    else setInternalOpen(v);
+  };
   const [step, setStep] = useState<Step>('upload');
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
   const [csvRows, setCsvRows] = useState<Record<string, string>[]>([]);
@@ -111,10 +121,12 @@ export function ImportIssuesModal({
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        <Upload className="mr-2 h-4 w-4" />
-        Import
-      </Button>
+      {!isControlled && (
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+          <Upload className="mr-2 h-4 w-4" />
+          Import
+        </Button>
+      )}
 
       <Dialog
         open={open}
@@ -122,7 +134,7 @@ export function ImportIssuesModal({
           if (!v) handleClose();
         }}
       >
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="sm:max-w-4xl" showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>{step === 'upload' ? 'Upload CSV' : 'Map Columns'}</DialogTitle>
           </DialogHeader>
@@ -214,15 +226,18 @@ export function ImportIssuesModal({
 
           <DialogFooter>
             <Button variant="cancel" onClick={handleClose}>
+              <X className="h-4 w-4" />
               Cancel
             </Button>
             {step === 'upload' && (
-              <Button size="sm" onClick={() => setStep('mapping')} disabled={csvRows.length === 0}>
+              <Button onClick={() => setStep('mapping')} disabled={csvRows.length === 0}>
+                <ArrowRight className="h-4 w-4" />
                 Next
               </Button>
             )}
             {step === 'mapping' && (
-              <Button size="sm" onClick={handleImport} disabled={loading}>
+              <Button onClick={handleImport} disabled={loading}>
+                <Upload className="h-4 w-4" />
                 {loading ? 'Importing…' : `Import ${csvRows.length} rows`}
               </Button>
             )}
