@@ -24,25 +24,19 @@ export function ExecutiveSummarySection({
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle>Executive Summary</CardTitle>
         <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onGenerate}
-            disabled={isGenerating}
-            aria-label="Generate with AI"
-          >
-            <Sparkles className="h-4 w-4" />
+          <Button type="button" variant="ai" size="sm" onClick={onGenerate} disabled={isGenerating}>
+            <Sparkles />
+            {isGenerating ? 'Generating…' : 'Generate'}
           </Button>
           <Button
             type="button"
-            variant="ghost"
-            size="icon"
+            variant="destructive"
+            size="sm"
             onClick={onDelete}
             disabled={isGenerating}
-            aria-label="Delete section"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 />
+            Delete
           </Button>
         </div>
       </CardHeader>
