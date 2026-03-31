@@ -29,6 +29,16 @@ export interface VpatCriterionRow {
   remarks: string | null;
   ai_confidence: 'high' | 'medium' | 'low' | null;
   ai_reasoning: string | null;
+  ai_referenced_issues:
+    | {
+        title: string;
+        severity: string;
+        id?: string;
+        assessment_id?: string;
+        project_id?: string;
+      }[]
+    | null;
+  ai_suggested_conformance: 'supports' | 'does_not_support' | 'not_applicable' | null;
   last_generated_at: string | null;
   updated_at: string;
   issue_count: number;
@@ -45,6 +55,8 @@ export interface UpdateCriterionRowInput {
   remarks?: string;
   ai_confidence?: VpatCriterionRow['ai_confidence'];
   ai_reasoning?: string;
+  ai_referenced_issues?: { title: string; severity: string }[];
+  ai_suggested_conformance?: VpatCriterionRow['ai_suggested_conformance'];
 }
 
 // Raw DB join shape
@@ -61,6 +73,8 @@ interface CriterionRowDbRow {
   remarks: string | null;
   ai_confidence: string | null;
   ai_reasoning: string | null;
+  ai_referenced_issues: string | null; // JSON string in DB
+  ai_suggested_conformance: string | null;
   last_generated_at: string | null;
   updated_at: string;
   issue_count?: number;
@@ -71,6 +85,16 @@ function parseRow(raw: CriterionRowDbRow): VpatCriterionRow {
     ...raw,
     conformance: raw.conformance as VpatCriterionRow['conformance'],
     ai_confidence: raw.ai_confidence as VpatCriterionRow['ai_confidence'],
+    ai_suggested_conformance:
+      raw.ai_suggested_conformance as VpatCriterionRow['ai_suggested_conformance'],
+    ai_referenced_issues: (() => {
+      if (!raw.ai_referenced_issues) return null;
+      try {
+        return JSON.parse(raw.ai_referenced_issues) as { title: string; severity: string }[];
+      } catch {
+        return null;
+      }
+    })(),
     issue_count: raw.issue_count ?? 0,
   };
 }
@@ -88,6 +112,8 @@ const joinedSelect = {
   remarks: vpatCriterionRows.remarks,
   ai_confidence: vpatCriterionRows.ai_confidence,
   ai_reasoning: vpatCriterionRows.ai_reasoning,
+  ai_referenced_issues: vpatCriterionRows.ai_referenced_issues,
+  ai_suggested_conformance: vpatCriterionRows.ai_suggested_conformance,
   last_generated_at: vpatCriterionRows.last_generated_at,
   updated_at: vpatCriterionRows.updated_at,
 };
@@ -171,6 +197,8 @@ export async function updateCriterionRow(
       | 'remarks'
       | 'ai_confidence'
       | 'ai_reasoning'
+      | 'ai_referenced_issues'
+      | 'ai_suggested_conformance'
       | 'last_generated_at'
       | 'updated_at'
     >
@@ -184,10 +212,38 @@ export async function updateCriterionRow(
     values.ai_reasoning = input.ai_reasoning;
     values.last_generated_at = new Date().toISOString();
   }
+  if (input.ai_referenced_issues !== undefined) {
+    values.ai_referenced_issues = JSON.stringify(input.ai_referenced_issues);
+  }
+  if (input.ai_suggested_conformance !== undefined) {
+    values.ai_suggested_conformance = input.ai_suggested_conformance;
+  }
 
   values.updated_at = new Date().toISOString();
 
   db().update(vpatCriterionRows).set(values).where(eq(vpatCriterionRows.id, rowId)).run();
+
+  // Reset reviewed VPAT to draft if conformance or remarks changed
+  if (input.conformance !== undefined || input.remarks !== undefined) {
+    // Dynamic import of schema (not vpats.ts) to avoid circular dependency:
+    // vpats.ts statically imports vpat-criterion-rows.ts, so importing vpats.ts
+    // here would create a cycle. Schema has no such dependency.
+    const { vpats: vpatsTable } = await import('./schema');
+    const vpatRow = db()
+      .select({ status: vpatsTable.status })
+      .from(vpatsTable)
+      .where(eq(vpatsTable.id, existing.vpat_id))
+      .limit(1)
+      .get() as { status: string } | undefined;
+    if (vpatRow?.status === 'reviewed') {
+      const now = new Date().toISOString();
+      db()
+        .update(vpatsTable)
+        .set({ status: 'draft', reviewed_by: null, reviewed_at: null, updated_at: now })
+        .where(eq(vpatsTable.id, existing.vpat_id))
+        .run();
+    }
+  }
 
   return getCriterionRow(rowId);
 }

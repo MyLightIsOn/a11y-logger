@@ -60,6 +60,8 @@ describe('createVpatSnapshot', () => {
           remarks: null,
         },
       ],
+      reviewed_by: null,
+      reviewed_at: null,
     });
     expect(snap.id).toBeDefined();
     expect(snap.version_number).toBe(2);
@@ -78,6 +80,8 @@ describe('listVpatSnapshots', () => {
       wcag_level: 'AA',
       product_scope: ['web'],
       criterion_rows: [],
+      reviewed_by: null,
+      reviewed_at: null,
     };
     await createVpatSnapshot(vpatId, 1, now, data);
     await createVpatSnapshot(vpatId, 2, now, data);
@@ -87,6 +91,25 @@ describe('listVpatSnapshots', () => {
     expect(list[1]!.version_number).toBe(1);
     // Should NOT include the snapshot blob
     expect((list[0]! as unknown as Record<string, unknown>).snapshot).toBeUndefined();
+  });
+
+  it('includes created_at in returned summaries', async () => {
+    const now = new Date().toISOString();
+    const data = {
+      title: 'T',
+      description: null,
+      standard_edition: 'WCAG',
+      wcag_version: '2.1',
+      wcag_level: 'AA',
+      product_scope: ['web'],
+      criterion_rows: [],
+      reviewed_by: null,
+      reviewed_at: null,
+    };
+    await createVpatSnapshot(vpatId, 1, now, data);
+    const list = await listVpatSnapshots(vpatId);
+    expect(list[0]!.created_at).toBeDefined();
+    expect(typeof list[0]!.created_at).toBe('string');
   });
 });
 
@@ -101,6 +124,8 @@ describe('getVpatSnapshot', () => {
       wcag_level: 'AA',
       product_scope: ['web'],
       criterion_rows: [],
+      reviewed_by: null,
+      reviewed_at: null,
     };
     await createVpatSnapshot(vpatId, 2, now, data);
     const snap = await getVpatSnapshot(vpatId, 2);

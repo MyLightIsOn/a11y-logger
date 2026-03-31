@@ -88,6 +88,8 @@ export const vpats = sqliteTable('vpats', {
   status: text('status').notNull().default('draft'),
   version_number: integer('version_number').notNull().default(1),
   published_at: text('published_at'),
+  reviewed_by: text('reviewed_by'),
+  reviewed_at: text('reviewed_at'),
   created_by: text('created_by'),
   created_at: text('created_at').notNull(),
   updated_at: text('updated_at').notNull(),
@@ -116,6 +118,8 @@ export const vpatCriterionRows = sqliteTable('vpat_criterion_rows', {
   remarks: text('remarks'),
   ai_confidence: text('ai_confidence'),
   ai_reasoning: text('ai_reasoning'),
+  ai_referenced_issues: text('ai_referenced_issues'),
+  ai_suggested_conformance: text('ai_suggested_conformance'),
   last_generated_at: text('last_generated_at'),
   updated_at: text('updated_at').notNull(),
 });
@@ -126,6 +130,7 @@ export const vpatSnapshots = sqliteTable('vpat_snapshots', {
   version_number: integer('version_number').notNull(),
   published_at: text('published_at').notNull(),
   snapshot: text('snapshot').notNull(),
+  created_at: text('created_at').notNull().default(''),
 });
 
 export type VpatSnapshotRow = typeof vpatSnapshots.$inferSelect;

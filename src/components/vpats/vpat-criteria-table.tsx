@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef, memo } from 'react';
 import { useForm } from 'react-hook-form';
 import type { UseFormRegister } from 'react-hook-form';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Info, Sparkles } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -21,8 +21,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { VpatAiPanel } from '@/components/vpats/vpat-ai-panel';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 
 const CONFORMANCE_OPTIONS = [
@@ -56,182 +56,183 @@ const STANDARD_GROUPS: { label: string; sections: string[] }[] = [
 // but must be grouped by criterion_level (A/AA/AAA) to match the standard VPAT table format.
 const WCAG_PRINCIPLE_SECTIONS = new Set(['Perceivable', 'Operable', 'Understandable', 'Robust']);
 
-const CONFIDENCE_COLORS: Record<string, string> = {
-  high: 'bg-green-100 text-green-800',
-  medium: 'bg-amber-100 text-amber-800',
-  low: 'bg-red-100 text-red-800',
-};
-
 type RemarksFormValues = Record<string, string>;
 
 interface CriterionTableRowProps {
   row: VpatCriterionRow;
+  isEven: boolean;
   readOnly: boolean;
   aiEnabled: boolean;
   isGenerating: boolean;
+  isGeneratingAll: boolean;
   onRowChange: (rowId: string, update: { conformance?: string }) => void;
   scheduleRemarksSave: (rowId: string, value: string) => void;
   onGenerateRow?: (rowId: string) => void;
   onCriterionClick?: (criterionCode: string) => void;
+  onAiInfoClick?: (row: VpatCriterionRow) => void;
   register: UseFormRegister<RemarksFormValues>;
 }
 
-// Isolated per-row component — owns isExpanded state so toggling reasoning
-// only re-renders this row, not the entire table.
 const CriterionTableRow = memo(function CriterionTableRow({
   row,
+  isEven,
   readOnly,
   aiEnabled,
   isGenerating,
+  isGeneratingAll,
   onRowChange,
   scheduleRemarksSave,
   onGenerateRow,
   onCriterionClick,
+  onAiInfoClick,
   register,
 }: CriterionTableRowProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleReasoning = useCallback(() => setIsExpanded((v) => !v), []);
+  const isDisabled = isGenerating || isGeneratingAll;
+  const hasAiInfo = !!(
+    row.ai_confidence ||
+    row.ai_reasoning ||
+    row.ai_suggested_conformance ||
+    row.ai_referenced_issues
+  );
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, []);
+
+  // Resize after row.remarks changes — rAF lets the parent's setValue update the DOM first.
+  useEffect(() => {
+    requestAnimationFrame(() => autoResize(textareaRef.current));
+  }, [row.remarks, autoResize]);
 
   const isUnresolved = row.conformance === 'not_evaluated';
   const conformanceLabel =
     CONFORMANCE_OPTIONS.find((o) => o.value === row.conformance)?.label ?? row.conformance;
 
   return (
-    <TableRow
-      data-testid={`row-${row.id}`}
-      className={`border-l-4 ${isUnresolved ? 'border-amber-400' : 'border-transparent'}`}
-    >
-      <TableCell className="font-mono text-sm align-top pt-3">{row.criterion_code}</TableCell>
-      <TableCell className="align-top pt-3">
-        {onCriterionClick ? (
-          <Button
-            type="button"
-            variant="link"
-            className="h-auto p-0 font-medium text-sm text-left"
-            onClick={() => onCriterionClick(row.criterion_code)}
-            aria-label={`View issues for ${row.criterion_code}`}
-          >
-            {row.criterion_name}
-            {row.issue_count > 0 && (
-              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                ({row.issue_count})
-              </span>
-            )}
-          </Button>
-        ) : (
-          <div className="font-medium text-sm">
-            {row.criterion_name}
-            {row.issue_count > 0 && (
-              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                ({row.issue_count})
-              </span>
-            )}
-          </div>
-        )}
-      </TableCell>
-      <TableCell className="align-top pt-3">
-        {readOnly ? (
-          <span className="text-sm">{conformanceLabel}</span>
-        ) : (
-          <Select
-            value={row.conformance}
-            onValueChange={(v) => onRowChange(row.id, { conformance: v })}
-          >
-            <SelectTrigger
-              className="h-8 text-sm"
-              aria-label={`Conformance for ${row.criterion_code}`}
+    <>
+      <TableRow
+        data-testid={`row-${row.id}`}
+        className={`border-l-4 ${!readOnly && isUnresolved ? 'border-amber-400' : 'border-primary border-l-0'} ${isEven ? 'bg-muted' : ''}`}
+      >
+        <TableCell className="font-mono text-sm align-top pt-3">{row.criterion_code}</TableCell>
+        <TableCell className="align-top pt-3">
+          {onCriterionClick ? (
+            <Button
+              type="button"
+              variant="link"
+              className="h-auto p-0 font-medium text-sm text-left"
+              onClick={() => onCriterionClick(row.criterion_code)}
+              aria-label={`View issues for ${row.criterion_code}`}
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {CONFORMANCE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      </TableCell>
-      <TableCell className="align-top pt-2">
-        {/* AI confidence badge + reasoning toggle */}
-        {(row.ai_confidence || row.ai_reasoning) && (
-          <div className="mb-1 flex items-center gap-2">
-            {row.ai_confidence && (
-              <Badge
-                variant="outline"
-                className={`text-xs ${CONFIDENCE_COLORS[row.ai_confidence] ?? ''}`}
+              {row.criterion_name}
+              {!readOnly && row.issue_count > 0 && (
+                <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                  ({row.issue_count})
+                </span>
+              )}
+            </Button>
+          ) : (
+            <div className="font-medium text-sm">
+              {row.criterion_name}
+              {!readOnly && row.issue_count > 0 && (
+                <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                  ({row.issue_count})
+                </span>
+              )}
+            </div>
+          )}
+        </TableCell>
+        <TableCell className="align-top pt-3">
+          {readOnly ? (
+            <span className="text-sm">{conformanceLabel}</span>
+          ) : (
+            <Select
+              value={row.conformance}
+              onValueChange={(v) => onRowChange(row.id, { conformance: v })}
+              disabled={isDisabled}
+            >
+              <SelectTrigger
+                className="h-8 text-sm"
+                aria-label={`Conformance for ${row.criterion_code}`}
               >
-                {row.ai_confidence}
-              </Badge>
-            )}
-            {row.ai_reasoning && (
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CONFORMANCE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </TableCell>
+        <TableCell className="align-top pt-2">
+          {readOnly ? (
+            <span className="text-sm text-muted-foreground whitespace-pre-wrap">
+              {row.remarks || '—'}
+            </span>
+          ) : (
+            <Textarea
+              {...(() => {
+                const { ref, ...rest } = register(row.id, {
+                  onChange: (e) => scheduleRemarksSave(row.id, e.target.value),
+                });
+                return {
+                  ...rest,
+                  ref: (el: HTMLTextAreaElement | null) => {
+                    ref(el);
+                    textareaRef.current = el;
+                  },
+                };
+              })()}
+              className="text-sm min-h-10 overflow-hidden"
+              style={{ resize: 'vertical' }}
+              placeholder="Add remarks…"
+              disabled={isDisabled}
+              onInput={(e) => autoResize(e.currentTarget)}
+              aria-label={`Remarks for ${row.criterion_code}`}
+            />
+          )}
+        </TableCell>
+        {aiEnabled && !readOnly && (
+          <TableCell className="align-top pt-3 text-center">
+            <div className="flex items-center justify-center gap-1">
               <Button
                 type="button"
-                variant="ghost"
+                variant="ai"
                 size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={toggleReasoning}
+                onClick={() => onGenerateRow?.(row.id)}
+                disabled={isDisabled}
                 aria-label={
-                  isExpanded
-                    ? `Hide reasoning for ${row.criterion_code}`
-                    : `Show reasoning for ${row.criterion_code}`
+                  isGenerating
+                    ? `Generating for ${row.criterion_code}`
+                    : `Generate for ${row.criterion_code}`
                 }
-                aria-expanded={isExpanded}
               >
-                Why?
+                <Sparkles />
+                {isGenerating ? 'Generating…' : 'Generate'}
               </Button>
-            )}
-          </div>
+              {hasAiInfo && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => onAiInfoClick?.(row)}
+                  aria-label={`AI info for ${row.criterion_code}`}
+                >
+                  <Info className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </TableCell>
         )}
-
-        {/* Low confidence warning */}
-        {row.ai_confidence === 'low' && (
-          <p className="text-xs text-amber-600 mb-1">
-            AI flagged limited evidence — consider additional testing before setting conformance.
-          </p>
-        )}
-
-        {/* Reasoning expandable */}
-        {isExpanded && row.ai_reasoning && (
-          <div className="text-xs text-muted-foreground bg-muted/50 rounded p-2 mb-1 whitespace-pre-wrap">
-            {row.ai_reasoning}
-          </div>
-        )}
-
-        {readOnly ? (
-          <span className="text-sm text-muted-foreground">{row.remarks || '—'}</span>
-        ) : (
-          <Textarea
-            {...register(row.id, {
-              onChange: (e) => scheduleRemarksSave(row.id, e.target.value),
-            })}
-            rows={2}
-            className="text-sm min-h-0"
-            placeholder="Add remarks…"
-            aria-label={`Remarks for ${row.criterion_code}`}
-          />
-        )}
-      </TableCell>
-      {aiEnabled && !readOnly && (
-        <TableCell className="align-top pt-3">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => onGenerateRow?.(row.id)}
-            disabled={isGenerating}
-            aria-label={
-              isGenerating
-                ? `Generating for ${row.criterion_code}`
-                : `Generate for ${row.criterion_code}`
-            }
-          >
-            {isGenerating ? 'Generating…' : 'Generate'}
-          </Button>
-        </TableCell>
-      )}
-    </TableRow>
+      </TableRow>
+    </>
   );
 });
 
@@ -241,10 +242,12 @@ interface CriterionSectionProps {
   readOnly: boolean;
   aiEnabled: boolean;
   generatingRowId?: string | null;
+  isGeneratingAll: boolean;
   onRowChange: (rowId: string, update: { conformance?: string }) => void;
   scheduleRemarksSave: (rowId: string, value: string) => void;
   onGenerateRow?: (rowId: string) => void;
   onCriterionClick?: (criterionCode: string) => void;
+  onAiInfoClick?: (row: VpatCriterionRow) => void;
   register: UseFormRegister<RemarksFormValues>;
 }
 
@@ -255,13 +258,15 @@ const CriterionSection = memo(function CriterionSection({
   readOnly,
   aiEnabled,
   generatingRowId,
+  isGeneratingAll,
   onRowChange,
   scheduleRemarksSave,
   onGenerateRow,
   onCriterionClick,
+  onAiInfoClick,
   register,
 }: CriterionSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const label = SECTION_LABELS[section] ?? section;
   const resolved = sectionRows.filter((r) => r.conformance !== 'not_evaluated').length;
   const total = sectionRows.length;
@@ -296,25 +301,28 @@ const CriterionSection = memo(function CriterionSection({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-24">Criterion</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="w-48">Conformance</TableHead>
+                <TableHead className={readOnly ? 'w-16' : 'w-20'}>Criterion</TableHead>
+                <TableHead className={readOnly ? 'w-[20%]' : 'w-[30%]'}>Name</TableHead>
+                <TableHead className={readOnly ? 'w-28' : 'w-40'}>Conformance</TableHead>
                 <TableHead>Remarks</TableHead>
-                {aiEnabled && !readOnly && <TableHead className="w-28">AI</TableHead>}
+                {aiEnabled && !readOnly && <TableHead className="w-36 text-center">AI</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sectionRows.map((row) => (
+              {sectionRows.map((row, i) => (
                 <CriterionTableRow
                   key={row.id}
                   row={row}
+                  isEven={i % 2 === 0}
                   readOnly={readOnly}
                   aiEnabled={aiEnabled}
                   isGenerating={generatingRowId === row.id}
+                  isGeneratingAll={isGeneratingAll}
                   onRowChange={onRowChange}
                   scheduleRemarksSave={scheduleRemarksSave}
                   onGenerateRow={onGenerateRow}
                   onCriterionClick={onCriterionClick}
+                  onAiInfoClick={onAiInfoClick}
                   register={register}
                 />
               ))}
@@ -335,6 +343,7 @@ interface VpatCriteriaTableProps {
   onGenerateRow?: (rowId: string) => void;
   onGenerateAll?: () => void;
   generatingRowId?: string | null;
+  isGeneratingAll?: boolean;
   readOnly?: boolean;
   aiEnabled?: boolean;
   onCriterionClick?: (criterionCode: string) => void;
@@ -347,14 +356,26 @@ export function VpatCriteriaTable({
   onGenerateRow,
   onGenerateAll,
   generatingRowId,
+  isGeneratingAll = false,
   readOnly = false,
   aiEnabled = false,
   onCriterionClick,
 }: VpatCriteriaTableProps) {
+  const [aiPanelRow, setAiPanelRow] = useState<VpatCriterionRow | null>(null);
+
   // RHF manages remarks as uncontrolled inputs — typing never triggers React re-renders.
-  const { register } = useForm<RemarksFormValues>({
+  const { register, setValue, getValues } = useForm<RemarksFormValues>({
     defaultValues: Object.fromEntries(rows.map((r) => [r.id, r.remarks ?? ''])),
   });
+
+  // Sync rows → form when AI generation updates remarks outside of user input.
+  useEffect(() => {
+    rows.forEach((row) => {
+      if (getValues(row.id) !== (row.remarks ?? '')) {
+        setValue(row.id, row.remarks ?? '');
+      }
+    });
+  }, [rows, setValue, getValues]);
 
   // Per-row debounce timers for remarks saves.
   const saveTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -395,7 +416,14 @@ export function VpatCriteriaTable({
     <div className="space-y-6">
       {aiEnabled && !readOnly && onGenerateAll && (
         <div className="flex justify-end">
-          <Button type="button" variant="outline" size="sm" onClick={onGenerateAll}>
+          <Button
+            type="button"
+            variant="ai"
+            size="sm"
+            onClick={onGenerateAll}
+            disabled={isGeneratingAll}
+          >
+            <Sparkles />
             Generate All
           </Button>
         </div>
@@ -414,16 +442,19 @@ export function VpatCriteriaTable({
                 readOnly={readOnly}
                 aiEnabled={aiEnabled}
                 generatingRowId={generatingRowId}
+                isGeneratingAll={isGeneratingAll}
                 onRowChange={onRowChange}
                 scheduleRemarksSave={scheduleRemarksSave}
                 onGenerateRow={onGenerateRow}
                 onCriterionClick={onCriterionClick}
+                onAiInfoClick={setAiPanelRow}
                 register={register}
               />
             ))}
           </div>
         );
       })}
+      {aiPanelRow && <VpatAiPanel row={aiPanelRow} onClose={() => setAiPanelRow(null)} />}
     </div>
   );
 }

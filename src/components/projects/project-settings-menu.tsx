@@ -76,10 +76,7 @@ export function ProjectSettingsMenu({ projectId, projectName }: ProjectSettingsM
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onSelect={() => setDeleteOpen(true)}
-            className="text-destructive focus:text-destructive"
-          >
+          <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="">
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Project
           </DropdownMenuItem>

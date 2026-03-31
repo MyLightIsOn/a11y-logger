@@ -5,6 +5,7 @@ import { vpats, projects, vpatCriterionRows } from './schema';
 import type * as sqliteSchema from './schema';
 import { getCriteriaForEdition } from './criteria';
 import { createCriterionRows, countUnresolvedRows, getCriterionRows } from './vpat-criterion-rows';
+import type { VpatCriterionRow } from './vpat-criterion-rows';
 import { createVpatSnapshot } from './vpat-snapshots';
 import type { VpatSnapshotData } from './vpat-snapshots';
 import type { CreateVpatParams, UpdateVpatInput } from '../validators/vpats';
@@ -32,6 +33,39 @@ export class UnresolvedRowsError extends Error {
   }
 }
 
+export class NotReviewedError extends Error {
+  readonly code = 'NOT_REVIEWED' as const;
+  constructor(id: string) {
+    super(`Cannot publish: VPAT ${id} has not been reviewed`);
+    this.name = 'NotReviewedError';
+  }
+}
+
+export class NotPublishedError extends Error {
+  constructor(id: string) {
+    super(`VPAT ${id} is not published`);
+    this.name = 'NotPublishedError';
+  }
+}
+
+export interface VpatData {
+  id: string;
+  title: string;
+  status: 'draft' | 'reviewed' | 'published';
+  standard_edition: 'WCAG' | '508' | 'EU' | 'INT';
+  wcag_version: '2.1' | '2.2';
+  wcag_level: 'A' | 'AA' | 'AAA';
+  product_scope: string[];
+  project_id: string;
+  version_number: number;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  criterion_rows: VpatCriterionRow[];
+}
+
 export interface Vpat {
   id: string;
   project_id: string;
@@ -41,9 +75,11 @@ export interface Vpat {
   wcag_version: '2.1' | '2.2';
   wcag_level: 'A' | 'AA' | 'AAA';
   product_scope: string[];
-  status: 'draft' | 'published';
+  status: 'draft' | 'reviewed' | 'published';
   version_number: number;
   published_at: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -64,6 +100,8 @@ interface VpatRow {
   status: string;
   version_number: number;
   published_at: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -121,6 +159,8 @@ export async function getVpatsWithProgress(projectId?: string): Promise<VpatWith
       status: vpats.status,
       version_number: vpats.version_number,
       published_at: vpats.published_at,
+      reviewed_by: vpats.reviewed_by,
+      reviewed_at: vpats.reviewed_at,
       created_at: vpats.created_at,
       updated_at: vpats.updated_at,
       project_name: projects.name,
@@ -164,6 +204,8 @@ export async function getVpatsWithProject(projectId?: string): Promise<VpatWithP
       status: vpats.status,
       version_number: vpats.version_number,
       published_at: vpats.published_at,
+      reviewed_by: vpats.reviewed_by,
+      reviewed_at: vpats.reviewed_at,
       created_at: vpats.created_at,
       updated_at: vpats.updated_at,
       project_name: projects.name,
@@ -290,6 +332,20 @@ export async function deleteVpat(id: string): Promise<boolean> {
   return true;
 }
 
+export async function reviewVpat(id: string, reviewerName: string): Promise<Vpat> {
+  const existing = await getVpat(id);
+  if (!existing) throw new VpatNotFoundError(id);
+  const unresolved = countUnresolvedRows(id);
+  if (unresolved > 0) throw new UnresolvedRowsError(unresolved);
+  const now = new Date().toISOString();
+  db()
+    .update(vpats)
+    .set({ status: 'reviewed', reviewed_by: reviewerName, reviewed_at: now, updated_at: now })
+    .where(eq(vpats.id, id))
+    .run();
+  return (await getVpat(id))!;
+}
+
 export async function publishVpat(id: string): Promise<Vpat> {
   const existing = await getVpat(id);
   if (!existing) throw new VpatNotFoundError(id);
@@ -297,6 +353,7 @@ export async function publishVpat(id: string): Promise<Vpat> {
   if (unresolved > 0) {
     throw new UnresolvedRowsError(unresolved);
   }
+  if (existing.status !== 'reviewed') throw new NotReviewedError(id);
   // Capture criterion rows before status update (rows don't change during publish)
   const criterionRows = await getCriterionRows(id);
   const publishedAt = new Date().toISOString();
@@ -318,6 +375,8 @@ export async function publishVpat(id: string): Promise<Vpat> {
     wcag_version: published.wcag_version,
     wcag_level: published.wcag_level,
     product_scope: published.product_scope,
+    reviewed_by: published.reviewed_by,
+    reviewed_at: published.reviewed_at,
     criterion_rows: criterionRows.map((r) => ({
       criterion_code: r.criterion_code,
       criterion_name: r.criterion_name,
@@ -330,4 +389,13 @@ export async function publishVpat(id: string): Promise<Vpat> {
   };
   await createVpatSnapshot(published.id, published.version_number, publishedAt, snapshotData);
   return published;
+}
+
+export async function unpublishVpat(id: string): Promise<Vpat> {
+  const existing = await getVpat(id);
+  if (!existing) throw new VpatNotFoundError(id);
+  if (existing.status !== 'published') throw new NotPublishedError(id);
+  const now = new Date().toISOString();
+  db().update(vpats).set({ status: 'draft', updated_at: now }).where(eq(vpats.id, id)).run();
+  return (await getVpat(id))!;
 }

@@ -1,16 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
-}));
-
 vi.mock('@/components/vpats/vpat-card', () => ({
   VpatCard: () => <div data-testid="vpat-card" />,
-}));
-
-vi.mock('@/components/vpats/import-openacr-modal', () => ({
-  ImportOpenAcrModal: () => <button>Import from OpenACR</button>,
 }));
 
 import { VpatsListView } from '../vpats-list-view';
@@ -21,6 +13,14 @@ describe('VpatsListView layout', () => {
     expect(screen.getByRole('link', { name: /new vpat/i })).toBeInTheDocument();
   });
 
+  it('wraps heading in a labelled section', () => {
+    render(<VpatsListView vpats={[]} />);
+    const heading = screen.getByRole('heading', { name: 'VPATs' });
+    expect(heading).toHaveAttribute('id', 'vpats-heading');
+    const section = heading.closest('section')!;
+    expect(section).toHaveAttribute('aria-labelledby', 'vpats-heading');
+  });
+
   it('ViewToggle is in the header row with the New VPAT button', () => {
     render(<VpatsListView vpats={[]} />);
     const heading = screen.getByRole('heading', { name: 'VPATs' });
@@ -29,8 +29,8 @@ describe('VpatsListView layout', () => {
     expect(headerRow).toContainElement(viewGroup);
   });
 
-  it('ViewToggle is rendered on the page', () => {
+  it('does not render an Import from OpenACR button', () => {
     render(<VpatsListView vpats={[]} />);
-    expect(screen.getByRole('group', { name: 'View options' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /import from openacr/i })).not.toBeInTheDocument();
   });
 });

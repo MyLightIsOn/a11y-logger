@@ -180,20 +180,22 @@ describe('core tables schema', () => {
         'id',
         'project_id',
         'title',
+        'description',
+        'standard_edition',
+        'wcag_version',
+        'wcag_level',
+        'product_scope',
         'status',
         'version_number',
+        'published_at',
+        'reviewed_by',
+        'reviewed_at',
         'wcag_scope',
         'criteria_rows',
         'ai_generated',
         'created_by',
-        'published_at',
         'created_at',
         'updated_at',
-        'wcag_version',
-        'wcag_level',
-        'standard_edition',
-        'product_scope',
-        'description',
       ]);
     });
 
@@ -236,6 +238,8 @@ describe('core tables schema', () => {
         'ai_reasoning',
         'last_generated_at',
         'updated_at',
+        'ai_referenced_issues',
+        'ai_suggested_conformance',
       ]);
     });
 
@@ -253,7 +257,14 @@ describe('core tables schema', () => {
   describe('vpat_snapshots', () => {
     it('has the correct columns', () => {
       const columns = getColumnNames(db, 'vpat_snapshots');
-      expect(columns).toEqual(['id', 'vpat_id', 'version_number', 'published_at', 'snapshot']);
+      expect(columns).toEqual([
+        'id',
+        'vpat_id',
+        'version_number',
+        'published_at',
+        'snapshot',
+        'created_at',
+      ]);
     });
 
     it('includes vpat_snapshots table', () => {

@@ -1,15 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import jsYaml from 'js-yaml';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { parseOpenAcr, type OpenAcrParseResult } from '@/lib/import/parse-openacr';
 
 const EDITIONS = [
   {
@@ -24,6 +34,11 @@ const EDITIONS = [
     label: 'International',
     description: 'Most comprehensive; includes all three standards',
   },
+  {
+    value: 'IMPORT',
+    label: 'Import from OpenACR',
+    description: 'Import an existing OpenACR YAML file',
+  },
 ] as const;
 
 const PRODUCT_SCOPES = [
@@ -35,7 +50,7 @@ const PRODUCT_SCOPES = [
   { value: 'telephony', label: 'Telephony' },
 ];
 
-type Edition = 'WCAG' | '508' | 'EU' | 'INT';
+type Edition = 'WCAG' | '508' | 'EU' | 'INT' | 'IMPORT';
 
 export default function NewVpatPage() {
   const router = useRouter();
@@ -46,12 +61,18 @@ export default function NewVpatPage() {
   // Step 1
   const [edition, setEdition] = useState<Edition>('WCAG');
 
-  // Step 2
+  // Step 2 — create flow
   const [wcagVersion, setWcagVersion] = useState<'2.1' | '2.2'>('2.1');
   const [wcagLevel, setWcagLevel] = useState<'A' | 'AA' | 'AAA'>('AA');
   const [productScope, setProductScope] = useState<string[]>(['web']);
 
-  // Step 3
+  // Step 2 — import flow
+  const [yamlString, setYamlString] = useState('');
+  const [parsed, setParsed] = useState<OpenAcrParseResult | null>(null);
+  const [parseError, setParseError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Step 3 — shared
   const [title, setTitle] = useState('');
   const [projectId, setProjectId] = useState('');
   const [description, setDescription] = useState('');
@@ -76,7 +97,34 @@ export default function NewVpatPage() {
     );
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setParseError(null);
+    setParsed(null);
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      try {
+        const doc = jsYaml.load(text);
+        const result = parseOpenAcr(doc);
+        if (!result) {
+          setParseError(
+            'File does not appear to be a valid OpenACR YAML (missing catalog or chapters).'
+          );
+          return;
+        }
+        setYamlString(text);
+        setParsed(result);
+      } catch {
+        setParseError('Could not parse YAML. Please check the file format.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  async function handleCreateSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) {
       toast.error('Title is required');
@@ -100,13 +148,8 @@ export default function NewVpatPage() {
         product_scope: productScope,
         description: description.trim() || null,
       };
-      // Only include wcag_version and wcag_level for non-locked editions
-      if (edition !== '508') {
-        payload.wcag_version = wcagVersion;
-      }
-      if (edition !== '508' && edition !== 'EU') {
-        payload.wcag_level = wcagLevel;
-      }
+      if (edition !== '508') payload.wcag_version = wcagVersion;
+      if (edition !== '508' && edition !== 'EU') payload.wcag_level = wcagLevel;
 
       const res = await fetch('/api/vpats', {
         method: 'POST',
@@ -122,6 +165,34 @@ export default function NewVpatPage() {
       router.push(`/vpats/${json.data.id}`);
     } catch {
       toast.error('Failed to create VPAT');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleImportSubmit() {
+    if (isSubmitting) return;
+    if (!projectId) {
+      toast.error('Project is required');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/vpats/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, yaml: yamlString }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        toast.error(json.error ?? 'Import failed');
+        return;
+      }
+      toast.success('VPAT imported');
+      router.push(`/vpats/${json.data.id}`);
+    } catch {
+      toast.error('Import failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -154,7 +225,7 @@ export default function NewVpatPage() {
                   name="edition"
                   value={ed.value}
                   checked={edition === ed.value}
-                  onChange={() => setEdition(ed.value)}
+                  onChange={() => setEdition(ed.value as Edition)}
                   className="mt-1"
                 />
                 <div>
@@ -165,41 +236,83 @@ export default function NewVpatPage() {
             ))}
             <div className="flex justify-end pt-2">
               <Button type="button" onClick={() => setStep(2)}>
-                Next
+                Next <ChevronRight />
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Step 2: Scope */}
-      {step === 2 && (
+      {/* Step 2: Upload (import flow) */}
+      {step === 2 && edition === 'IMPORT' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Step 2 of 3: Upload OpenACR</CardTitle>
+            <CardDescription>Upload a valid OpenACR YAML file to import.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="yaml-file-input">YAML File</Label>
+              <input
+                id="yaml-file-input"
+                ref={fileInputRef}
+                type="file"
+                accept=".yaml,.yml"
+                onChange={handleFileChange}
+                className="block w-full text-sm mt-1"
+              />
+            </div>
+            {parseError && <p className="text-sm text-destructive">{parseError}</p>}
+            {parsed && (
+              <div className="rounded border p-3 text-sm space-y-1">
+                <p className="font-medium">{parsed.title}</p>
+                <p className="text-muted-foreground">
+                  {parsed.standard_edition} · WCAG {parsed.wcag_version} · Level {parsed.wcag_level}
+                </p>
+                <p className="text-muted-foreground">{parsed.criteria.length} criteria</p>
+              </div>
+            )}
+            <div className="flex justify-between pt-2">
+              <Button type="button" variant="cancel" onClick={() => setStep(1)}>
+                <ChevronLeft /> Back
+              </Button>
+              <Button type="button" onClick={() => setStep(3)} disabled={!parsed}>
+                Next <ChevronRight />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Step 2: Scope (create flow) */}
+      {step === 2 && edition !== 'IMPORT' && (
         <Card>
           <CardHeader>
             <CardTitle>Step 2 of 3: Scope</CardTitle>
             <CardDescription>Configure the scope for this VPAT.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
-            {/* WCAG Version — hidden for 508 */}
             {edition !== '508' && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="wcag-version">WCAG Version</Label>
-                <select
-                  id="wcag-version"
+                <Select
                   value={wcagVersion}
-                  onChange={(e) => setWcagVersion(e.target.value as '2.1' | '2.2')}
-                  className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  onValueChange={(v) => setWcagVersion(v as '2.1' | '2.2')}
                 >
-                  <option value="2.1">WCAG 2.1</option>
-                  <option value="2.2">WCAG 2.2</option>
-                </select>
+                  <SelectTrigger id="wcag-version">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2.1">WCAG 2.1</SelectItem>
+                    <SelectItem value="2.2">WCAG 2.2</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
 
-            {/* Conformance Level — hidden for 508 and EU */}
             {edition !== '508' && edition !== 'EU' && (
               <fieldset className="space-y-2">
-                <legend className="text-sm font-medium">Conformance Level</legend>
+                <legend className="text-sm font-bold">Conformance Level</legend>
                 {(['A', 'AA', 'AAA'] as const).map((lvl) => (
                   <label key={lvl} className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -228,9 +341,8 @@ export default function NewVpatPage() {
               </p>
             )}
 
-            {/* Product Scope */}
             <fieldset className="space-y-2">
-              <legend className="text-sm font-medium">Product Scope</legend>
+              <legend className="text-sm font-bold">Product Scope</legend>
               <p className="text-sm text-muted-foreground">
                 Select all product types this VPAT covers.
               </p>
@@ -250,20 +362,73 @@ export default function NewVpatPage() {
             </fieldset>
 
             <div className="flex justify-between pt-2">
-              <Button type="button" variant="outline" onClick={() => setStep(1)}>
-                Back
+              <Button type="button" variant="cancel" onClick={() => setStep(1)}>
+                <ChevronLeft /> Back
               </Button>
               <Button type="button" onClick={() => setStep(3)} disabled={productScope.length === 0}>
-                Next
+                Next <ChevronRight />
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Step 3: Details */}
-      {step === 3 && (
-        <form onSubmit={handleSubmit}>
+      {/* Step 3: Project + Confirm (import flow) */}
+      {step === 3 && edition === 'IMPORT' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Step 3 of 3: Select Project</CardTitle>
+            <CardDescription>Associate this import with a project.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {parsed && (
+              <div className="rounded border p-3 text-sm space-y-1 bg-muted/30">
+                <p className="font-medium">{parsed.title}</p>
+                <p className="text-muted-foreground">
+                  {parsed.standard_edition} · WCAG {parsed.wcag_version} · Level {parsed.wcag_level}{' '}
+                  · {parsed.criteria.length} criteria
+                </p>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="import-project">Project *</Label>
+              <select
+                id="import-project"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                <option value="">— Select a project —</option>
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              {projectsError && (
+                <p className="text-sm text-destructive">Failed to load projects. Please refresh.</p>
+              )}
+            </div>
+            <div className="flex justify-between pt-2">
+              <Button type="button" variant="cancel" onClick={() => setStep(2)}>
+                <ChevronLeft /> Back
+              </Button>
+              <div className="flex gap-2">
+                <Button type="button" variant="cancel" asChild>
+                  <Link href="/vpats">Cancel</Link>
+                </Button>
+                <Button onClick={handleImportSubmit} disabled={!projectId || isSubmitting}>
+                  {isSubmitting ? 'Importing…' : 'Import'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Step 3: Details (create flow) */}
+      {step === 3 && edition !== 'IMPORT' && (
+        <form onSubmit={handleCreateSubmit}>
           <Card>
             <CardHeader>
               <CardTitle>Step 3 of 3: Details</CardTitle>

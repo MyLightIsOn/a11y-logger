@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { initDb, closeDb } from '../index';
-import { getDbClient } from '../client';
+import { getDbClient, getDb } from '../client';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import type * as sqliteSchema from '../schema';
 import * as schema from '../schema';
@@ -13,13 +13,17 @@ import {
   updateVpat,
   deleteVpat,
   publishVpat,
+  unpublishVpat,
+  reviewVpat,
   getVpatsWithProject,
   getVpatsWithProgress,
   importVpatFromOpenAcr,
+  VpatNotFoundError,
+  NotPublishedError,
 } from '../vpats';
 import { getCriterionRows } from '../vpat-criterion-rows';
 import { getCriteriaByCode } from '../criteria';
-import { listVpatSnapshots } from '../vpat-snapshots';
+import { listVpatSnapshots, getVpatSnapshot } from '../vpat-snapshots';
 import { eq } from 'drizzle-orm';
 
 function dbc() {
@@ -91,6 +95,19 @@ describe('createVpat', () => {
     expect(codes).not.toContain('1.3.4');
     expect(codes).not.toContain('1.4.10');
     expect(codes).toContain('302.1');
+  });
+
+  it('creates a VPAT with null reviewed_by and reviewed_at', async () => {
+    const vpat = await createVpat({
+      title: 'Review Test',
+      project_id: projectId,
+      standard_edition: 'WCAG',
+      wcag_version: '2.1',
+      wcag_level: 'AA',
+      product_scope: ['web'],
+    });
+    expect(vpat.reviewed_by).toBeNull();
+    expect(vpat.reviewed_at).toBeNull();
   });
 
   it('marks Chapter5 rows as not_applicable for web-only scope in 508 edition', async () => {
@@ -240,9 +257,52 @@ describe('publishVpat', () => {
         )
       )
       .run();
+    await reviewVpat(vpat.id, 'Test Reviewer');
     const published = await publishVpat(vpat.id);
     expect(published.status).toBe('published');
     expect(published.published_at).not.toBeNull();
+  });
+
+  it('throws NotReviewedError when status is draft', async () => {
+    const vpat = await createVpat({
+      title: 'Not Reviewed',
+      project_id: projectId,
+      standard_edition: 'WCAG',
+      wcag_version: '2.1',
+      wcag_level: 'AA',
+      product_scope: ['web'],
+    });
+    dbc()
+      .update(schema.vpatCriterionRows)
+      .set({ conformance: 'supports' })
+      .where(eq(schema.vpatCriterionRows.vpat_id, vpat.id))
+      .run();
+    await expect(publishVpat(vpat.id)).rejects.toThrow('reviewed');
+  });
+
+  it('publishes a reviewed VPAT and snapshot includes reviewer info', async () => {
+    const vpat = await createVpat({
+      title: 'Reviewed',
+      project_id: projectId,
+      standard_edition: 'WCAG',
+      wcag_version: '2.1',
+      wcag_level: 'AA',
+      product_scope: ['web'],
+    });
+    dbc()
+      .update(schema.vpatCriterionRows)
+      .set({ conformance: 'supports' })
+      .where(eq(schema.vpatCriterionRows.vpat_id, vpat.id))
+      .run();
+    await reviewVpat(vpat.id, 'Jane Smith');
+    const published = await publishVpat(vpat.id);
+    expect(published.status).toBe('published');
+    const snapshots = await listVpatSnapshots(vpat.id);
+    expect(snapshots).toHaveLength(1);
+    const snap = await getVpatSnapshot(vpat.id, snapshots[0]!.version_number);
+    expect(snap).not.toBeNull();
+    expect(snap!.data.reviewed_by).toBe('Jane Smith');
+    expect(snap!.data.reviewed_at).not.toBeNull();
   });
 });
 
@@ -363,10 +423,83 @@ describe('publishVpat snapshot creation', () => {
       .set({ conformance: 'supports' })
       .where(eq(schema.vpatCriterionRows.vpat_id, vpat.id))
       .run();
+    await reviewVpat(vpat.id, 'Test Reviewer');
     await publishVpat(vpat.id);
     const snapshots = await listVpatSnapshots(vpat.id);
     expect(snapshots).toHaveLength(1);
     expect(snapshots[0]!.version_number).toBe(2);
+  });
+});
+
+describe('reviewVpat', () => {
+  it('throws VpatNotFoundError for non-existent id', async () => {
+    await expect(reviewVpat('non-existent', 'Jane Smith')).rejects.toThrow('not found');
+  });
+
+  it('sets status to reviewed and saves reviewer info', async () => {
+    const vpat = await createVpat({
+      title: 'To Review',
+      project_id: projectId,
+      standard_edition: 'WCAG',
+      wcag_version: '2.1',
+      wcag_level: 'AA',
+      product_scope: ['web'],
+    });
+    // Resolve all rows so review is allowed
+    dbc()
+      .update(schema.vpatCriterionRows)
+      .set({ conformance: 'supports' })
+      .where(eq(schema.vpatCriterionRows.vpat_id, vpat.id))
+      .run();
+    const reviewed = await reviewVpat(vpat.id, 'Jane Smith');
+    expect(reviewed.status).toBe('reviewed');
+    expect(reviewed.reviewed_by).toBe('Jane Smith');
+    expect(reviewed.reviewed_at).not.toBeNull();
+  });
+
+  it('throws UnresolvedRowsError when rows are not_evaluated', async () => {
+    const vpat = await createVpat({
+      title: 'Unresolved',
+      project_id: projectId,
+      standard_edition: 'WCAG',
+      wcag_version: '2.1',
+      wcag_level: 'AA',
+      product_scope: ['web'],
+    });
+    // Leave rows as not_evaluated (default after createVpat)
+    await expect(reviewVpat(vpat.id, 'Jane Smith')).rejects.toThrow('unresolved');
+  });
+});
+
+describe('unpublishVpat', () => {
+  it('resets a published VPAT to draft', async () => {
+    const project = await createProject({ name: 'Unpublish Test' });
+    const vpat = await createVpat({
+      title: 'Published VPAT',
+      project_id: project.id,
+      standard_edition: 'WCAG',
+      product_scope: ['web'],
+    });
+    // Force status to published directly for test setup
+    getDb()!.prepare(`UPDATE vpats SET status = 'published' WHERE id = ?`).run(vpat.id);
+
+    const result = await unpublishVpat(vpat.id);
+    expect(result.status).toBe('draft');
+  });
+
+  it('throws VpatNotFoundError for unknown id', async () => {
+    await expect(unpublishVpat('nonexistent')).rejects.toThrow(VpatNotFoundError);
+  });
+
+  it('throws NotPublishedError when VPAT is not published', async () => {
+    const project = await createProject({ name: 'Draft Test' });
+    const vpat = await createVpat({
+      title: 'Draft VPAT',
+      project_id: project.id,
+      standard_edition: 'WCAG',
+      product_scope: ['web'],
+    });
+    await expect(unpublishVpat(vpat.id)).rejects.toThrow(NotPublishedError);
   });
 });
 

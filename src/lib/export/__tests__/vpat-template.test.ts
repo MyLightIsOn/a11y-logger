@@ -28,6 +28,8 @@ const mockVpat: Vpat = {
   status: 'published',
   version_number: 2,
   published_at: '2024-03-01T00:00:00Z',
+  reviewed_by: null,
+  reviewed_at: null,
   created_at: '2024-02-01T00:00:00Z',
   updated_at: '2024-03-01T00:00:00Z',
 };
@@ -45,6 +47,8 @@ const makeRow = (overrides: Partial<VpatCriterionRow> = {}): VpatCriterionRow =>
   remarks: 'All images have alt text.',
   ai_confidence: null,
   ai_reasoning: null,
+  ai_referenced_issues: null,
+  ai_suggested_conformance: null,
   last_generated_at: null,
   updated_at: '2026-01-01',
   issue_count: 0,
