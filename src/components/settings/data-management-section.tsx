@@ -24,6 +24,23 @@ interface DataManagementSectionProps {
 
 export function DataManagementSection({ dbPath, mediaPath }: DataManagementSectionProps) {
   const [resetConfirm, setResetConfirm] = useState('');
+  const [resetting, setResetting] = useState(false);
+
+  async function handleReset() {
+    setResetting(true);
+    try {
+      const res = await fetch('/api/settings/reset', { method: 'POST' });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      setResetConfirm('');
+      toast.success('Database reset successfully');
+      window.location.reload();
+    } catch {
+      toast.error('Failed to reset database');
+    } finally {
+      setResetting(false);
+    }
+  }
 
   return (
     <Card>
@@ -46,6 +63,11 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
               className="font-mono text-sm bg-muted"
             />
           </div>
+          <p className="text-xs text-muted-foreground">
+            These paths are read-only. To change them, set the{' '}
+            <code className="font-mono">DATABASE_PATH</code> environment variable before starting
+            the server.
+          </p>
         </div>
 
         <div className="flex gap-2">
@@ -88,9 +110,9 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={() => setResetConfirm('')}>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  disabled={resetConfirm !== 'RESET'}
+                  disabled={resetConfirm !== 'RESET' || resetting}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => toast.info('Database reset not yet implemented')}
+                  onClick={handleReset}
                 >
                   Reset Database
                 </AlertDialogAction>

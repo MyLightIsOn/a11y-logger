@@ -5,16 +5,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AIConfigSection } from './ai-config-section';
 import { DataManagementSection } from './data-management-section';
 import { AuthToggleSection } from './auth-toggle-section';
+import { UserManagementSection } from './user-management-section';
+
+interface AIEnvSource {
+  provider: string | null;
+  apiKey: boolean;
+  model: string | null;
+  baseUrl: string | null;
+}
 
 interface SettingsClientProps {
   aiProvider: string;
   aiApiKey: string;
   aiModel: string;
   aiBaseUrl: string;
+  aiEnvSource?: AIEnvSource;
   dbPath: string;
   mediaPath: string;
   version: string;
   authEnabled: boolean;
+  users: {
+    id: string;
+    username: string;
+    role: 'admin' | 'member';
+    created_at: string;
+    updated_at: string;
+  }[];
 }
 
 export function SettingsClient({
@@ -22,10 +38,12 @@ export function SettingsClient({
   aiApiKey,
   aiModel,
   aiBaseUrl,
+  aiEnvSource,
   dbPath,
   mediaPath,
   version,
   authEnabled,
+  users,
 }: SettingsClientProps) {
   const handleSaveAI = async (data: {
     provider: string;
@@ -77,7 +95,7 @@ export function SettingsClient({
 
   return (
     <Tabs defaultValue="ai">
-      <TabsList>
+      <TabsList variant="segmented">
         <TabsTrigger value="ai">AI Configuration</TabsTrigger>
         <TabsTrigger value="data">Data Management</TabsTrigger>
         <TabsTrigger value="security">Security</TabsTrigger>
@@ -89,6 +107,7 @@ export function SettingsClient({
           apiKey={aiApiKey}
           model={aiModel}
           baseUrl={aiBaseUrl}
+          envSource={aiEnvSource}
           onSave={handleSaveAI}
         />
       </TabsContent>
@@ -96,7 +115,10 @@ export function SettingsClient({
         <DataManagementSection dbPath={dbPath} mediaPath={mediaPath} />
       </TabsContent>
       <TabsContent value="security" className="mt-6">
-        <AuthToggleSection authEnabled={authEnabled} />
+        <div className="space-y-6">
+          <UserManagementSection users={users} />
+          <AuthToggleSection authEnabled={authEnabled} hasUsers={users.length > 0} />
+        </div>
       </TabsContent>
       <TabsContent value="about" className="mt-6">
         <Card>
