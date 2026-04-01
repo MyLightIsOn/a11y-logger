@@ -1,8 +1,8 @@
 # A11y Logger
 
-**Free, offline-first accessibility auditing. No accounts. No cloud. Just your work.**
+**Free, offline-first accessibility program management tool.**
 
-A11y Logger is an open-source tool for accessibility consultants and in-house teams who want a structured workflow for auditing, reporting, and producing standards-compliant output — without giving their data to a SaaS platform or paying per seat.
+A11y Logger is an open-source tool for accessibility consultants and program managers. Audit, report, and produce standards-compliant output without the fuss of signing contracts, sales demos, or paying per seat.
 
 <img src="docs/screenshots/dashboard.png" alt="A11y Logger dashboard showing a project with active assessments and a VPAT in progress" width="800">
 
@@ -12,7 +12,7 @@ A11y Logger is an open-source tool for accessibility consultants and in-house te
 
 ## Why this exists
 
-Most accessibility audit tools are either expensive subscriptions, require cloud accounts, or produce output that doesn't map cleanly to WCAG criteria and VPAT formats. A11y Logger is the tool we wanted to use ourselves — local-first, offline-capable, and built around the actual deliverables practitioners produce.
+Most accessibility management tools require expensive subscriptions/contracts, upselling sales demos, or have workflows that are just tied exclusively to that platform. A11y Logger is the tool we wanted to use ourselves, built by accessibility specialists around actual SME workflows.
 
 ---
 
@@ -20,7 +20,9 @@ Most accessibility audit tools are either expensive subscriptions, require cloud
 
 ### Log Issues
 
-Document findings with WCAG criterion codes, severity levels, environment details, affected URLs, and screenshot evidence. Issues link directly to VPAT criteria rows.
+Log a finding with its WCAG code, severity, affected URL, environment, and screenshots or videos. Each issue links directly to the relevant VPAT criteria rows.
+
+Or describe an issue to the AI and let it draft the issue for you to edit as you see fit.
 
 <img src="docs/screenshots/issues.png" alt="Issue log showing a list of accessibility findings with WCAG codes and severity badges" width="800">
 
@@ -28,19 +30,38 @@ Document findings with WCAG criterion codes, severity levels, environment detail
 
 ### Organize Assessments
 
-Group issues into assessments within projects. Each assessment represents a scope of work — a product, a sprint, a client engagement.
+Log issues and group them into assessments. Each assessment can be a scope of work, such as a product, a sprint, or a client engagement. Assessments are grouped into projects. This gives you a flexible system to organize your work.
 
 ### Generate Reports
 
-Create structured reports with executive summaries, severity breakdowns, and WCAG criteria analysis. Optional AI assistance (BYOK) can draft narrative sections — or work entirely manually.
+Create reports with an executive summary, severity breakdown, and WCAG criteria analysis. AI can draft the narrative sections if you bring your own API key, or you can write them yourself.
 
+| Export format      | Description                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| HTML               | Just the report sections you add in an HTML file with styles and JS for interactive viewing |
+| HTML - With Charts | Same as above but with visualizations.                                                      |
+| HTML - With Issues | The sections you add, visualizations, and a list of issues.                                 |
+| HTML - All         | Export everything for a full, comprehensive report.                                         |
+| Word (.docx)       | Word compatible document                                                                    |
+
+<br />
+<br />
 <img src="docs/screenshots/report.png" alt="Report detail view showing an executive summary and a WCAG criteria breakdown table" width="800">
 
 <!-- Screenshot: a report detail page showing the executive summary field, a bar chart or table of issues by severity, and the WCAG criteria counts section -->
 
 ### Create VPATs
 
-Build Voluntary Product Accessibility Templates against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. Criteria rows are auto-populated and linked to your issues. AI can generate conformance narratives from your issue data.
+Build VPATs against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. Criteria rows populate from your issues. AI can write the conformance narratives and explain its rationale. VPATs require human review before publishing.
+
+| Export format | Description                                                                         |
+| ------------- | ----------------------------------------------------------------------------------- |
+| HTML          | VPAT in HTML format                                                                 |
+| Word (.docx)  | Standard VPAT table format for client delivery                                      |
+| OpenACR YAML  | Machine-readable format for the [GSA ACR Editor](https://acreditor.section508.gov/) |
+
+<br />
+<br />
 
 <img src="docs/screenshots/vpat.png" alt="VPAT editor showing criteria rows with conformance dropdowns and remarks fields" width="800">
 
@@ -48,23 +69,16 @@ Build Voluntary Product Accessibility Templates against WCAG 2.1, WCAG 2.2, Sect
 
 ---
 
-## Export formats
-
-| Format       | Use case                                                                            |
-| ------------ | ----------------------------------------------------------------------------------- |
-| HTML         | Printable via browser — File → Print → Save as PDF                                  |
-| Word (.docx) | Standard VPAT and report format for client delivery                                 |
-| OpenACR YAML | Machine-readable format for the [GSA ACR Editor](https://acreditor.section508.gov/) |
-
----
-
 ## AI features (optional)
 
-A11y Logger works fully without AI. If you want AI-assisted report narratives and VPAT conformance notes, bring your own API key — no data leaves your machine through A11y Logger itself.
+A11y Logger works without AI. If you want help drafting report narratives or VPAT conformance notes, bring your own API key. You can use it as much or as little as you want. Configure your key in Settings or a .env once and use it across all projects.
 
-Supported providers: **OpenAI**, **Anthropic**, **Ollama** (local), **Gemini**
+Supported providers:
 
-Configure your key in Settings once and use it across all projects.
+- **OpenAI**
+- **Anthropic**
+- **Gemini**
+- **Ollama** (local — no data leaves your machine)
 
 ---
 
@@ -73,8 +87,8 @@ Configure your key in Settings once and use it across all projects.
 **Prerequisites:** Node.js 20+
 
 ```bash
-git clone https://github.com/hci-design-lab/a11y-pm.git
-cd a11y-pm
+git clone https://github.com/hci-design-lab/a11y-logger.git
+cd a11y-logger
 npm install
 npm run dev
 ```
@@ -85,7 +99,7 @@ Open [http://localhost:3000](http://localhost:3000). Data is stored in `./data/`
 
 ## Contributing
 
-A11y Logger is open source under AGPL-3.0. Contributions are welcome — bug fixes, features, documentation, and accessibility improvements to the tool itself.
+A11y Logger is open source under AGPL-3.0. Bug fixes, features, documentation, and accessibility improvements to the tool itself are all welcome.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, project structure, and how to submit a PR.
 
@@ -93,4 +107,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, project structure
 
 ## License
 
-[AGPL-3.0](LICENSE) — free to use and modify. If you build a hosted service on top of A11y Logger, the AGPL requires you to open-source your modifications. For commercial licensing inquiries, open an issue.
+[AGPL-3.0](LICENSE) — free to use and modify. If you build a hosted service on top of A11y Logger, the AGPL requires you to open-source your modifications. For commercial licensing inquiries, send an email to [hello@hcidesignlab.com](mailto:hello@hcidesignlab.com).
