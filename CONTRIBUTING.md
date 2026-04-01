@@ -11,7 +11,7 @@ Thanks for your interest in contributing. This guide covers everything you need 
 ## Setup
 
 ```bash
-git clone https://github.com/YOUR_ORG/a11y-pm.git
+git clone https://github.com/hci-design-lab/a11y-pm.git
 cd a11y-pm
 npm install
 npm run dev
@@ -79,4 +79,4 @@ TypeScript strict mode is on. Avoid `any`.
 
 ## Questions
 
-Open a [GitHub Discussion](https://github.com/YOUR_ORG/a11y-pm/discussions) for questions that aren't bug reports or feature requests.
+Open a [GitHub Discussion](https://github.com/hci-design-lab/a11y-pm/discussions) for questions that aren't bug reports or feature requests.

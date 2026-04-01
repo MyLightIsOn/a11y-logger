@@ -23,7 +23,7 @@ jobs:
         with:
           # Create a file named cla-signatures.json with content [] and copy the Gist ID from the URL
           path-to-signatures: 'https://gist.github.com/bf84f88035cada9005177dfa61ad93db/cla-signatures.json'
-          path-to-document: 'https://github.com/YOUR_ORG/a11y-pm/blob/main/CLA.md'
+          path-to-document: 'https://github.com/hci-design-lab/a11y-logger/blob/main/CLA.md'
           branch: 'main'
           # Bots and the repo owner don't need to sign
           allowlist: bot*,dependabot[bot]

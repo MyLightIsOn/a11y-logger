@@ -4,7 +4,7 @@
 
 A11y Logger is an open-source tool for accessibility consultants and in-house teams who want a structured workflow for auditing, reporting, and producing standards-compliant output — without giving their data to a SaaS platform or paying per seat.
 
-![A11y Logger dashboard showing a project with active assessments and a VPAT in progress](docs/screenshots/dashboard.png)
+<img src="docs/screenshots/dashboard.png" alt="A11y Logger dashboard showing a project with active assessments and a VPAT in progress" width="800">
 
 <!-- Screenshot: the main dashboard with a project open, showing the sidebar navigation, a list of assessments, and the progress summary card -->
 
@@ -22,7 +22,7 @@ Most accessibility audit tools are either expensive subscriptions, require cloud
 
 Document findings with WCAG criterion codes, severity levels, environment details, affected URLs, and screenshot evidence. Issues link directly to VPAT criteria rows.
 
-![Issue log showing a list of accessibility findings with WCAG codes and severity badges](docs/screenshots/issue-log.png)
+<img src="docs/screenshots/issues.png" alt="Issue log showing a list of accessibility findings with WCAG codes and severity badges" width="800">
 
 <!-- Screenshot: the issues list for an assessment, showing several issues with WCAG codes (e.g. 1.4.3, 2.4.7), severity badges, and a filter bar -->
 
@@ -34,7 +34,7 @@ Group issues into assessments within projects. Each assessment represents a scop
 
 Create structured reports with executive summaries, severity breakdowns, and WCAG criteria analysis. Optional AI assistance (BYOK) can draft narrative sections — or work entirely manually.
 
-![Report detail view showing an executive summary and a WCAG criteria breakdown table](docs/screenshots/report-detail.png)
+<img src="docs/screenshots/report.png" alt="Report detail view showing an executive summary and a WCAG criteria breakdown table" width="800">
 
 <!-- Screenshot: a report detail page showing the executive summary field, a bar chart or table of issues by severity, and the WCAG criteria counts section -->
 
@@ -42,7 +42,7 @@ Create structured reports with executive summaries, severity breakdowns, and WCA
 
 Build Voluntary Product Accessibility Templates against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. Criteria rows are auto-populated and linked to your issues. AI can generate conformance narratives from your issue data.
 
-![VPAT editor showing criteria rows with conformance dropdowns and remarks fields](docs/screenshots/vpat-editor.png)
+<img src="docs/screenshots/vpat.png" alt="VPAT editor showing criteria rows with conformance dropdowns and remarks fields" width="800">
 
 <!-- Screenshot: the VPAT criteria table with several rows visible, showing the conformance level dropdown (Supports, Partially Supports, etc.) and a remarks text field -->
 
@@ -73,7 +73,7 @@ Configure your key in Settings once and use it across all projects.
 **Prerequisites:** Node.js 20+
 
 ```bash
-git clone https://github.com/YOUR_ORG/a11y-pm.git
+git clone https://github.com/hci-design-lab/a11y-pm.git
 cd a11y-pm
 npm install
 npm run dev
