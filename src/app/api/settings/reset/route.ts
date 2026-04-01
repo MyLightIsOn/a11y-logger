@@ -1,3 +1,9 @@
+/**
+ * Settings Reset API — /api/settings/reset
+ *
+ * POST /api/settings/reset   Delete all user data and reset the database to a clean state
+ */
+
 import { NextResponse } from 'next/server';
 import { getDb, getDbClient } from '@/lib/db/client';
 
@@ -26,7 +32,7 @@ export async function POST() {
 
     deleteAll();
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, data: null });
   } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to reset database', code: 'INTERNAL_ERROR' },
