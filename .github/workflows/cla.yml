@@ -6,6 +6,10 @@ on:
   pull_request_target:
     types: [opened, closed, synchronize]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   cla_assistant:
     runs-on: ubuntu-latest
@@ -26,4 +30,4 @@ jobs:
           path-to-document: 'https://github.com/hci-design-lab/a11y-logger/blob/main/CLA.md'
           branch: 'main'
           # Bots and the repo owner don't need to sign
-          allowlist: bot*,dependabot[bot]
+          allowlist: bot*,dependabot[bot],MyLightIsOn
