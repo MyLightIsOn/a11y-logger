@@ -4,6 +4,11 @@ import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/sonner';
 import { getSetting } from '@/lib/db/settings';
 import { getSession } from '@/lib/auth/session';
+import { getLocale } from 'next-intl/server';
+
+// All pages under this layout read from the database at request time —
+// prevent Next.js from attempting static pre-rendering.
+export const dynamic = 'force-dynamic';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const authEnabled = Boolean(getSetting('auth_enabled'));
@@ -11,6 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     const userId = await getSession();
     if (!userId) redirect('/login');
   }
+  const locale = await getLocale();
   return (
     <div className="flex min-h-screen flex-col overflow-hidden">
       <a
@@ -19,7 +25,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       >
         Skip to main content
       </a>
-      <Header />
+      <Header currentLocale={locale} />
       <div className="flex flex-1 overflow-hidden">
         <div className="relative w-14 shrink-0">
           <Sidebar />
