@@ -26,8 +26,21 @@ const SECTION_LABELS: Record<string, string> = {
 // Canonical standard groups — defines display order and which sections belong to each standard.
 const STANDARD_GROUPS: { label: string; sections: string[] }[] = [
   { label: 'WCAG', sections: ['A', 'AA', 'AAA'] },
-  { label: 'Section 508', sections: ['Chapter3', 'Chapter5', 'Chapter6'] },
-  { label: 'EN 301 549', sections: ['Clause4', 'Clause5', 'Clause12'] },
+  { label: 'Section 508', sections: ['Chapter3', 'Chapter4', 'Chapter5', 'Chapter6'] },
+  {
+    label: 'EN 301 549',
+    sections: [
+      'Clause4',
+      'Clause5',
+      'Clause6',
+      'Clause7',
+      'Clause8',
+      'Clause10',
+      'Clause11',
+      'Clause12',
+      'Clause13',
+    ],
+  },
 ];
 
 // WCAG rows are stored with criterion_section = principle name (Perceivable etc.)
@@ -151,6 +164,11 @@ interface VpatCriteriaTableProps {
   readOnly?: boolean;
   aiEnabled?: boolean;
   onCriterionClick?: (criterionCode: string) => void;
+  /**
+   * When provided, render only the single section matching this key —
+   * no standard group headers, no "Generate All" button.
+   */
+  sectionKey?: string;
 }
 
 /**
@@ -195,6 +213,7 @@ export function VpatCriteriaTable({
   readOnly = false,
   aiEnabled = false,
   onCriterionClick,
+  sectionKey,
 }: VpatCriteriaTableProps) {
   const [aiPanelRow, setAiPanelRow] = useState<VpatCriterionRow | null>(null);
 
@@ -250,6 +269,35 @@ export function VpatCriteriaTable({
       }, new Map()),
     [rows]
   );
+
+  // Single-section mode: render just the one section, no group headers or Generate All.
+  if (sectionKey) {
+    const sectionRows = sections.get(sectionKey) ?? [];
+    return (
+      <div>
+        {sectionRows.length > 0 ? (
+          <CriterionSection
+            section={sectionKey}
+            sectionRows={sectionRows}
+            locale={locale}
+            readOnly={readOnly}
+            aiEnabled={aiEnabled}
+            generatingRowId={generatingRowId}
+            isGeneratingAll={isGeneratingAll}
+            onRowChange={onRowChange}
+            scheduleRemarksSave={scheduleRemarksSave}
+            onGenerateRow={onGenerateRow}
+            onCriterionClick={onCriterionClick}
+            onAiInfoClick={setAiPanelRow}
+            register={register}
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground py-4">No criteria in this section.</p>
+        )}
+        {aiPanelRow && <VpatAiPanel row={aiPanelRow} onClose={() => setAiPanelRow(null)} />}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
