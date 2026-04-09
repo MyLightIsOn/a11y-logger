@@ -18,7 +18,7 @@ import {
 } from '@/components/vpats/vpat-cover-sheet-form';
 import { VpatIssuesPanel, type PanelIssue } from '@/components/vpats/vpat-issues-panel';
 import { GenerateAllConfirmDialog } from '@/components/vpats/generate-all-confirm-dialog';
-import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
+import type { VpatCriterionRow, VpatCriterionComponent } from '@/lib/db/vpat-criterion-rows';
 import type { VpatData } from '@/lib/db/vpats';
 import { EDITION_SECTION_KEYS, SECTION_TAB_LABELS } from '@/lib/vpat-tabs';
 
@@ -85,10 +85,44 @@ export default function VpatEditPage() {
   }, [vpatId, router]);
 
   // Updates local state + queues change for save.
+  // When update.component_name is set, immediately PUTs to the component API
+  // instead of queuing to the row-level PATCH batch.
   const handleRowChange = useCallback(
-    (rowId: string, update: { conformance?: string }) => {
+    (rowId: string, update: { conformance?: string; component_name?: string }) => {
       if (vpat?.status === 'reviewed' && !hasShownEditWarning) {
         setShowEditWarning(true);
+      }
+      if (update.component_name) {
+        // Per-component update — call component API immediately, update components in local state
+        const { component_name, ...componentUpdate } = update;
+        setRows((prev) =>
+          prev.map((r) =>
+            r.id === rowId
+              ? {
+                  ...r,
+                  components: (r.components ?? []).map((c) =>
+                    c.component_name === component_name
+                      ? {
+                          ...c,
+                          ...(componentUpdate.conformance !== undefined && {
+                            conformance:
+                              componentUpdate.conformance as VpatCriterionComponent['conformance'],
+                          }),
+                        }
+                      : c
+                  ),
+                }
+              : r
+          )
+        );
+        fetch(`/api/vpats/${vpatId}/rows/${rowId}/components/${component_name}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(componentUpdate),
+        }).catch(() => {
+          // Optimistic update already applied; swallow error for now
+        });
+        return;
       }
       setRows((prev) =>
         prev.map((r) => (r.id === rowId ? ({ ...r, ...update } as VpatCriterionRow) : r))
@@ -96,7 +130,7 @@ export default function VpatEditPage() {
       const existing = pendingChanges.current.get(rowId) ?? {};
       pendingChanges.current.set(rowId, { ...existing, ...update });
     },
-    [vpat, hasShownEditWarning]
+    [vpat, hasShownEditWarning, vpatId]
   );
 
   // Called by the table after 500ms debounce — queues remarks for save.
