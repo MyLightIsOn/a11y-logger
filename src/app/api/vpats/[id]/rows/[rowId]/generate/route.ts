@@ -5,9 +5,14 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getCriterionRow, updateCriterionRow } from '@/lib/db/vpat-criterion-rows';
+import {
+  getCriterionRow,
+  updateCriterionRow,
+  upsertCriterionComponent,
+} from '@/lib/db/vpat-criterion-rows';
 import { getVpat } from '@/lib/db/vpats';
 import { getDb } from '@/lib/db';
+import { getSetting } from '@/lib/db/settings';
 import { getAIProvider } from '@/lib/ai';
 
 type RouteContext = { params: Promise<{ id: string; rowId: string }> };
@@ -15,7 +20,7 @@ type RouteContext = { params: Promise<{ id: string; rowId: string }> };
 export async function POST(_request: Request, { params }: RouteContext) {
   const { id: vpatId, rowId } = await params;
 
-  const ai = getAIProvider();
+  const ai = getAIProvider('vpat');
   if (!ai) {
     return NextResponse.json(
       { success: false, error: 'No AI provider configured', code: 'NO_AI_PROVIDER' },
@@ -37,7 +42,6 @@ export async function POST(_request: Request, { params }: RouteContext) {
       { status: 404 }
     );
 
-  // Fetch issues matched to this criterion from the associated project
   const issues = getDb()
     .prepare(
       `
@@ -60,20 +64,29 @@ export async function POST(_request: Request, { params }: RouteContext) {
     description: string;
   }[];
 
-  // Build a lookup map for enriching AI-referenced issues with their IDs after generation
   const issueByTitle = new Map(issues.map((i) => [i.title, i]));
 
-  try {
-    const result = await ai.generateVpatRow({
-      criterion: {
-        code: row.criterion_code,
-        name: row.criterion_name,
-        description: row.criterion_description,
-      },
-      issues,
-    });
+  const context = {
+    criterion: {
+      code: row.criterion_code,
+      name: row.criterion_name,
+      description: row.criterion_description,
+    },
+    issues,
+  };
 
-    // Enrich referenced issues with IDs so the UI can link to them
+  try {
+    let result = await ai.generateVpatRow(context);
+
+    // Optional AI Review Pass — uses a separate model slot
+    const reviewEnabled = getSetting('ai_review_pass_enabled');
+    if (reviewEnabled) {
+      const reviewer = getAIProvider('vpat_review');
+      if (reviewer) {
+        result = await reviewer.reviewVpatRow(context, result);
+      }
+    }
+
     const enrichedReferencedIssues = result.referenced_issues.map((ref) => {
       const match = issueByTitle.get(ref.title);
       if (match) {
@@ -94,6 +107,19 @@ export async function POST(_request: Request, { params }: RouteContext) {
       ai_referenced_issues: enrichedReferencedIssues,
       ai_suggested_conformance: result.suggested_conformance,
     });
+
+    // For multi-component rows, distribute the generated remarks to every component
+    // so the per-component textareas in the UI reflect the AI output.
+    const components = updated?.components ?? [];
+    if (components.length > 1) {
+      for (const comp of components) {
+        await upsertCriterionComponent(rowId, comp.component_name, {
+          remarks: result.remarks,
+        });
+      }
+      const withComponents = await getCriterionRow(rowId);
+      return NextResponse.json({ success: true, data: withComponents });
+    }
 
     return NextResponse.json({ success: true, data: updated });
   } catch {

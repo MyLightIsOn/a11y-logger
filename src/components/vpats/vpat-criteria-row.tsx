@@ -34,7 +34,7 @@ export interface VpatCriteriaRowProps {
   isGenerating: boolean;
   isGeneratingAll: boolean;
   onRowChange: (rowId: string, update: { conformance?: string; component_name?: string }) => void;
-  scheduleRemarksSave: (rowId: string, value: string) => void;
+  scheduleRemarksSave: (rowId: string, value: string, componentName?: string) => void;
   onGenerateRow?: (rowId: string) => void;
   onCriterionClick?: (criterionCode: string) => void;
   onAiInfoClick?: (row: VpatCriterionRow) => void;
@@ -67,16 +67,34 @@ export const VpatCriteriaRow = memo(function VpatCriteriaRow({
   );
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const compRemarkRefs = useRef<Map<string, HTMLTextAreaElement>>(new Map());
   const autoResize = useCallback((el: HTMLTextAreaElement | null) => {
     if (!el) return;
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
   }, []);
 
-  // Resize after row.remarks changes — rAF lets the parent's setValue update the DOM first.
+  // Sync textarea value when row.remarks changes externally (e.g. AI generation).
+  // Direct DOM update is more reliable than relying on RHF setValue from the parent.
   useEffect(() => {
-    requestAnimationFrame(() => autoResize(textareaRef.current));
+    const el = textareaRef.current;
+    if (!el) return;
+    if (el.value !== (row.remarks ?? '')) {
+      el.value = row.remarks ?? '';
+    }
+    requestAnimationFrame(() => autoResize(el));
   }, [row.remarks, autoResize]);
+
+  // Sync per-component textarea values when component remarks change externally (AI generation).
+  useEffect(() => {
+    (row.components ?? []).forEach((comp) => {
+      const el = compRemarkRefs.current.get(comp.component_name);
+      if (el && el.value !== (comp.remarks ?? '')) {
+        el.value = comp.remarks ?? '';
+        requestAnimationFrame(() => autoResize(el));
+      }
+    });
+  }, [row.components, autoResize]);
 
   const isUnresolved = row.conformance === 'not_evaluated';
   const conformanceLabel =
@@ -117,7 +135,6 @@ export const VpatCriteriaRow = memo(function VpatCriteriaRow({
   );
 
   if (isMultiComponent) {
-    const colSpan = aiEnabled && !readOnly ? 5 : 4;
     return (
       <>
         <TableRow
@@ -126,7 +143,7 @@ export const VpatCriteriaRow = memo(function VpatCriteriaRow({
         >
           <TableCell className="font-mono text-sm align-top pt-3">{row.criterion_code}</TableCell>
           {criterionNameCell}
-          <TableCell colSpan={colSpan - 2} className="p-0">
+          <TableCell colSpan={2} className="p-0">
             <table data-testid="component-sub-table" className="w-full">
               <tbody>
                 {(row.components ?? []).map((comp) => {
@@ -173,11 +190,18 @@ export const VpatCriteriaRow = memo(function VpatCriteriaRow({
                           </span>
                         ) : (
                           <Textarea
+                            ref={(el) => {
+                              if (el) compRemarkRefs.current.set(comp.component_name, el);
+                              else compRemarkRefs.current.delete(comp.component_name);
+                            }}
                             className="text-sm min-h-10 overflow-hidden"
                             style={{ resize: 'vertical' }}
                             placeholder="Add remarks…"
                             disabled={isDisabled}
                             defaultValue={comp.remarks ?? ''}
+                            onChange={(e) =>
+                              scheduleRemarksSave(row.id, e.target.value, comp.component_name)
+                            }
                             aria-label={`Remarks for ${row.criterion_code} — ${comp.component_name}`}
                           />
                         )}
@@ -188,6 +212,39 @@ export const VpatCriteriaRow = memo(function VpatCriteriaRow({
               </tbody>
             </table>
           </TableCell>
+          {aiEnabled && !readOnly && (
+            <TableCell className="align-top pt-3 text-center">
+              <div className="flex items-center justify-center gap-1">
+                <Button
+                  type="button"
+                  variant="ai"
+                  size="sm"
+                  onClick={() => onGenerateRow?.(row.id)}
+                  disabled={isDisabled}
+                  aria-label={
+                    isGenerating
+                      ? `Generating for ${row.criterion_code}`
+                      : `Generate for ${row.criterion_code}`
+                  }
+                >
+                  <Sparkles />
+                  {isGenerating ? 'Generating…' : 'Generate'}
+                </Button>
+                {hasAiInfo && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => onAiInfoClick?.(row)}
+                    aria-label={`AI info for ${row.criterion_code}`}
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </TableCell>
+          )}
         </TableRow>
       </>
     );
