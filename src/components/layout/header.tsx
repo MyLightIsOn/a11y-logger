@@ -4,12 +4,19 @@ import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const LANGUAGE_OPTIONS = [
   { value: 'en', label: 'English' },
-  { value: 'fr', label: 'French' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'de', label: 'German' },
+  { value: 'fr', label: 'Français' },
+  { value: 'es', label: 'Español' },
+  { value: 'de', label: 'Deutsch' },
 ] as const;
 
 interface HeaderProps {
@@ -35,31 +42,28 @@ export function Header({ currentLocale = 'en' }: HeaderProps) {
   }
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between bg-card px-6">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-6">
       <div className="flex items-center gap-2">
         {/*<Accessibility className="h-6 w-6 text-primary" aria-hidden="true" />*/}
         <span className="font-semibold text-sm tracking-tight">A11y Logger</span>
       </div>
       <div className="flex items-center gap-2">
-        <label className="sr-only" htmlFor="language-selector">
-          Language
-        </label>
-        <select
-          id="language-selector"
-          aria-label="Language"
-          value={currentLocale}
-          onChange={(e) => handleLanguageChange(e.target.value)}
-          className="text-sm bg-transparent border border-border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          {LANGUAGE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={currentLocale} onValueChange={handleLanguageChange}>
+          <SelectTrigger id="language-selector" aria-label="Language" className="w-auto text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {LANGUAGE_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button
           variant="ghost"
           size="icon"
+          className="border border-input"
           onClick={() => setTheme(isDark ? 'light' : 'dark')}
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           aria-pressed={isDark}

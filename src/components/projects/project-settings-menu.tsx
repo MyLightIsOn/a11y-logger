@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Settings, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Settings, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -58,7 +58,7 @@ export function ProjectSettingsMenu({ projectId, projectName }: ProjectSettingsM
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Project settings">
+          <Button variant="outline" size="icon" aria-label="Project settings" className="bg-card">
             <Settings className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -93,8 +93,12 @@ export function ProjectSettingsMenu({ projectId, projectName }: ProjectSettingsM
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>
+              <X />
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+              <Trash2 />
               {isDeleting ? 'Deleting…' : 'Delete Project'}
             </AlertDialogAction>
           </AlertDialogFooter>

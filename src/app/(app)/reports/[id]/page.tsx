@@ -41,7 +41,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
       <Breadcrumbs items={[{ label: 'Reports', href: '/reports' }, { label: report.title }]} />
 
       {/* Header card */}
-      <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 px-6 shadow-sm">
+      <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-[4px] border py-6 px-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">{report.title}</h1>
@@ -93,7 +93,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
                       </CardHeader>
                       <CardContent>
                         <ul className="list-disc list-inside space-y-1 text-sm leading-relaxed">
-                          {content.top_risks.items.map((item, i) => (
+                          {content.top_risks.items.filter(Boolean).map((item, i) => (
                             <li key={i}>{item}</li>
                           ))}
                         </ul>
@@ -107,7 +107,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
                       </CardHeader>
                       <CardContent>
                         <ul className="list-disc list-inside space-y-1 text-sm leading-relaxed">
-                          {content.quick_wins.items.map((item, i) => (
+                          {content.quick_wins.items.filter(Boolean).map((item, i) => (
                             <li key={i}>{item}</li>
                           ))}
                         </ul>
@@ -126,7 +126,7 @@ export default async function ReportDetailPage({ params }: PageProps) {
                       Object.keys(content.user_impact) as Array<keyof typeof content.user_impact>
                     ).map((key) => (
                       <Card key={key}>
-                        <CardHeader className="pb-2">
+                        <CardHeader>
                           <CardTitle className="text-sm font-semibold">
                             {PERSONA_LABELS[key] ?? key}
                           </CardTitle>

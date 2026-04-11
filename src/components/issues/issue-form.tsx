@@ -234,7 +234,9 @@ export function IssueForm({
 
             {/* Title */}
             <div className="space-y-1.5">
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">
+                Title <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="title"
                 {...register('title')}
@@ -350,9 +352,9 @@ export function IssueForm({
             </div>
 
             {/* Environment */}
-            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide pt-2">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide pt-2">
               Environment
-            </h3>
+            </p>
 
             <div className="space-y-1.5">
               <Label htmlFor="device_type">Device Type</Label>

@@ -12,7 +12,7 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
     <div
       role="group"
       aria-label="View options"
-      className="relative inline-flex items-center rounded-full border bg-muted p-0.5"
+      className="relative inline-flex items-center rounded-full border bg-card p-0.5"
     >
       {/* Sliding thumb */}
       <span
@@ -27,7 +27,7 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
         onClick={() => onViewChange('table')}
         aria-label="Table view"
         aria-pressed={view === 'table'}
-        className="relative z-10 flex h-7 w-7 items-center justify-center rounded-full"
+        className={`relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full ${view !== 'table' ? 'hover:bg-accent dark:hover:bg-muted hover:border hover:border-border dark:hover:border-muted-foreground/40' : ''}`}
       >
         <Table
           className={`h-3.5 w-3.5 ${view === 'table' ? 'text-primary-foreground' : 'text-muted-foreground'}`}
@@ -40,7 +40,7 @@ export function ViewToggle({ view, onViewChange }: ViewToggleProps) {
         onClick={() => onViewChange('grid')}
         aria-label="Grid view"
         aria-pressed={view === 'grid'}
-        className="relative z-10 flex h-7 w-7 items-center justify-center rounded-full"
+        className={`relative z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full ${view !== 'grid' ? 'hover:bg-accent dark:hover:bg-muted hover:border hover:border-border dark:hover:border-muted-foreground/40' : ''}`}
       >
         <LayoutGrid
           className={`h-3.5 w-3.5 ${view === 'grid' ? 'text-primary-foreground' : 'text-muted-foreground'}`}
