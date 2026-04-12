@@ -9,6 +9,11 @@ import {
   Packer,
   WidthType,
 } from 'docx';
+import type { Vpat } from '@/lib/db/vpats';
+import type { Project } from '@/lib/db/projects';
+import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
+import type { VpatCoverSheetRow } from '@/lib/db/schema';
+import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from './vpat-shared';
 
 // Usable page width: Letter 8.5" − 2" margins = 6.5" = 9360 twips (DXA)
 const PAGE_WIDTH = 9360;
@@ -27,11 +32,6 @@ const COL4 = {
   conformance: Math.round(PAGE_WIDTH * 0.2), // 1872
   remarks: Math.round(PAGE_WIDTH * 0.25), // 2340
 };
-import type { Vpat } from '@/lib/db/vpats';
-import type { Project } from '@/lib/db/projects';
-import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
-import type { VpatCoverSheetRow } from '@/lib/db/schema';
-import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from './vpat-shared';
 
 function headerRow(): TableRow {
   return new TableRow({
