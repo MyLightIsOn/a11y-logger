@@ -126,7 +126,7 @@ export async function generateReportDocx(
   }
 
   if (content.user_impact) {
-    const impact = content.user_impact;
+    const impact = content.user_impact as Record<string, string | undefined>;
     const impactRows = Object.entries(USER_IMPACT_LABELS)
       .filter(([key]) => impact[key])
       .map(

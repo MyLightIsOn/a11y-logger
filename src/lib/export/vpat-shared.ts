@@ -11,7 +11,7 @@ export const SECTION_ORDER = [
   'Clause4',
   'Clause5',
   'Clause12',
-] as const;
+];
 
 /** Human-readable section headings matching the VPAT 2.x template. */
 export const SECTION_LABELS: Record<string, string> = {
