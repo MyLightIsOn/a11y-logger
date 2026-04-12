@@ -10,18 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VpatAiPanel } from '@/components/vpats/vpat-ai-panel';
 import { VpatCriteriaRow } from '@/components/vpats/vpat-criteria-row';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
-
-const SECTION_LABELS: Record<string, string> = {
-  A: 'Table 1: Success Criteria, Level A',
-  AA: 'Table 2: Success Criteria, Level AA',
-  AAA: 'Table 3: Success Criteria, Level AAA',
-  Chapter3: 'Chapter 3: Functional Performance Criteria',
-  Chapter5: 'Chapter 5: Software',
-  Chapter6: 'Chapter 6: Support Documentation and Services',
-  Clause4: 'Clause 4: Functional Performance Statements',
-  Clause5: 'Clause 5: Generic Requirements',
-  Clause12: 'Clauses 11-12: Documentation and Support Services',
-};
+import { SECTION_LABELS } from '@/lib/export/vpat-shared';
 
 // Canonical standard groups — defines display order and which sections belong to each standard.
 const STANDARD_GROUPS: { label: string; sections: string[] }[] = [

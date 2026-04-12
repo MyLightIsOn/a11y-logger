@@ -31,54 +31,7 @@ import type { Vpat } from '@/lib/db/vpats';
 import type { Project } from '@/lib/db/projects';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 import type { VpatCoverSheetRow } from '@/lib/db/schema';
-
-const CONFORMANCE_DISPLAY: Record<string, string> = {
-  supports: 'Supports',
-  partially_supports: 'Partially Supports',
-  does_not_support: 'Does Not Support',
-  not_applicable: 'Not Applicable',
-  not_evaluated: 'Not Evaluated',
-};
-
-// Canonical section order matching the real VPAT 2.x template
-const SECTION_ORDER = [
-  'A',
-  'AA',
-  'AAA',
-  'Chapter3',
-  'Chapter5',
-  'Chapter6',
-  'Clause4',
-  'Clause5',
-  'Clause12',
-];
-
-const SECTION_LABELS: Record<string, string> = {
-  A: 'Table 1: Success Criteria, Level A',
-  AA: 'Table 2: Success Criteria, Level AA',
-  AAA: 'Table 3: Success Criteria, Level AAA',
-  Chapter3: 'Chapter 3: Functional Performance Criteria',
-  Chapter5: 'Chapter 5: Software',
-  Chapter6: 'Chapter 6: Support Documentation and Services',
-  Clause4: 'Clause 4: Functional Performance Statements',
-  Clause5: 'Clause 5: Generic Requirements',
-  Clause12: 'Clauses 11-12: Documentation and Support Services',
-};
-
-// Sort criterion codes numerically: "1.2.3" < "1.10.1"
-function sortCode(code: string): number[] {
-  return code.split('.').map((n) => parseInt(n, 10) || 0);
-}
-
-function compareCode(a: string, b: string): number {
-  const pa = sortCode(a);
-  const pb = sortCode(b);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
-    if (diff !== 0) return diff;
-  }
-  return 0;
-}
+import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from './vpat-shared';
 
 function headerRow(): TableRow {
   return new TableRow({
