@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC_PATHS = ['/login', '/api/auth/login', '/api/auth/logout', '/api/auth/toggle'];
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Always allow public paths
@@ -10,8 +10,8 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if auth is enabled via cookie (set by the toggle API route)
-  // The settings DB isn't accessible from middleware (Edge runtime)
+  // Check if auth is enabled via cookie (set by the toggle API route).
+  // The settings DB isn't accessible from middleware (Edge runtime).
   const authEnabled = req.cookies.get('auth_enabled')?.value === 'true';
 
   if (!authEnabled) {
