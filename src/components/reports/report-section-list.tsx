@@ -1,0 +1,85 @@
+'use client';
+import { useTranslations } from 'next-intl';
+import { Loader2, Sparkles, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+
+interface Props {
+  /** Translation key for the card title, looked up under 'reports.sections'. */
+  titleKey: string;
+  /** Prefix for input placeholder text — e.g. "Quick win" → "Quick win 1". */
+  placeholderPrefix: string;
+  items: string[];
+  onChange: (items: string[]) => void;
+  onDelete: () => void;
+  onGenerate: () => void;
+  isGenerating: boolean;
+}
+
+export function ReportSectionList({
+  titleKey,
+  placeholderPrefix,
+  items,
+  onChange,
+  onDelete,
+  onGenerate,
+  isGenerating,
+}: Props) {
+  const t = useTranslations('reports.sections');
+  const normalizedItems = Array.from({ length: 5 }, (_, i) => items[i] ?? '');
+
+  const handleItemChange = (index: number, value: string) => {
+    const updated = [...normalizedItems];
+    updated[index] = value;
+    onChange(updated);
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle>{t(titleKey)}</CardTitle>
+        <div className="flex items-center gap-1">
+          <Button type="button" variant="ai" size="sm" onClick={onGenerate} disabled={isGenerating}>
+            <Sparkles />
+            {isGenerating ? t('generating_label') : t('generate_button')}
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={onDelete}
+            disabled={isGenerating}
+          >
+            <Trash2 />
+            {t('delete_button')}
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="relative">
+        {isGenerating && (
+          <div
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/80 backdrop-blur-sm rounded-b-lg"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">{t('generating_overlay')}</p>
+          </div>
+        )}
+        <ol data-testid="section-fields" className="space-y-2" inert={isGenerating || undefined}>
+          {normalizedItems.map((item, index) => (
+            <li key={index} className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground w-4 shrink-0">{index + 1}.</span>
+              <Input
+                value={item}
+                onChange={(e) => handleItemChange(index, e.target.value)}
+                placeholder={`${placeholderPrefix} ${index + 1}`}
+              />
+            </li>
+          ))}
+        </ol>
+      </CardContent>
+    </Card>
+  );
+}
