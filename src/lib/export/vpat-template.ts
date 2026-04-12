@@ -3,15 +3,7 @@ import type { Project } from '@/lib/db/projects';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 import type { VpatCoverSheetRow } from '@/lib/db/schema';
 import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from './vpat-shared';
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+import { escapeHtml } from './report-shared';
 
 function getConformanceDisplay(conformance: string): string {
   return CONFORMANCE_DISPLAY[conformance] ?? conformance;

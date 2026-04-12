@@ -12,18 +12,7 @@ import {
 import type { Report, ReportStats } from '@/lib/db/reports';
 import type { IssueWithContext } from '@/lib/db/issues';
 import type { Project } from '@/lib/db/projects';
-import type { ReportContent } from '@/lib/validators/reports';
-
-function parseContent(content: string | null | undefined): ReportContent {
-  try {
-    const parsed = JSON.parse(content ?? '{}');
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-      ? (parsed as ReportContent)
-      : {};
-  } catch {
-    return {};
-  }
-}
+import { parseReportContent } from './report-shared';
 
 function stripHtml(html: string): string {
   return html
@@ -97,7 +86,7 @@ export async function generateReportDocx(
   stats?: ReportStats,
   issues?: IssueWithContext[]
 ): Promise<Buffer> {
-  const content = parseContent(report.content);
+  const content = parseReportContent(report.content);
 
   const children: (Paragraph | Table)[] = [
     new Paragraph({ text: report.title, heading: HeadingLevel.HEADING_1 }),

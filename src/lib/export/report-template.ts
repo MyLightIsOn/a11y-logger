@@ -4,27 +4,7 @@ import type { Project } from '@/lib/db/projects';
 import type { ReportContent } from '@/lib/validators/reports';
 import type { IssueWithContext } from '@/lib/db/issues';
 import { getWcagCriterionName } from '@/lib/wcag-criteria';
-
-function parseContent(content: string): ReportContent {
-  try {
-    const parsed = JSON.parse(content);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as ReportContent;
-    }
-    return {};
-  } catch {
-    return {};
-  }
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+import { parseReportContent, escapeHtml } from './report-shared';
 
 function toRad(deg: number): number {
   return (deg * Math.PI) / 180;
@@ -449,7 +429,7 @@ export function generateReportHtml(
   baseUrl = '',
   autoPrint = false
 ): string {
-  const content = parseContent(report.content);
+  const content = parseReportContent(report.content);
   const sectionsHtml = buildSectionsHtml(content);
   const extraParts: string[] = [];
   if ((variant === 'with-chart' || variant === 'with-all') && extras.stats) {
