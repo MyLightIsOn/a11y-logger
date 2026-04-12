@@ -1,10 +1,38 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 import { TopRisksSection } from '@/components/reports/report-section-top-risks';
+
+const messages = {
+  reports: {
+    sections: {
+      executive_summary_title: 'Executive Summary',
+      executive_summary_add: 'Add Executive Summary',
+      top_risks_title: 'Top Risks',
+      top_risks_add: 'Add Top Risks',
+      quick_wins_title: 'Quick Wins',
+      quick_wins_add: 'Add Quick Wins',
+      user_impact_title: 'User Impact',
+      user_impact_add: 'Add User Impact',
+      generate_button: 'Generate',
+      generating_label: 'Generating…',
+      generating_overlay: 'Generating with AI...',
+      delete_button: 'Delete',
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 describe('TopRisksSection', () => {
   it('renders 5 numbered inputs', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -17,7 +45,7 @@ describe('TopRisksSection', () => {
   });
 
   it('renders existing items', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={['Risk A']}
         onChange={vi.fn()}
@@ -31,7 +59,7 @@ describe('TopRisksSection', () => {
 
   it('calls onChange with updated array when item changed', () => {
     const onChange = vi.fn();
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={['A', 'B']}
         onChange={onChange}
@@ -47,7 +75,7 @@ describe('TopRisksSection', () => {
 
   it('calls onDelete when delete button clicked', () => {
     const onDelete = vi.fn();
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -61,7 +89,7 @@ describe('TopRisksSection', () => {
   });
 
   it('disables generate button while generating', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -74,7 +102,7 @@ describe('TopRisksSection', () => {
   });
 
   it('shows generating overlay when isGenerating is true', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -88,7 +116,7 @@ describe('TopRisksSection', () => {
   });
 
   it('does not show generating overlay when isGenerating is false', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -102,7 +130,7 @@ describe('TopRisksSection', () => {
   });
 
   it('disables delete button while generating', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -115,7 +143,7 @@ describe('TopRisksSection', () => {
   });
 
   it('marks fields inert while generating', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -128,7 +156,7 @@ describe('TopRisksSection', () => {
   });
 
   it('does not mark fields inert when not generating', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -141,7 +169,7 @@ describe('TopRisksSection', () => {
   });
 
   it('generate button uses ai variant', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}
@@ -154,7 +182,7 @@ describe('TopRisksSection', () => {
   });
 
   it('delete button uses destructive variant', () => {
-    render(
+    renderWithIntl(
       <TopRisksSection
         items={[]}
         onChange={vi.fn()}

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 import { Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,14 +20,15 @@ export function ExecutiveSummarySection({
   onGenerate,
   isGenerating,
 }: Props) {
+  const t = useTranslations('reports.sections');
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle>Executive Summary</CardTitle>
+        <CardTitle>{t('executive_summary_title')}</CardTitle>
         <div className="flex items-center gap-1">
           <Button type="button" variant="ai" size="sm" onClick={onGenerate} disabled={isGenerating}>
             <Sparkles />
-            {isGenerating ? 'Generating…' : 'Generate'}
+            {isGenerating ? t('generating_label') : t('generate_button')}
           </Button>
           <Button
             type="button"
@@ -36,7 +38,7 @@ export function ExecutiveSummarySection({
             disabled={isGenerating}
           >
             <Trash2 />
-            Delete
+            {t('delete_button')}
           </Button>
         </div>
       </CardHeader>
@@ -48,7 +50,7 @@ export function ExecutiveSummarySection({
             aria-live="polite"
           >
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Generating with AI...</p>
+            <p className="text-sm text-muted-foreground">{t('generating_overlay')}</p>
           </div>
         )}
         <div data-testid="section-fields" inert={isGenerating || undefined}>

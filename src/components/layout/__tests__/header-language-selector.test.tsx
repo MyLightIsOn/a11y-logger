@@ -3,11 +3,67 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
 import { Header } from '../header';
 
 // Mock next-themes
 vi.mock('next-themes', () => ({
   useTheme: () => ({ theme: 'light', setTheme: vi.fn() }),
+}));
+
+// Mock Radix Select as a native <select> so fireEvent.change and getByDisplayValue work.
+// SelectTrigger owns the aria-label/id in real usage, so we use context to pass them
+// down to the <select> that Select renders.
+const MockSelectCtx = React.createContext<{
+  ariaLabel?: string;
+  id?: string;
+  setMeta: (m: { ariaLabel?: string; id?: string }) => void;
+}>({ setMeta: () => {} });
+
+vi.mock('@/components/ui/select', () => ({
+  Select: ({
+    value,
+    onValueChange,
+    children,
+  }: {
+    value: string;
+    onValueChange: (v: string) => void;
+    children: React.ReactNode;
+  }) => {
+    const [meta, setMeta] = React.useState<{ ariaLabel?: string; id?: string }>({});
+    return (
+      <MockSelectCtx.Provider value={{ ...meta, setMeta }}>
+        <select
+          role="combobox"
+          aria-label={meta.ariaLabel}
+          id={meta.id}
+          value={value}
+          onChange={(e) => onValueChange(e.target.value)}
+        >
+          {children}
+        </select>
+      </MockSelectCtx.Provider>
+    );
+  },
+  SelectTrigger: ({
+    'aria-label': ariaLabel,
+    id,
+  }: {
+    children: React.ReactNode;
+    'aria-label'?: string;
+    id?: string;
+  }) => {
+    const { setMeta } = React.useContext(MockSelectCtx);
+    React.useEffect(() => {
+      setMeta({ ariaLabel, id });
+    }, [ariaLabel, id, setMeta]);
+    return null;
+  },
+  SelectValue: () => null,
+  SelectContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  SelectItem: ({ value, children }: { value: string; children: React.ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
 }));
 
 // Mock next-intl
@@ -40,31 +96,29 @@ describe('Header language selector', () => {
 
   it('shows English as the selected option when locale is en', () => {
     render(<Header currentLocale="en" />);
-    expect(screen.getByRole('combobox', { name: /language/i })).toHaveTextContent('English');
+    // With next-intl mock, t('en') returns the key 'en' as the option label
+    expect(screen.getByDisplayValue('en')).toBeInTheDocument();
   });
 
   it('shows Français as the selected option when locale is fr', () => {
     render(<Header currentLocale="fr" />);
-    expect(screen.getByRole('combobox', { name: /language/i })).toHaveTextContent('Français');
+    expect(screen.getByDisplayValue('fr')).toBeInTheDocument();
   });
 
   it('shows Español as the selected option when locale is es', () => {
     render(<Header currentLocale="es" />);
-    expect(screen.getByRole('combobox', { name: /language/i })).toHaveTextContent('Español');
+    expect(screen.getByDisplayValue('es')).toBeInTheDocument();
   });
 
   it('shows Deutsch as the selected option when locale is de', () => {
     render(<Header currentLocale="de" />);
-    expect(screen.getByRole('combobox', { name: /language/i })).toHaveTextContent('Deutsch');
+    expect(screen.getByDisplayValue('de')).toBeInTheDocument();
   });
 
   it('calls settings API and router.refresh when language changes', async () => {
     render(<Header currentLocale="en" />);
-    const trigger = screen.getByRole('combobox', { name: /language/i });
-    fireEvent.click(trigger);
-
-    const frOption = await screen.findByRole('option', { name: 'Français' });
-    fireEvent.click(frOption);
+    const select = screen.getByRole('combobox', { name: /language/i });
+    fireEvent.change(select, { target: { value: 'fr' } });
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(

@@ -1,10 +1,38 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 import { QuickWinsSection } from '@/components/reports/report-section-quick-wins';
+
+const messages = {
+  reports: {
+    sections: {
+      executive_summary_title: 'Executive Summary',
+      executive_summary_add: 'Add Executive Summary',
+      top_risks_title: 'Top Risks',
+      top_risks_add: 'Add Top Risks',
+      quick_wins_title: 'Quick Wins',
+      quick_wins_add: 'Add Quick Wins',
+      user_impact_title: 'User Impact',
+      user_impact_add: 'Add User Impact',
+      generate_button: 'Generate',
+      generating_label: 'Generating…',
+      generating_overlay: 'Generating with AI...',
+      delete_button: 'Delete',
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 describe('QuickWinsSection', () => {
   it('renders 5 numbered inputs', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -17,7 +45,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('renders existing items', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={['Quick win A']}
         onChange={vi.fn()}
@@ -31,7 +59,7 @@ describe('QuickWinsSection', () => {
 
   it('calls onChange with updated array when item changed', () => {
     const onChange = vi.fn();
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={['A', 'B']}
         onChange={onChange}
@@ -47,7 +75,7 @@ describe('QuickWinsSection', () => {
 
   it('calls onDelete when delete button clicked', () => {
     const onDelete = vi.fn();
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -61,7 +89,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('disables generate button while generating', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -74,7 +102,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('shows generating overlay when isGenerating is true', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -88,7 +116,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('does not show generating overlay when isGenerating is false', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -102,7 +130,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('disables delete button while generating', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -115,7 +143,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('marks fields inert while generating', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -128,7 +156,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('does not mark fields inert when not generating', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -141,7 +169,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('generate button uses ai variant', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}
@@ -154,7 +182,7 @@ describe('QuickWinsSection', () => {
   });
 
   it('delete button uses destructive variant', () => {
-    render(
+    renderWithIntl(
       <QuickWinsSection
         items={[]}
         onChange={vi.fn()}

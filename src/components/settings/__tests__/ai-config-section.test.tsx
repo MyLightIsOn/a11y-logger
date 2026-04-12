@@ -1,33 +1,62 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { NextIntlClientProvider } from 'next-intl';
 import { AIConfigSection } from '../ai-config-section';
 
 const onSave = vi.fn().mockResolvedValue(undefined);
 
+const messages = {
+  settings: {
+    ai: {
+      heading: 'AI Configuration',
+      provider_label: 'AI Provider',
+      provider_none: 'None (disable AI features)',
+      provider_openai: 'OpenAI',
+      provider_anthropic: 'Anthropic',
+      api_key_label: 'API Key',
+      api_key_placeholder: 'sk-...',
+      model_label: 'Model',
+      base_url_label: 'Base URL',
+      base_url_placeholder: 'https://api.openai.com/v1',
+      ollama_base_url_placeholder: 'http://localhost:11434/v1',
+      save_button: 'Save AI Settings',
+      save_button_loading: 'Saving…',
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 describe('AIConfigSection — None provider', () => {
   it('Save button is enabled when provider is None', async () => {
-    render(<AIConfigSection provider="none" onSave={onSave} />);
-    expect(screen.getByRole('button', { name: 'Save Configuration' })).not.toBeDisabled();
+    renderWithIntl(<AIConfigSection provider="none" onSave={onSave} />);
+    expect(screen.getByRole('button', { name: 'Save AI Settings' })).not.toBeDisabled();
   });
 
   it('Save button is always enabled regardless of provider selection', () => {
-    render(<AIConfigSection provider="" onSave={onSave} />);
-    expect(screen.getByRole('button', { name: 'Save Configuration' })).not.toBeDisabled();
+    renderWithIntl(<AIConfigSection provider="" onSave={onSave} />);
+    expect(screen.getByRole('button', { name: 'Save AI Settings' })).not.toBeDisabled();
   });
 
   it('calls onSave with provider=none when None is saved', async () => {
     const user = userEvent.setup();
     const mockSave = vi.fn().mockResolvedValue(undefined);
-    render(<AIConfigSection provider="none" onSave={mockSave} />);
-    await user.click(screen.getByRole('button', { name: 'Save Configuration' }));
+    renderWithIntl(<AIConfigSection provider="none" onSave={mockSave} />);
+    await user.click(screen.getByRole('button', { name: 'Save AI Settings' }));
     await waitFor(() => {
       expect(mockSave).toHaveBeenCalledWith(expect.objectContaining({ provider: 'none' }));
     });
   });
 
   it('hides API key, base URL, and model fields when None is selected', () => {
-    render(<AIConfigSection provider="none" onSave={onSave} />);
+    renderWithIntl(<AIConfigSection provider="none" onSave={onSave} />);
     expect(screen.queryByLabelText(/api key/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/base url/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/model name/i)).not.toBeInTheDocument();
@@ -43,29 +72,29 @@ describe('AIConfigSection — env var overrides', () => {
   };
 
   it('shows info banner when provider is from env', () => {
-    render(<AIConfigSection provider="none" onSave={onSave} envSource={envSource} />);
+    renderWithIntl(<AIConfigSection provider="none" onSave={onSave} envSource={envSource} />);
     const alert = screen.getByRole('alert');
     expect(alert).toBeInTheDocument();
     expect(within(alert).getByText(/environment variable/i)).toBeInTheDocument();
   });
 
   it('does not show banner when no env source is set', () => {
-    render(<AIConfigSection provider="openai" onSave={onSave} />);
+    renderWithIntl(<AIConfigSection provider="openai" onSave={onSave} />);
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('Save button remains enabled even when provider is from env', () => {
-    render(<AIConfigSection provider="none" onSave={onSave} envSource={envSource} />);
-    expect(screen.getByRole('button', { name: 'Save Configuration' })).not.toBeDisabled();
+    renderWithIntl(<AIConfigSection provider="none" onSave={onSave} envSource={envSource} />);
+    expect(screen.getByRole('button', { name: 'Save AI Settings' })).not.toBeDisabled();
   });
 
   it('shows "Set via environment variable" for API key when apiKey is from env', () => {
-    render(<AIConfigSection provider="anthropic" onSave={onSave} envSource={envSource} />);
+    renderWithIntl(<AIConfigSection provider="anthropic" onSave={onSave} envSource={envSource} />);
     expect(screen.getByText(/set via environment variable/i)).toBeInTheDocument();
   });
 
   it('shows env override banner when model is from env', () => {
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="ollama"
         onSave={onSave}
@@ -78,7 +107,7 @@ describe('AIConfigSection — env var overrides', () => {
   });
 
   it('shows env baseUrl value in base URL field when baseUrl is from env', () => {
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="ollama"
         onSave={onSave}
@@ -99,7 +128,7 @@ describe('AIConfigSection — env var overrides', () => {
 describe('AIConfigSection — API key visibility toggle', () => {
   it('toggles API key visibility when eye button is clicked', async () => {
     const user = userEvent.setup();
-    render(<AIConfigSection provider="openai" onSave={onSave} apiKey="sk-test" />);
+    renderWithIntl(<AIConfigSection provider="openai" onSave={onSave} apiKey="sk-test" />);
     const keyInput = screen.getByPlaceholderText('sk-...');
     expect(keyInput).toHaveAttribute('type', 'password');
     await user.click(screen.getByRole('button', { name: /show api key/i }));
@@ -110,7 +139,7 @@ describe('AIConfigSection — API key visibility toggle', () => {
 
   it('updates API key value when typed', async () => {
     const user = userEvent.setup();
-    render(<AIConfigSection provider="openai" onSave={onSave} />);
+    renderWithIntl(<AIConfigSection provider="openai" onSave={onSave} />);
     const keyInput = screen.getByPlaceholderText('sk-...');
     await user.clear(keyInput);
     await user.type(keyInput, 'sk-newkey');
@@ -120,17 +149,17 @@ describe('AIConfigSection — API key visibility toggle', () => {
 
 describe('AIConfigSection — openai-compatible provider', () => {
   it('shows openai-compatible description paragraph', () => {
-    render(<AIConfigSection provider="openai-compatible" onSave={onSave} />);
+    renderWithIntl(<AIConfigSection provider="openai-compatible" onSave={onSave} />);
     expect(screen.getByText(/any api that follows the openai chat format/i)).toBeInTheDocument();
   });
 
   it('shows optional label for API key with openai-compatible', () => {
-    render(<AIConfigSection provider="openai-compatible" onSave={onSave} />);
+    renderWithIntl(<AIConfigSection provider="openai-compatible" onSave={onSave} />);
     expect(screen.getByText(/optional/i)).toBeInTheDocument();
   });
 
   it('shows base URL input for openai-compatible', () => {
-    render(<AIConfigSection provider="openai-compatible" onSave={onSave} />);
+    renderWithIntl(<AIConfigSection provider="openai-compatible" onSave={onSave} />);
     expect(screen.getByLabelText(/base url/i)).toBeInTheDocument();
   });
 });
@@ -138,7 +167,7 @@ describe('AIConfigSection — openai-compatible provider', () => {
 describe('AIConfigSection — base URL input', () => {
   it('shows editable base URL for ollama without env override', async () => {
     const user = userEvent.setup();
-    render(<AIConfigSection provider="ollama" onSave={onSave} baseUrl="" />);
+    renderWithIntl(<AIConfigSection provider="ollama" onSave={onSave} baseUrl="" />);
     const input = screen.getByLabelText(/base url/i);
     expect(input).not.toBeDisabled();
     await user.type(input, 'http://localhost:11434/v1');
@@ -150,18 +179,20 @@ describe('AIConfigSection — TaskModelSelector', () => {
   it('renders with custom model value showing Other text input (isCustomValue path)', () => {
     // When a model value is set that isn't in the known models list,
     // the component initializes with showOther=true, revealing the custom text input.
-    render(<AIConfigSection provider="openai" onSave={onSave} modelIssues="my-custom-model" />);
+    renderWithIntl(
+      <AIConfigSection provider="openai" onSave={onSave} modelIssues="my-custom-model" />
+    );
     expect(screen.getByDisplayValue('my-custom-model')).toBeInTheDocument();
     expect(screen.getByLabelText(/issue analysis custom model name/i)).toBeInTheDocument();
   });
 
   it('renders without custom input when model is a known value', () => {
-    render(<AIConfigSection provider="openai" onSave={onSave} modelIssues="gpt-4o" />);
+    renderWithIntl(<AIConfigSection provider="openai" onSave={onSave} modelIssues="gpt-4o" />);
     expect(screen.queryByLabelText(/issue analysis custom model name/i)).not.toBeInTheDocument();
   });
 
   it('shows custom inputs for multiple tasks when all have unknown models', () => {
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="openai"
         onSave={onSave}
@@ -178,11 +209,13 @@ describe('AIConfigSection — TaskModelSelector', () => {
   it('saves custom model value via text input', async () => {
     const user = userEvent.setup();
     const mockSave = vi.fn().mockResolvedValue(undefined);
-    render(<AIConfigSection provider="openai" onSave={mockSave} modelIssues="my-custom-model" />);
+    renderWithIntl(
+      <AIConfigSection provider="openai" onSave={mockSave} modelIssues="my-custom-model" />
+    );
     const customInput = screen.getByLabelText(/issue analysis custom model name/i);
     await user.clear(customInput);
     await user.type(customInput, 'new-custom');
-    await user.click(screen.getByRole('button', { name: 'Save Configuration' }));
+    await user.click(screen.getByRole('button', { name: 'Save AI Settings' }));
     await waitFor(() => {
       expect(mockSave).toHaveBeenCalledWith(expect.objectContaining({ modelIssues: 'new-custom' }));
     });
@@ -191,7 +224,7 @@ describe('AIConfigSection — TaskModelSelector', () => {
 
 describe('AIConfigSection — review pass initially enabled', () => {
   it('shows review model selector when reviewPassEnabled starts true', () => {
-    render(<AIConfigSection provider="openai" onSave={onSave} reviewPassEnabled={true} />);
+    renderWithIntl(<AIConfigSection provider="openai" onSave={onSave} reviewPassEnabled={true} />);
     expect(screen.getByLabelText(/ai review pass model/i)).toBeInTheDocument();
   });
 });
@@ -200,7 +233,7 @@ describe('AIConfigSection — per-task model selectors', () => {
   const onSave = vi.fn().mockResolvedValue(undefined);
 
   it('shows task model section when provider is openai', () => {
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="openai"
         onSave={onSave}
@@ -218,7 +251,7 @@ describe('AIConfigSection — per-task model selectors', () => {
   });
 
   it('does not show review model selector when toggle is off', () => {
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="openai"
         onSave={onSave}
@@ -234,7 +267,7 @@ describe('AIConfigSection — per-task model selectors', () => {
 
   it('shows review model selector when toggle is switched on', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="openai"
         onSave={onSave}
@@ -252,7 +285,7 @@ describe('AIConfigSection — per-task model selectors', () => {
   it('calls onSave with all model fields and reviewPassEnabled', async () => {
     const user = userEvent.setup();
     const mockSave = vi.fn().mockResolvedValue(undefined);
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="openai"
         onSave={mockSave}
@@ -263,7 +296,7 @@ describe('AIConfigSection — per-task model selectors', () => {
         reviewPassEnabled={true}
       />
     );
-    await user.click(screen.getByRole('button', { name: 'Save Configuration' }));
+    await user.click(screen.getByRole('button', { name: 'Save AI Settings' }));
     await waitFor(() => {
       expect(mockSave).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -278,7 +311,7 @@ describe('AIConfigSection — per-task model selectors', () => {
   });
 
   it('hides task model section when provider is none', () => {
-    render(
+    renderWithIntl(
       <AIConfigSection
         provider="none"
         onSave={onSave}

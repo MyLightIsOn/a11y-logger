@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,8 @@ interface DataManagementSectionProps {
 }
 
 export function DataManagementSection({ dbPath, mediaPath }: DataManagementSectionProps) {
+  const t = useTranslations('settings.data');
+  const tToast = useTranslations('settings.toast');
   const [resetConfirm, setResetConfirm] = useState('');
   const [resetting, setResetting] = useState(false);
 
@@ -33,10 +36,10 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
       setResetConfirm('');
-      toast.success('Database reset successfully');
+      toast.success(tToast('data_reset_success'));
       window.location.reload();
     } catch {
-      toast.error('Failed to reset database');
+      toast.error(tToast('data_reset_failed'));
     } finally {
       setResetting(false);
     }
@@ -45,7 +48,7 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Data Management</CardTitle>
+        <CardTitle>{t('heading')}</CardTitle>
         <CardDescription>Manage your local data storage, exports, and imports.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -72,15 +75,15 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
 
         <div className="flex gap-2">
           <Button variant="outline" disabled>
-            Export Data (coming soon)
+            {t('export_button')}
           </Button>
           <Button variant="outline" disabled>
-            Import Data (coming soon)
+            {t('import_button')}
           </Button>
         </div>
 
         <div className="rounded-lg border border-destructive/50 p-4 space-y-3">
-          <h2 className="font-medium text-destructive">Danger Zone</h2>
+          <h2 className="font-medium text-destructive">{t('danger_zone_heading')}</h2>
           <p className="text-sm text-muted-foreground">
             Reset the database. This will permanently delete all projects, assessments, issues,
             reports, and VPATs.
@@ -88,15 +91,13 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm">
-                Reset Database
+                {t('clear_button')}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Reset Database?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will permanently delete ALL data. Type <strong>RESET</strong> to confirm.
-                </AlertDialogDescription>
+                <AlertDialogTitle>{t('clear_dialog_title')}</AlertDialogTitle>
+                <AlertDialogDescription>{t('clear_dialog_description')}</AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-1.5">
                 <Label htmlFor="reset-confirm">Type RESET to confirm</Label>
@@ -108,13 +109,15 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
                 />
               </div>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => setResetConfirm('')}>Cancel</AlertDialogCancel>
+                <AlertDialogCancel onClick={() => setResetConfirm('')}>
+                  {t('clear_dialog_cancel')}
+                </AlertDialogCancel>
                 <AlertDialogAction
                   disabled={resetConfirm !== 'RESET' || resetting}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={handleReset}
                 >
-                  Reset Database
+                  {t('clear_dialog_confirm')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

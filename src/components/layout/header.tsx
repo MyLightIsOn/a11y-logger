@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -12,12 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const LANGUAGE_OPTIONS = [
-  { value: 'en', label: 'English' },
-  { value: 'fr', label: 'Français' },
-  { value: 'es', label: 'Español' },
-  { value: 'de', label: 'Deutsch' },
-] as const;
+const LANGUAGE_OPTION_KEYS = ['en', 'fr', 'es', 'de'] as const;
 
 interface HeaderProps {
   currentLocale?: string;
@@ -27,6 +23,8 @@ export function Header({ currentLocale = 'en' }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const tUi = useTranslations('ui');
+  const tLang = useTranslations('settings.language');
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
@@ -49,13 +47,17 @@ export function Header({ currentLocale = 'en' }: HeaderProps) {
       </div>
       <div className="flex items-center gap-2">
         <Select value={currentLocale} onValueChange={handleLanguageChange}>
-          <SelectTrigger id="language-selector" aria-label="Language" className="w-auto text-sm">
+          <SelectTrigger
+            id="language-selector"
+            aria-label={tUi('language_select.aria_label')}
+            className="w-auto text-sm"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {LANGUAGE_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
+            {LANGUAGE_OPTION_KEYS.map((key) => (
+              <SelectItem key={key} value={key}>
+                {tLang(key)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -65,7 +67,9 @@ export function Header({ currentLocale = 'en' }: HeaderProps) {
           size="icon"
           className="border border-input"
           onClick={() => setTheme(isDark ? 'light' : 'dark')}
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={
+            isDark ? tUi('theme_toggle.light_aria_label') : tUi('theme_toggle.dark_aria_label')
+          }
           aria-pressed={isDark}
         >
           <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

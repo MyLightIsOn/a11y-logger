@@ -1,20 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Settings,
-  Plus,
-  Upload,
-  Pencil,
-  CirclePlay,
-  CircleCheck,
-  Ban,
-  Trash2,
-  X,
-} from 'lucide-react';
+import { Settings, Plus, Upload, Pencil, CirclePlay, CircleCheck, Ban, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -38,21 +29,26 @@ import {
 interface AssessmentSettingsMenuProps {
   projectId: string;
   assessmentId: string;
+  assessmentName?: string;
   currentStatus?: 'ready' | 'in_progress' | 'completed';
 }
 
 const statusTransition = {
-  ready: { next: 'in_progress', label: 'Mark as In Progress', Icon: CirclePlay },
-  in_progress: { next: 'completed', label: 'Mark as Complete', Icon: CircleCheck },
-  completed: { next: 'in_progress', label: 'Mark as Incomplete', Icon: Ban },
+  ready: { next: 'in_progress', labelKey: 'mark_in_progress' as const, Icon: CirclePlay },
+  in_progress: { next: 'completed', labelKey: 'mark_complete' as const, Icon: CircleCheck },
+  completed: { next: 'in_progress', labelKey: 'mark_incomplete' as const, Icon: Ban },
 } as const;
 
 export function AssessmentSettingsMenu({
   projectId,
   assessmentId,
+  assessmentName = '',
   currentStatus,
 }: AssessmentSettingsMenuProps) {
   const router = useRouter();
+  const tMenu = useTranslations('assessments.settings_menu');
+  const tDialog = useTranslations('assessments.delete_dialog');
+  const tToast = useTranslations('assessments.toast');
   const [importOpen, setImportOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -71,13 +67,13 @@ export function AssessmentSettingsMenu({
       });
       const data = await res.json();
       if (data.success) {
-        toast.success('Status updated');
+        toast.success(tToast('updated'));
         router.refresh();
       } else {
-        toast.error('Failed to update status');
+        toast.error(tToast('update_failed'));
       }
     } catch {
-      toast.error('Failed to update status');
+      toast.error(tToast('update_failed'));
     } finally {
       setLoading(false);
     }
@@ -91,14 +87,14 @@ export function AssessmentSettingsMenu({
       });
       const json = await res.json();
       if (!json.success) {
-        toast.error(json.error ?? 'Failed to delete assessment');
+        toast.error(json.error ?? tToast('delete_failed'));
         return;
       }
-      toast.success('Assessment deleted');
+      toast.success(tToast('deleted'));
       router.push(`/projects/${projectId}`);
       router.refresh();
     } catch {
-      toast.error('Failed to delete assessment');
+      toast.error(tToast('delete_failed'));
     } finally {
       setIsDeleting(false);
       setDeleteOpen(false);
@@ -111,12 +107,7 @@ export function AssessmentSettingsMenu({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="Assessment settings"
-            className="bg-card"
-          >
+          <Button variant="ghost" size="icon" aria-label={tMenu('aria_label')}>
             <Settings className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -125,7 +116,7 @@ export function AssessmentSettingsMenu({
             <>
               <DropdownMenuItem onSelect={handleStatusTransition} disabled={loading}>
                 <transition.Icon className="mr-2 h-4 w-4" />
-                {transition.label}
+                {tMenu(transition.labelKey)}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </>
@@ -133,23 +124,23 @@ export function AssessmentSettingsMenu({
           <DropdownMenuItem asChild>
             <Link href={`${baseUrl}/issues/new`}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Issue
+              {tMenu('add_issue')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setImportOpen(true)}>
             <Upload className="mr-2 h-4 w-4" />
-            Import Issues
+            {tMenu('import_issues')}
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`${baseUrl}/edit`}>
               <Pencil className="mr-2 h-4 w-4" />
-              Edit Assessment
+              {tMenu('edit')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setDeleteOpen(true)} className="">
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete Assessment
+            {tMenu('delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -165,20 +156,13 @@ export function AssessmentSettingsMenu({
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Assessment?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the assessment and all its issues. This action cannot be
-              undone.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{tDialog('title', { name: assessmentName })}</AlertDialogTitle>
+            <AlertDialogDescription>{tDialog('description')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>
-              <X />
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel>{tDialog('cancel_button')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
-              <Trash2 />
-              {isDeleting ? 'Deleting…' : 'Delete Assessment'}
+              {tDialog('confirm_button')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,8 @@ export function AuthToggleSection({
   authEnabled: initialEnabled,
   hasUsers,
 }: AuthToggleSectionProps) {
+  const t = useTranslations('settings.auth');
+  const tToast = useTranslations('settings.toast');
   const [enabled, setEnabled] = useState(initialEnabled);
   const [loading, setLoading] = useState(false);
 
@@ -27,16 +30,12 @@ export function AuthToggleSection({
       const data = await res.json();
       if (data.success) {
         setEnabled(data.data.enabled);
-        toast.success(
-          data.data.enabled
-            ? 'Authentication enabled. Users must log in.'
-            : 'Authentication disabled. App is open access.'
-        );
+        toast.success(tToast('auth_saved'));
       } else {
-        toast.error('Failed to update authentication setting');
+        toast.error(tToast('auth_save_failed'));
       }
     } catch {
-      toast.error('Failed to update authentication setting');
+      toast.error(tToast('auth_save_failed'));
     } finally {
       setLoading(false);
     }
@@ -45,7 +44,7 @@ export function AuthToggleSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Authentication</CardTitle>
+        <CardTitle>{t('heading')}</CardTitle>
         <CardDescription>
           When enabled, users must log in to access the app. Requires at least one user account.
         </CardDescription>
@@ -53,17 +52,8 @@ export function AuthToggleSection({
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium">
-              Authentication is currently{' '}
-              <span className={enabled ? 'text-green-600' : 'text-muted-foreground'}>
-                {enabled ? 'enabled' : 'disabled'}
-              </span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {enabled
-                ? 'Users must provide credentials to access the app.'
-                : 'App is open access — no login required.'}
-            </p>
+            <p className="text-sm font-medium">{t('enable_label')}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('enable_description')}</p>
           </div>
           <div className="flex flex-col items-end gap-1">
             <Button
@@ -72,7 +62,7 @@ export function AuthToggleSection({
               disabled={loading || !hasUsers}
               aria-pressed={enabled}
             >
-              {loading ? 'Updating…' : enabled ? 'Disable Auth' : 'Enable Auth'}
+              {loading ? t('updating_label') : enabled ? t('disable_button') : t('enable_button')}
             </Button>
             {!hasUsers && <p className="text-xs text-muted-foreground">Create an account first.</p>}
           </div>

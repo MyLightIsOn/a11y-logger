@@ -1,6 +1,34 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 import { UserImpactSection } from '@/components/reports/report-section-user-impact';
+
+const messages = {
+  reports: {
+    sections: {
+      executive_summary_title: 'Executive Summary',
+      executive_summary_add: 'Add Executive Summary',
+      top_risks_title: 'Top Risks',
+      top_risks_add: 'Add Top Risks',
+      quick_wins_title: 'Quick Wins',
+      quick_wins_add: 'Add Quick Wins',
+      user_impact_title: 'User Impact',
+      user_impact_add: 'Add User Impact',
+      generate_button: 'Generate',
+      generating_label: 'Generating…',
+      generating_overlay: 'Generating with AI...',
+      delete_button: 'Delete',
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const EMPTY = {
   screen_reader: '',
@@ -13,7 +41,7 @@ const EMPTY = {
 
 describe('UserImpactSection', () => {
   it('renders 6 labeled textareas', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -26,7 +54,7 @@ describe('UserImpactSection', () => {
   });
 
   it('renders existing data', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={{ ...EMPTY, screen_reader: 'Has issues' }}
         onChange={vi.fn()}
@@ -40,7 +68,7 @@ describe('UserImpactSection', () => {
 
   it('calls onChange with updated field', () => {
     const onChange = vi.fn();
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={onChange}
@@ -56,7 +84,7 @@ describe('UserImpactSection', () => {
 
   it('calls onDelete when delete button clicked', () => {
     const onDelete = vi.fn();
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -70,7 +98,7 @@ describe('UserImpactSection', () => {
   });
 
   it('disables generate button while generating', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -83,7 +111,7 @@ describe('UserImpactSection', () => {
   });
 
   it('shows generating overlay when isGenerating is true', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={{
           screen_reader: '',
@@ -104,7 +132,7 @@ describe('UserImpactSection', () => {
   });
 
   it('does not show generating overlay when isGenerating is false', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={{
           screen_reader: '',
@@ -125,7 +153,7 @@ describe('UserImpactSection', () => {
   });
 
   it('disables delete button while generating', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -138,7 +166,7 @@ describe('UserImpactSection', () => {
   });
 
   it('marks fields inert while generating', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -151,7 +179,7 @@ describe('UserImpactSection', () => {
   });
 
   it('does not mark fields inert when not generating', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -164,7 +192,7 @@ describe('UserImpactSection', () => {
   });
 
   it('generate button uses ai variant', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}
@@ -177,7 +205,7 @@ describe('UserImpactSection', () => {
   });
 
   it('delete button uses destructive variant', () => {
-    render(
+    renderWithIntl(
       <UserImpactSection
         data={EMPTY}
         onChange={vi.fn()}

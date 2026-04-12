@@ -1,35 +1,55 @@
 {
   "nav": {
     "dashboard": "Dashboard",
-    "projects": "Projects",
-    "assessments": "Assessments",
-    "issues": "Issues",
-    "reports": "Reports",
+    "projects": "Projekte",
+    "assessments": "Bewertungen",
+    "issues": "Probleme",
+    "reports": "Berichte",
     "vpats": "VPATs",
-    "settings": "Settings"
+    "settings": "Einstellungen"
   },
   "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "create": "Create",
-    "loading": "Loading…",
-    "error": "An error occurred"
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "loading": "Laden…",
+    "error": "Ein Fehler ist aufgetreten",
+    "saving": "Speichern…",
+    "new": "Neu",
+    "view": "Ansehen",
+    "back": "Zurück",
+    "confirm": "Bestätigen",
+    "name": "Name",
+    "description": "Beschreibung",
+    "status": "Status",
+    "actions": "Aktionen",
+    "no_results": "Keine Ergebnisse gefunden",
+    "required_field": "Dieses Feld ist erforderlich"
+  },
+  "ui": {
+    "theme_toggle": {
+      "light_aria_label": "Zum hellen Modus wechseln",
+      "dark_aria_label": "Zum dunklen Modus wechseln"
+    },
+    "language_select": {
+      "aria_label": "Sprache"
+    }
   },
   "vpats": {
     "conformance": {
-      "not_evaluated": "Not Evaluated",
-      "supports": "Supports",
-      "partially_supports": "Partial Support",
-      "does_not_support": "Does Not Support",
-      "not_applicable": "Not Applicable"
+      "not_evaluated": "Nicht bewertet",
+      "supports": "Erfüllt",
+      "partially_supports": "Teilweise erfüllt",
+      "does_not_support": "Nicht erfüllt",
+      "not_applicable": "Nicht anwendbar"
     },
     "status": {
-      "draft": "Draft",
-      "published": "Published",
-      "archived": "Archived",
-      "reviewed": "Reviewed"
+      "draft": "Entwurf",
+      "published": "Veröffentlicht",
+      "archived": "Archiviert",
+      "reviewed": "Überprüft"
     },
     "sections": {
       "tableA": "Table 1: Success Criteria, Level A",
@@ -50,12 +70,122 @@
       "download": "Download PDF",
       "generating": "Generating…"
     },
+    "card": {
+      "no_project": "Kein Projekt",
+      "criteria_resolved": "{resolved} von {total} Kriterien gelöst"
+    },
+    "settings_menu": {
+      "aria_label": "VPAT-Einstellungen",
+      "edit_vpat": "VPAT bearbeiten",
+      "mark_as_reviewed": "Als überprüft markieren",
+      "update_review": "Überprüfung aktualisieren",
+      "publish": "Veröffentlichen",
+      "unpublish": "Zurückziehen",
+      "export_html": "HTML",
+      "export_docx": "Word (.docx)",
+      "export_openacr": "OpenACR (YAML)",
+      "print_to_pdf": "Als PDF drucken…",
+      "delete": "Löschen",
+      "not_ready_to_publish_title": "Nicht bereit zur Veröffentlichung",
+      "criteria_must_be_evaluated": "Alle Kriterien müssen bewertet werden, bevor dieser VPAT veröffentlicht werden kann.",
+      "vpat_must_be_reviewed": "Der VPAT muss überprüft werden, bevor er veröffentlicht werden kann.",
+      "vpat_must_also_be_reviewed": "Der VPAT muss außerdem überprüft werden, bevor er veröffentlicht werden kann.",
+      "publish_vpat_title": "VPAT veröffentlichen",
+      "publish_snapshot_note": "Durch die Veröffentlichung wird ein Snapshot des aktuellen Zustands erstellt. Sind Sie sicher?",
+      "publishing": "Veröffentlichung…",
+      "unpublish_vpat_title": "VPAT zurückziehen?",
+      "unpublish_description": "Das Zurückziehen setzt diesen VPAT auf den Status Entwurf zurück. Die aktuell veröffentlichte Version wird im Versionsverlauf gespeichert.",
+      "not_ready_to_review_title": "Nicht bereit zur Überprüfung",
+      "criteria_must_be_evaluated_review": "Alle Kriterien müssen bewertet werden, bevor dieser VPAT überprüft werden kann.",
+      "submit_review_title": "Überprüfung einreichen",
+      "submit_review_confirmation": "Mit der Einreichung Ihres Namens bestätigen Sie, dass Sie diesen VPAT persönlich überprüft haben und die Ergebnisse die Barrierefreiheitskonformität des Produkts korrekt widerspiegeln.",
+      "reviewer_name_placeholder": "Vollständiger Name",
+      "reviewer_name_aria_label": "Vollständiger Name des Prüfers",
+      "submitting": "Einreichen…",
+      "submit_review_button": "Überprüfung einreichen",
+      "edit_published_title": "Veröffentlichten VPAT bearbeiten?",
+      "edit_published_description": "Durch die Bearbeitung wird dieser VPAT auf den Status Entwurf zurückgesetzt. Die aktuell veröffentlichte Version wird im Versionsverlauf gespeichert.",
+      "edit_anyway": "Trotzdem bearbeiten",
+      "delete_vpat_title": "VPAT löschen",
+      "delete_vpat_description": "Sind Sie sicher, dass Sie \"{title}\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleting": "Löschen…",
+      "ok": "OK",
+      "cancel": "Abbrechen",
+      "all_criteria_evaluated": "Alle {total} Kriterien wurden bewertet.",
+      "criteria_not_evaluated": "{notEvaluated} von {total} Kriterien wurden noch nicht bewertet."
+    },
+    "cover_sheet": {
+      "loading": "Laden…",
+      "product_info_title": "Produktinformationen",
+      "product_name_label": "Produktname",
+      "product_name_placeholder": "z.B. Meine App 2.0",
+      "product_version_label": "Version",
+      "product_version_placeholder": "z.B. 2.4.1",
+      "product_description_label": "Produktbeschreibung",
+      "product_description_placeholder": "Kurze Beschreibung des Produkts",
+      "vendor_info_title": "Anbieter- / Kontaktinformationen",
+      "vendor_company_label": "Unternehmen",
+      "vendor_company_placeholder": "z.B. Acme GmbH",
+      "vendor_contact_name_label": "Kontaktname",
+      "vendor_contact_name_placeholder": "z.B. Jane Smith",
+      "vendor_contact_email_label": "Kontakt-E-Mail",
+      "vendor_contact_email_placeholder": "z.B. jane@acme.com",
+      "vendor_contact_phone_label": "Kontakttelefon",
+      "vendor_contact_phone_placeholder": "z.B. +49 555 000 0000",
+      "vendor_website_label": "Webseite",
+      "vendor_website_placeholder": "z.B. https://acme.com",
+      "report_details_title": "Berichtsdetails",
+      "report_date_label": "Berichtsdatum",
+      "evaluation_methods_label": "Evaluierungsmethoden",
+      "evaluation_methods_placeholder": "Beschreiben Sie die verwendeten Testmethoden",
+      "notes_label": "Notizen",
+      "notes_placeholder": "Zusätzliche Notizen"
+    },
+    "cover_sheet_toast": {
+      "save_failed": "Deckblatt konnte nicht gespeichert werden"
+    },
+    "generate_all": {
+      "title": "Alle Kriterien generieren?",
+      "description": "Dabei werden Bemerkungen für {criteriaCount} Kriterien generiert. Dies kann einige Minuten dauern.",
+      "cancel": "Abbrechen",
+      "generate": "Generieren"
+    },
+    "criteria": {
+      "remarks_placeholder": "Bemerkungen hinzufügen…",
+      "generating": "Generieren…",
+      "generate": "Generieren",
+      "view_issues_aria_label": "Probleme für {code} anzeigen",
+      "generate_aria_label": "Für {code} generieren",
+      "generating_aria_label": "Generierung für {code}",
+      "ai_info_aria_label": "KI-Info für {code}",
+      "conformance_aria_label": "Konformität für {code}",
+      "remarks_aria_label": "Bemerkungen für {code}"
+    },
+    "toast": {
+      "deleted": "VPAT gelöscht",
+      "delete_failed": "VPAT konnte nicht gelöscht werden"
+    },
     "pdf_modal": {
       "title": "Als PDF drucken",
       "browser_warning": "Ihr Browser erstellt eine PDF-Datei. Hinweis: Vom Browser generierte PDFs sind nicht getaggt und möglicherweise nicht für Screenreader-Nutzer zugänglich.",
       "accessible_alternative": "Für ein zugängliches PDF für formelle Zwecke laden Sie das DOCX herunter und verwenden Sie die Option 'Als PDF exportieren' in Word oder LibreOffice mit aktivierten Barrierefreiheitsoptionen.",
       "continue_to_print": "Weiter zum Drucken",
       "download_docx": "Stattdessen DOCX herunterladen"
+    }
+  },
+  "auth": {
+    "login": {
+      "heading": "Anmelden",
+      "username_label": "Benutzername",
+      "username_placeholder": "Benutzernamen eingeben",
+      "password_label": "Passwort",
+      "password_placeholder": "Passwort eingeben",
+      "submit_button": "Anmelden",
+      "submit_button_loading": "Anmeldung…"
+    },
+    "toast": {
+      "login_failed": "Ungültiger Benutzername oder Passwort",
+      "login_error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
     }
   },
   "settings": {
@@ -65,6 +195,441 @@
       "fr": "French",
       "es": "Spanish",
       "de": "German"
+    },
+    "ai": {
+      "heading": "KI-Konfiguration",
+      "provider_label": "KI-Anbieter",
+      "provider_none": "Keiner (KI-Funktionen deaktivieren)",
+      "provider_openai": "OpenAI",
+      "provider_anthropic": "Anthropic",
+      "api_key_label": "API-Schlüssel",
+      "api_key_placeholder": "sk-...",
+      "model_label": "Modell",
+      "base_url_label": "Basis-URL",
+      "base_url_placeholder": "https://api.example.com/v1",
+      "ollama_base_url_placeholder": "http://localhost:11434/v1",
+      "save_button": "KI-Einstellungen speichern",
+      "save_button_loading": "Speichern…"
+    },
+    "auth": {
+      "heading": "Authentifizierung",
+      "enable_label": "Authentifizierung aktivieren",
+      "enable_description": "Passwort für den Zugriff auf diese Instanz erforderlich",
+      "save_button": "Auth-Einstellungen speichern",
+      "updating_label": "Aktualisierung…",
+      "enable_button": "Auth aktivieren",
+      "disable_button": "Auth deaktivieren"
+    },
+    "users": {
+      "heading": "Benutzerverwaltung",
+      "create_account_heading": "Konto erstellen",
+      "username_label": "Benutzername",
+      "password_label": "Passwort",
+      "new_password_label": "Neues Passwort",
+      "create_button": "Konto erstellen"
+    },
+    "data": {
+      "heading": "Datenverwaltung",
+      "danger_zone_heading": "Gefahrenzone",
+      "export_button": "Daten exportieren",
+      "import_button": "Daten importieren",
+      "clear_button": "Alle Daten löschen",
+      "clear_dialog_title": "Alle Daten löschen?",
+      "clear_dialog_description": "Dadurch werden alle Projekte, Bewertungen, Probleme, Berichte und VPATs dauerhaft gelöscht.",
+      "clear_dialog_confirm": "Alle Daten löschen",
+      "clear_dialog_cancel": "Abbrechen"
+    },
+    "toast": {
+      "ai_saved": "KI-Einstellungen gespeichert",
+      "ai_save_failed": "KI-Einstellungen konnten nicht gespeichert werden",
+      "auth_saved": "Auth-Einstellungen gespeichert",
+      "auth_save_failed": "Auth-Einstellungen konnten nicht gespeichert werden",
+      "language_saved": "Sprache aktualisiert",
+      "language_save_failed": "Sprache konnte nicht aktualisiert werden",
+      "data_reset_success": "Daten zurückgesetzt",
+      "data_reset_failed": "Daten konnten nicht zurückgesetzt werden"
+    }
+  },
+  "assessments": {
+    "form": {
+      "name_label": "Name",
+      "name_placeholder": "z.B. Mobile App Q1-Prüfung",
+      "description_label": "Beschreibung",
+      "description_placeholder": "Kurze Beschreibung dieser Bewertung",
+      "project_label": "Projekt",
+      "project_placeholder": "Projekt auswählen",
+      "start_date_label": "Startdatum",
+      "end_date_label": "Enddatum",
+      "status_label": "Status",
+      "status_options": {
+        "ready": "Bereit",
+        "in_progress": "In Bearbeitung",
+        "completed": "Abgeschlossen"
+      },
+      "save_button": "Bewertung speichern",
+      "save_button_loading": "Speichern…",
+      "cancel_button": "Abbrechen"
+    },
+    "settings_menu": {
+      "aria_label": "Bewertungseinstellungen",
+      "edit": "Bewertung bearbeiten",
+      "delete": "Bewertung löschen",
+      "add_issue": "Problem hinzufügen",
+      "import_issues": "Probleme importieren",
+      "mark_in_progress": "Als in Bearbeitung markieren",
+      "mark_complete": "Als abgeschlossen markieren",
+      "mark_incomplete": "Als unvollständig markieren"
+    },
+    "delete_dialog": {
+      "title": "{name} löschen?",
+      "description": "Dadurch wird diese Bewertung sowie alle zugehörigen Probleme dauerhaft gelöscht.",
+      "confirm_button": "Bewertung löschen",
+      "cancel_button": "Abbrechen"
+    },
+    "card": {
+      "issues_count": "{count, plural, one {# Problem} other {# Probleme}}",
+      "no_issues": "Noch keine Probleme"
+    },
+    "list": {
+      "empty_heading": "Noch keine Bewertungen",
+      "empty_description": "Erstellen Sie Ihre erste Bewertung, um zu beginnen.",
+      "new_button": "Neue Bewertung"
+    },
+    "toast": {
+      "created": "Bewertung erstellt",
+      "updated": "Bewertung aktualisiert",
+      "deleted": "Bewertung gelöscht",
+      "create_failed": "Bewertung konnte nicht erstellt werden",
+      "update_failed": "Bewertung konnte nicht aktualisiert werden",
+      "delete_failed": "Bewertung konnte nicht gelöscht werden"
+    }
+  },
+  "issues": {
+    "form": {
+      "title_label": "Titel",
+      "title_placeholder": "z.B. Bild ohne Alternativtext",
+      "description_label": "Beschreibung",
+      "description_placeholder": "Beschreiben Sie das Barrierefreiheitsproblem",
+      "severity_label": "Schweregrad",
+      "severity_options": {
+        "critical": "Kritisch",
+        "high": "Hoch",
+        "medium": "Mittel",
+        "low": "Niedrig"
+      },
+      "user_impact_label": "Auswirkung auf Nutzer",
+      "user_impact_placeholder": "Beschreiben Sie, wie dieses Problem Nutzer betrifft",
+      "url_label": "URL",
+      "url_placeholder": "https://beispiel.com/seite",
+      "selector_label": "Selektor",
+      "selector_placeholder": "z.B. #suchschaltfläche",
+      "code_snippet_label": "Code-Ausschnitt",
+      "suggested_fix_label": "Vorgeschlagene Lösung",
+      "environment_heading": "Umgebung",
+      "device_type_label": "Gerätetyp",
+      "device_type_options": {
+        "none": "Keiner",
+        "desktop": "Desktop",
+        "mobile": "Mobil",
+        "tablet": "Tablet"
+      },
+      "browser_label": "Browser",
+      "browser_placeholder": "z.B. Chrome 121",
+      "os_label": "Betriebssystem",
+      "os_placeholder": "z.B. macOS 14",
+      "at_label": "Hilfstechnologie",
+      "at_placeholder": "z.B. VoiceOver, NVDA",
+      "assessment_label": "Bewertung",
+      "assessment_placeholder": "Bewertung auswählen…",
+      "tags_label": "Tags",
+      "status_label": "Status",
+      "status_options": {
+        "open": "Offen",
+        "resolved": "Gelöst",
+        "wont_fix": "Wird nicht behoben"
+      },
+      "save_button": "Problem speichern",
+      "save_button_loading": "Speichern…",
+      "cancel_button": "Abbrechen"
+    },
+    "attachments": {
+      "heading": "Screenshots und Videos",
+      "ai_status_message": "Problem wird mit KI generiert. Bitte warten."
+    },
+    "settings_menu": {
+      "aria_label": "Problemeinstellungen",
+      "edit": "Problem bearbeiten",
+      "delete": "Problem löschen",
+      "mark_in_progress": "Als in Bearbeitung markieren",
+      "mark_complete": "Als abgeschlossen markieren",
+      "mark_open": "Als offen markieren"
+    },
+    "delete_dialog": {
+      "title": "{name} löschen?",
+      "description": "Dadurch wird dieses Problem sowie alle zugehörigen Anhänge dauerhaft gelöscht.",
+      "confirm_button": "Problem löschen",
+      "cancel_button": "Abbrechen"
+    },
+    "import": {
+      "button_label": "Probleme importieren",
+      "modal_title": "Probleme importieren",
+      "csv_tab": "CSV",
+      "openacr_tab": "OpenACR",
+      "upload_button": "Datei hochladen",
+      "import_button": "Importieren",
+      "cancel_button": "Abbrechen",
+      "map_columns_title": "Spalten zuordnen",
+      "csv_file_label": "CSV-Datei",
+      "preview_label": "Vorschau ({count} Zeilen)",
+      "field_column_header": "Problemfeld",
+      "csv_column_header": "CSV-Spalte",
+      "skip_option": "— überspringen —",
+      "next_button": "Weiter",
+      "importing_label": "Importieren…",
+      "import_rows_button": "{count} Zeilen importieren"
+    },
+    "list": {
+      "empty_heading": "Noch keine Probleme",
+      "empty_description": "Fügen Sie Ihr erstes Problem hinzu, um zu beginnen.",
+      "new_button": "Problem hinzufügen"
+    },
+    "badge": {
+      "severity": {
+        "critical": "Kritisch",
+        "high": "Hoch",
+        "medium": "Mittel",
+        "low": "Niedrig"
+      },
+      "status": {
+        "open": "Offen",
+        "resolved": "Gelöst",
+        "wont_fix": "Wird nicht behoben"
+      }
+    },
+    "toast": {
+      "created": "Problem erstellt",
+      "updated": "Problem aktualisiert",
+      "deleted": "Problem gelöscht",
+      "imported": "Probleme importiert",
+      "create_failed": "Problem konnte nicht erstellt werden",
+      "update_failed": "Problem konnte nicht aktualisiert werden",
+      "delete_failed": "Problem konnte nicht gelöscht werden",
+      "import_failed": "Probleme konnten nicht importiert werden"
+    }
+  },
+  "reports": {
+    "sections": {
+      "executive_summary_title": "Zusammenfassung",
+      "executive_summary_add": "Zusammenfassung hinzufügen",
+      "top_risks_title": "Wichtigste Risiken",
+      "top_risks_add": "Wichtigste Risiken hinzufügen",
+      "quick_wins_title": "Schnelle Erfolge",
+      "quick_wins_add": "Schnelle Erfolge hinzufügen",
+      "user_impact_title": "Auswirkung auf Nutzer",
+      "user_impact_add": "Auswirkung auf Nutzer hinzufügen",
+      "generate_button": "Generieren",
+      "generating_label": "Generieren…",
+      "generating_overlay": "Generierung mit KI...",
+      "delete_button": "Löschen"
+    },
+    "panel": {
+      "assessment_issues_heading": "Bewertungsprobleme"
+    },
+    "form": {
+      "save_button": "Bericht speichern",
+      "save_button_loading": "Speichern…",
+      "cancel_button": "Abbrechen"
+    },
+    "settings_menu": {
+      "aria_label": "Berichtseinstellungen",
+      "edit": "Bericht bearbeiten",
+      "publish": "Bericht veröffentlichen",
+      "unpublish": "Bericht zurückziehen",
+      "delete": "Bericht löschen"
+    },
+    "delete_dialog": {
+      "title": "{name} löschen?",
+      "description": "Dadurch wird dieser Bericht dauerhaft gelöscht.",
+      "confirm_button": "Bericht löschen",
+      "cancel_button": "Abbrechen"
+    },
+    "publish_dialog": {
+      "title": "Bericht veröffentlichen?",
+      "description": "Dadurch wird der Bericht für Stakeholder sichtbar.",
+      "confirm_button": "Veröffentlichen",
+      "cancel_button": "Abbrechen"
+    },
+    "list": {
+      "empty_heading": "Noch keine Berichte",
+      "empty_description": "Erstellen Sie Ihren ersten Bericht, um zu beginnen.",
+      "new_button": "Neuer Bericht"
+    },
+    "status": {
+      "draft": "Entwurf",
+      "published": "Veröffentlicht",
+      "updated_at": "Aktualisiert {date}"
+    },
+    "toast": {
+      "created": "Bericht erstellt",
+      "updated": "Bericht aktualisiert",
+      "deleted": "Bericht gelöscht",
+      "published": "Bericht veröffentlicht",
+      "unpublished": "Bericht zurückgezogen",
+      "create_failed": "Bericht konnte nicht erstellt werden",
+      "update_failed": "Bericht konnte nicht aktualisiert werden",
+      "delete_failed": "Bericht konnte nicht gelöscht werden",
+      "publish_failed": "Bericht konnte nicht veröffentlicht werden",
+      "unpublish_failed": "Bericht konnte nicht zurückgezogen werden"
+    }
+  },
+  "dashboard": {
+    "activity_chart": {
+      "title": "Projekte, Bewertungen und Probleme",
+      "loading": "Laden…",
+      "error": "Diagrammdaten konnten nicht geladen werden.",
+      "empty": "Keine Aktivität in diesem Zeitraum.",
+      "range_6m": "6 Monate",
+      "range_3m": "3 Monate",
+      "range_1m": "1 Monat",
+      "range_1w": "1 Woche",
+      "table_showing_weeks": "Zeige die {count} letzten Wochen",
+      "table_showing_days": "Zeige die {count} letzten Tage",
+      "col_date": "Datum",
+      "col_projects": "Projekte",
+      "col_assessments": "Bewertungen",
+      "col_issues": "Probleme",
+      "caption": "Projekte, Bewertungen und Probleme, die im Laufe der Zeit erstellt wurden",
+      "line_projects": "Projekte",
+      "line_assessments": "Bewertungen",
+      "line_issues": "Probleme"
+    },
+    "chart_table_toggle": {
+      "group_aria_label": "Ansicht umschalten",
+      "chart_aria_label": "Diagrammansicht",
+      "table_aria_label": "Tabellenansicht"
+    },
+    "environment_heatmap": {
+      "title": "Probleme nach Umgebung",
+      "subtitle": "Gerät × Hilfstechnologie",
+      "loading": "Laden…",
+      "error": "Daten konnten nicht geladen werden.",
+      "empty": "Noch keine Umgebungsdaten.",
+      "col_device": "Gerät",
+      "caption_heatmap": "Heatmap offener Probleme nach Gerätetyp und Hilfstechnologie. Dunklere Zellen weisen auf mehr Probleme hin.",
+      "caption_table": "Offene Probleme nach Gerätetyp und Hilfstechnologie"
+    },
+    "issue_analysis": {
+      "heading": "Problemanalyse",
+      "subtitle": "Probleme in allen Projekten"
+    },
+    "issue_statistics": {
+      "title": "Problemstatistiken",
+      "loading": "Laden…",
+      "error": "Daten konnten nicht geladen werden.",
+      "center_label": "Probleme",
+      "col_severity": "Schweregrad",
+      "col_count": "Anzahl",
+      "row_total": "Gesamt",
+      "status_open": "Offen",
+      "status_resolved": "Gelöst",
+      "status_wont_fix": "Wird nicht behoben",
+      "severity_critical": "Kritisch",
+      "severity_high": "Hoch",
+      "severity_medium": "Mittel",
+      "severity_low": "Niedrig"
+    },
+    "pour_radar": {
+      "title": "Probleme nach POUR-Prinzip",
+      "loading": "Laden…",
+      "error": "Daten konnten nicht geladen werden.",
+      "empty": "Keine offenen Probleme gefunden.",
+      "col_principle": "Prinzip",
+      "col_issues": "Probleme",
+      "col_percent": "% des Gesamtwerts",
+      "row_total": "Gesamt",
+      "caption": "Probleme nach POUR-Prinzip — nur offene Probleme",
+      "principle_perceivable": "Wahrnehmbar",
+      "principle_operable": "Bedienbar",
+      "principle_understandable": "Verständlich",
+      "principle_robust": "Robust"
+    },
+    "repeat_offenders": {
+      "title": "Wiederkehrende Kriterien",
+      "subtitle": "Geordnet nach betroffenen Projekten",
+      "loading": "Laden…",
+      "error": "Daten konnten nicht geladen werden.",
+      "empty": "Noch keine Daten.",
+      "col_code": "Code",
+      "col_criterion": "Kriterium",
+      "col_projects": "Projekte",
+      "col_issues": "Probleme",
+      "tooltip_projects": "Projekte"
+    },
+    "status_filter": {
+      "group_aria_label": "Nach Status filtern",
+      "open": "Offen",
+      "resolved": "Gelöst",
+      "wont_fix": "Wird nicht behoben"
+    },
+    "tag_treemap": {
+      "title": "Problem-Tags",
+      "subtitle": "Offene Probleme nach Tag-Häufigkeit",
+      "loading": "Laden…",
+      "error": "Daten konnten nicht geladen werden.",
+      "empty": "Keine Tags gefunden.",
+      "col_tag": "Tag",
+      "col_issues": "Probleme",
+      "col_percent": "% des Gesamtwerts"
+    },
+    "wcag_criteria": {
+      "title": "WCAG-Kriterien",
+      "subtitle": "Nach Prinzip gefiltert",
+      "loading": "Laden…",
+      "error": "WCAG-Kriterien konnten nicht geladen werden.",
+      "empty": "Noch keine Probleme für {principle}-Kriterien erfasst.",
+      "tooltip_issues": "Probleme"
+    }
+  },
+  "projects": {
+    "form": {
+      "name_label": "Projektname",
+      "name_placeholder": "z.B. Neugestaltung der mobilen App",
+      "description_label": "Beschreibung",
+      "description_placeholder": "Kurze Beschreibung des Projekts",
+      "product_url_label": "Produkt-URL",
+      "product_url_placeholder": "https://beispiel.com",
+      "save_button": "Projekt speichern",
+      "save_button_loading": "Speichern…",
+      "cancel_button": "Abbrechen"
+    },
+    "settings_menu": {
+      "aria_label": "Projekteinstellungen",
+      "add_assessment": "Bewertung hinzufügen",
+      "edit": "Projekt bearbeiten",
+      "delete": "Projekt löschen"
+    },
+    "delete_dialog": {
+      "title": "Projekt löschen?",
+      "description": "Dadurch wird dieses Projekt sowie alle zugehörigen Bewertungen und Probleme dauerhaft gelöscht.",
+      "confirm_button": "Projekt löschen",
+      "cancel_button": "Abbrechen"
+    },
+    "card": {
+      "updated_label": "Aktualisiert",
+      "no_assessments": "Noch keine Bewertungen"
+    },
+    "list": {
+      "empty_heading": "Noch keine Projekte",
+      "empty_description": "Erstellen Sie Ihr erstes Projekt, um zu beginnen.",
+      "new_button": "Neues Projekt"
+    },
+    "toast": {
+      "created": "Projekt erstellt",
+      "updated": "Projekt aktualisiert",
+      "deleted": "Projekt gelöscht",
+      "create_failed": "Projekt konnte nicht erstellt werden",
+      "update_failed": "Projekt konnte nicht aktualisiert werden",
+      "delete_failed": "Projekt konnte nicht gelöscht werden"
     }
   }
 }

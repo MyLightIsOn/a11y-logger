@@ -1,35 +1,55 @@
 {
   "nav": {
-    "dashboard": "Dashboard",
-    "projects": "Projects",
-    "assessments": "Assessments",
-    "issues": "Issues",
-    "reports": "Reports",
+    "dashboard": "Panel",
+    "projects": "Proyectos",
+    "assessments": "Evaluaciones",
+    "issues": "Problemas",
+    "reports": "Informes",
     "vpats": "VPATs",
-    "settings": "Settings"
+    "settings": "Configuración"
   },
   "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "create": "Create",
-    "loading": "Loading…",
-    "error": "An error occurred"
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "loading": "Cargando…",
+    "error": "Se produjo un error",
+    "saving": "Guardando…",
+    "new": "Nuevo",
+    "view": "Ver",
+    "back": "Atrás",
+    "confirm": "Confirmar",
+    "name": "Nombre",
+    "description": "Descripción",
+    "status": "Estado",
+    "actions": "Acciones",
+    "no_results": "No se encontraron resultados",
+    "required_field": "Este campo es obligatorio"
+  },
+  "ui": {
+    "theme_toggle": {
+      "light_aria_label": "Cambiar al modo claro",
+      "dark_aria_label": "Cambiar al modo oscuro"
+    },
+    "language_select": {
+      "aria_label": "Idioma"
+    }
   },
   "vpats": {
     "conformance": {
-      "not_evaluated": "Not Evaluated",
-      "supports": "Supports",
-      "partially_supports": "Partial Support",
-      "does_not_support": "Does Not Support",
-      "not_applicable": "Not Applicable"
+      "not_evaluated": "No evaluado",
+      "supports": "Cumple",
+      "partially_supports": "Cumple parcialmente",
+      "does_not_support": "No cumple",
+      "not_applicable": "No aplica"
     },
     "status": {
-      "draft": "Draft",
-      "published": "Published",
-      "archived": "Archived",
-      "reviewed": "Reviewed"
+      "draft": "Borrador",
+      "published": "Publicado",
+      "archived": "Archivado",
+      "reviewed": "Revisado"
     },
     "sections": {
       "tableA": "Table 1: Success Criteria, Level A",
@@ -50,12 +70,122 @@
       "download": "Download PDF",
       "generating": "Generating…"
     },
+    "card": {
+      "no_project": "Sin proyecto",
+      "criteria_resolved": "{resolved} de {total} criterios resueltos"
+    },
+    "settings_menu": {
+      "aria_label": "Configuración VPAT",
+      "edit_vpat": "Editar VPAT",
+      "mark_as_reviewed": "Marcar como revisado",
+      "update_review": "Actualizar revisión",
+      "publish": "Publicar",
+      "unpublish": "Despublicar",
+      "export_html": "HTML",
+      "export_docx": "Word (.docx)",
+      "export_openacr": "OpenACR (YAML)",
+      "print_to_pdf": "Imprimir a PDF…",
+      "delete": "Eliminar",
+      "not_ready_to_publish_title": "No está listo para publicar",
+      "criteria_must_be_evaluated": "Todos los criterios deben ser evaluados antes de poder publicar este VPAT.",
+      "vpat_must_be_reviewed": "El VPAT debe ser revisado antes de poder publicarse.",
+      "vpat_must_also_be_reviewed": "El VPAT también debe ser revisado antes de poder publicarse.",
+      "publish_vpat_title": "Publicar VPAT",
+      "publish_snapshot_note": "La publicación crea una instantánea del estado actual. ¿Estás seguro?",
+      "publishing": "Publicando…",
+      "unpublish_vpat_title": "¿Despublicar VPAT?",
+      "unpublish_description": "Despublicar restablecerá este VPAT al estado Borrador. La versión publicada actual se conservará en el historial de versiones.",
+      "not_ready_to_review_title": "No está listo para revisar",
+      "criteria_must_be_evaluated_review": "Todos los criterios deben ser evaluados antes de poder revisar este VPAT.",
+      "submit_review_title": "Enviar revisión",
+      "submit_review_confirmation": "Al enviar tu nombre, confirmas que has revisado personalmente este VPAT y que los resultados reflejan con precisión la conformidad de accesibilidad del producto.",
+      "reviewer_name_placeholder": "Nombre completo",
+      "reviewer_name_aria_label": "Nombre completo del revisor",
+      "submitting": "Enviando…",
+      "submit_review_button": "Enviar revisión",
+      "edit_published_title": "¿Editar VPAT publicado?",
+      "edit_published_description": "Editar restablecerá este VPAT al estado Borrador. La versión publicada actual se conservará en el historial de versiones.",
+      "edit_anyway": "Editar de todos modos",
+      "delete_vpat_title": "Eliminar VPAT",
+      "delete_vpat_description": "¿Estás seguro de que quieres eliminar «{title}»? Esta acción no se puede deshacer.",
+      "deleting": "Eliminando…",
+      "ok": "Aceptar",
+      "cancel": "Cancelar",
+      "all_criteria_evaluated": "Todos los {total} criterios han sido evaluados.",
+      "criteria_not_evaluated": "{notEvaluated} de {total} criterios no han sido evaluados todavía."
+    },
+    "cover_sheet": {
+      "loading": "Cargando…",
+      "product_info_title": "Información del producto",
+      "product_name_label": "Nombre del producto",
+      "product_name_placeholder": "ej. Mi aplicación 2.0",
+      "product_version_label": "Versión",
+      "product_version_placeholder": "ej. 2.4.1",
+      "product_description_label": "Descripción del producto",
+      "product_description_placeholder": "Breve descripción del producto",
+      "vendor_info_title": "Información del proveedor / contacto",
+      "vendor_company_label": "Empresa",
+      "vendor_company_placeholder": "ej. Acme Corp",
+      "vendor_contact_name_label": "Nombre del contacto",
+      "vendor_contact_name_placeholder": "ej. Jane Smith",
+      "vendor_contact_email_label": "Correo del contacto",
+      "vendor_contact_email_placeholder": "ej. jane@acme.com",
+      "vendor_contact_phone_label": "Teléfono del contacto",
+      "vendor_contact_phone_placeholder": "ej. +1 555 000 0000",
+      "vendor_website_label": "Sitio web",
+      "vendor_website_placeholder": "ej. https://acme.com",
+      "report_details_title": "Detalles del informe",
+      "report_date_label": "Fecha del informe",
+      "evaluation_methods_label": "Métodos de evaluación",
+      "evaluation_methods_placeholder": "Describe los métodos de prueba utilizados",
+      "notes_label": "Notas",
+      "notes_placeholder": "Notas adicionales"
+    },
+    "cover_sheet_toast": {
+      "save_failed": "Error al guardar la hoja de portada"
+    },
+    "generate_all": {
+      "title": "¿Generar todos los criterios?",
+      "description": "Esto generará observaciones para {criteriaCount} criterios. Esto puede tardar unos minutos.",
+      "cancel": "Cancelar",
+      "generate": "Generar"
+    },
+    "criteria": {
+      "remarks_placeholder": "Añadir observaciones…",
+      "generating": "Generando…",
+      "generate": "Generar",
+      "view_issues_aria_label": "Ver problemas para {code}",
+      "generate_aria_label": "Generar para {code}",
+      "generating_aria_label": "Generando para {code}",
+      "ai_info_aria_label": "Información IA para {code}",
+      "conformance_aria_label": "Conformidad para {code}",
+      "remarks_aria_label": "Observaciones para {code}"
+    },
+    "toast": {
+      "deleted": "VPAT eliminado",
+      "delete_failed": "Error al eliminar el VPAT"
+    },
     "pdf_modal": {
       "title": "Imprimir a PDF",
       "browser_warning": "Su navegador generará un archivo PDF. Nota: los PDF generados por el navegador no están etiquetados y pueden no ser accesibles para los lectores de pantalla.",
       "accessible_alternative": "Para un PDF accesible adecuado para divulgación formal, descargue el DOCX y use la opción 'Exportar como PDF' de Word o LibreOffice con las opciones de accesibilidad habilitadas.",
       "continue_to_print": "Continuar a imprimir",
       "download_docx": "Descargar DOCX en su lugar"
+    }
+  },
+  "auth": {
+    "login": {
+      "heading": "Iniciar sesión",
+      "username_label": "Nombre de usuario",
+      "username_placeholder": "Introduce tu nombre de usuario",
+      "password_label": "Contraseña",
+      "password_placeholder": "Introduce tu contraseña",
+      "submit_button": "Iniciar sesión",
+      "submit_button_loading": "Iniciando sesión…"
+    },
+    "toast": {
+      "login_failed": "Nombre de usuario o contraseña no válidos",
+      "login_error": "Se produjo un error. Por favor, inténtalo de nuevo."
     }
   },
   "settings": {
@@ -65,6 +195,441 @@
       "fr": "French",
       "es": "Spanish",
       "de": "German"
+    },
+    "ai": {
+      "heading": "Configuración de IA",
+      "provider_label": "Proveedor de IA",
+      "provider_none": "Ninguno (deshabilitar funciones de IA)",
+      "provider_openai": "OpenAI",
+      "provider_anthropic": "Anthropic",
+      "api_key_label": "Clave API",
+      "api_key_placeholder": "sk-...",
+      "model_label": "Modelo",
+      "base_url_label": "URL base",
+      "base_url_placeholder": "https://api.example.com/v1",
+      "ollama_base_url_placeholder": "http://localhost:11434/v1",
+      "save_button": "Guardar configuración de IA",
+      "save_button_loading": "Guardando…"
+    },
+    "auth": {
+      "heading": "Autenticación",
+      "enable_label": "Habilitar autenticación",
+      "enable_description": "Requerir contraseña para acceder a esta instancia",
+      "save_button": "Guardar configuración de autenticación",
+      "updating_label": "Actualizando…",
+      "enable_button": "Habilitar autenticación",
+      "disable_button": "Deshabilitar autenticación"
+    },
+    "users": {
+      "heading": "Gestión de usuarios",
+      "create_account_heading": "Crear cuenta",
+      "username_label": "Nombre de usuario",
+      "password_label": "Contraseña",
+      "new_password_label": "Nueva contraseña",
+      "create_button": "Crear cuenta"
+    },
+    "data": {
+      "heading": "Gestión de datos",
+      "danger_zone_heading": "Zona de peligro",
+      "export_button": "Exportar datos",
+      "import_button": "Importar datos",
+      "clear_button": "Borrar todos los datos",
+      "clear_dialog_title": "¿Borrar todos los datos?",
+      "clear_dialog_description": "Esto eliminará permanentemente todos los proyectos, evaluaciones, problemas, informes y VPATs.",
+      "clear_dialog_confirm": "Borrar todos los datos",
+      "clear_dialog_cancel": "Cancelar"
+    },
+    "toast": {
+      "ai_saved": "Configuración de IA guardada",
+      "ai_save_failed": "Error al guardar la configuración de IA",
+      "auth_saved": "Configuración de autenticación guardada",
+      "auth_save_failed": "Error al guardar la configuración de autenticación",
+      "language_saved": "Idioma actualizado",
+      "language_save_failed": "Error al actualizar el idioma",
+      "data_reset_success": "Datos restablecidos",
+      "data_reset_failed": "Error al restablecer los datos"
+    }
+  },
+  "assessments": {
+    "form": {
+      "name_label": "Nombre",
+      "name_placeholder": "ej. Auditoría T1 de la aplicación móvil",
+      "description_label": "Descripción",
+      "description_placeholder": "Breve descripción de esta evaluación",
+      "project_label": "Proyecto",
+      "project_placeholder": "Seleccionar un proyecto",
+      "start_date_label": "Fecha de inicio",
+      "end_date_label": "Fecha de fin",
+      "status_label": "Estado",
+      "status_options": {
+        "ready": "Listo",
+        "in_progress": "En progreso",
+        "completed": "Completado"
+      },
+      "save_button": "Guardar evaluación",
+      "save_button_loading": "Guardando…",
+      "cancel_button": "Cancelar"
+    },
+    "settings_menu": {
+      "aria_label": "Configuración de la evaluación",
+      "edit": "Editar evaluación",
+      "delete": "Eliminar evaluación",
+      "add_issue": "Añadir problema",
+      "import_issues": "Importar problemas",
+      "mark_in_progress": "Marcar en progreso",
+      "mark_complete": "Marcar como completado",
+      "mark_incomplete": "Marcar como incompleto"
+    },
+    "delete_dialog": {
+      "title": "¿Eliminar {name}?",
+      "description": "Esto eliminará permanentemente esta evaluación y todos sus problemas.",
+      "confirm_button": "Eliminar evaluación",
+      "cancel_button": "Cancelar"
+    },
+    "card": {
+      "issues_count": "{count, plural, one {# problema} other {# problemas}}",
+      "no_issues": "Sin problemas todavía"
+    },
+    "list": {
+      "empty_heading": "Sin evaluaciones todavía",
+      "empty_description": "Crea tu primera evaluación para comenzar.",
+      "new_button": "Nueva evaluación"
+    },
+    "toast": {
+      "created": "Evaluación creada",
+      "updated": "Evaluación actualizada",
+      "deleted": "Evaluación eliminada",
+      "create_failed": "Error al crear la evaluación",
+      "update_failed": "Error al actualizar la evaluación",
+      "delete_failed": "Error al eliminar la evaluación"
+    }
+  },
+  "issues": {
+    "form": {
+      "title_label": "Título",
+      "title_placeholder": "ej. Imagen sin texto alternativo",
+      "description_label": "Descripción",
+      "description_placeholder": "Describe el problema de accesibilidad",
+      "severity_label": "Gravedad",
+      "severity_options": {
+        "critical": "Crítico",
+        "high": "Alto",
+        "medium": "Medio",
+        "low": "Bajo"
+      },
+      "user_impact_label": "Impacto en el usuario",
+      "user_impact_placeholder": "Describe cómo este problema afecta a los usuarios",
+      "url_label": "URL",
+      "url_placeholder": "https://ejemplo.com/pagina",
+      "selector_label": "Selector",
+      "selector_placeholder": "ej. #boton-buscar",
+      "code_snippet_label": "Fragmento de código",
+      "suggested_fix_label": "Corrección sugerida",
+      "environment_heading": "Entorno",
+      "device_type_label": "Tipo de dispositivo",
+      "device_type_options": {
+        "none": "Ninguno",
+        "desktop": "Escritorio",
+        "mobile": "Móvil",
+        "tablet": "Tableta"
+      },
+      "browser_label": "Navegador",
+      "browser_placeholder": "ej. Chrome 121",
+      "os_label": "Sistema operativo",
+      "os_placeholder": "ej. macOS 14",
+      "at_label": "Tecnología de asistencia",
+      "at_placeholder": "ej. VoiceOver, NVDA",
+      "assessment_label": "Evaluación",
+      "assessment_placeholder": "Seleccionar una evaluación…",
+      "tags_label": "Etiquetas",
+      "status_label": "Estado",
+      "status_options": {
+        "open": "Abierto",
+        "resolved": "Resuelto",
+        "wont_fix": "No se corregirá"
+      },
+      "save_button": "Guardar problema",
+      "save_button_loading": "Guardando…",
+      "cancel_button": "Cancelar"
+    },
+    "attachments": {
+      "heading": "Capturas de pantalla y vídeos",
+      "ai_status_message": "Generando problema con IA. Por favor, espera."
+    },
+    "settings_menu": {
+      "aria_label": "Configuración del problema",
+      "edit": "Editar problema",
+      "delete": "Eliminar problema",
+      "mark_in_progress": "Marcar en progreso",
+      "mark_complete": "Marcar como completado",
+      "mark_open": "Marcar como abierto"
+    },
+    "delete_dialog": {
+      "title": "¿Eliminar {name}?",
+      "description": "Esto eliminará permanentemente este problema y todos sus archivos adjuntos.",
+      "confirm_button": "Eliminar problema",
+      "cancel_button": "Cancelar"
+    },
+    "import": {
+      "button_label": "Importar problemas",
+      "modal_title": "Importar problemas",
+      "csv_tab": "CSV",
+      "openacr_tab": "OpenACR",
+      "upload_button": "Subir archivo",
+      "import_button": "Importar",
+      "cancel_button": "Cancelar",
+      "map_columns_title": "Mapear columnas",
+      "csv_file_label": "Archivo CSV",
+      "preview_label": "Vista previa ({count} filas)",
+      "field_column_header": "Campo del problema",
+      "csv_column_header": "Columna CSV",
+      "skip_option": "— omitir —",
+      "next_button": "Siguiente",
+      "importing_label": "Importando…",
+      "import_rows_button": "Importar {count} filas"
+    },
+    "list": {
+      "empty_heading": "Sin problemas todavía",
+      "empty_description": "Añade tu primer problema para comenzar.",
+      "new_button": "Añadir problema"
+    },
+    "badge": {
+      "severity": {
+        "critical": "Crítico",
+        "high": "Alto",
+        "medium": "Medio",
+        "low": "Bajo"
+      },
+      "status": {
+        "open": "Abierto",
+        "resolved": "Resuelto",
+        "wont_fix": "No se corregirá"
+      }
+    },
+    "toast": {
+      "created": "Problema creado",
+      "updated": "Problema actualizado",
+      "deleted": "Problema eliminado",
+      "imported": "Problemas importados",
+      "create_failed": "Error al crear el problema",
+      "update_failed": "Error al actualizar el problema",
+      "delete_failed": "Error al eliminar el problema",
+      "import_failed": "Error al importar los problemas"
+    }
+  },
+  "reports": {
+    "sections": {
+      "executive_summary_title": "Resumen ejecutivo",
+      "executive_summary_add": "Añadir resumen ejecutivo",
+      "top_risks_title": "Principales riesgos",
+      "top_risks_add": "Añadir principales riesgos",
+      "quick_wins_title": "Victorias rápidas",
+      "quick_wins_add": "Añadir victorias rápidas",
+      "user_impact_title": "Impacto en el usuario",
+      "user_impact_add": "Añadir impacto en el usuario",
+      "generate_button": "Generar",
+      "generating_label": "Generando…",
+      "generating_overlay": "Generando con IA...",
+      "delete_button": "Eliminar"
+    },
+    "panel": {
+      "assessment_issues_heading": "Problemas de evaluación"
+    },
+    "form": {
+      "save_button": "Guardar informe",
+      "save_button_loading": "Guardando…",
+      "cancel_button": "Cancelar"
+    },
+    "settings_menu": {
+      "aria_label": "Configuración del informe",
+      "edit": "Editar informe",
+      "publish": "Publicar informe",
+      "unpublish": "Despublicar informe",
+      "delete": "Eliminar informe"
+    },
+    "delete_dialog": {
+      "title": "¿Eliminar {name}?",
+      "description": "Esto eliminará permanentemente este informe.",
+      "confirm_button": "Eliminar informe",
+      "cancel_button": "Cancelar"
+    },
+    "publish_dialog": {
+      "title": "¿Publicar informe?",
+      "description": "Esto hará el informe visible para las partes interesadas.",
+      "confirm_button": "Publicar",
+      "cancel_button": "Cancelar"
+    },
+    "list": {
+      "empty_heading": "Sin informes todavía",
+      "empty_description": "Crea tu primer informe para comenzar.",
+      "new_button": "Nuevo informe"
+    },
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "updated_at": "Actualizado {date}"
+    },
+    "toast": {
+      "created": "Informe creado",
+      "updated": "Informe actualizado",
+      "deleted": "Informe eliminado",
+      "published": "Informe publicado",
+      "unpublished": "Informe despublicado",
+      "create_failed": "Error al crear el informe",
+      "update_failed": "Error al actualizar el informe",
+      "delete_failed": "Error al eliminar el informe",
+      "publish_failed": "Error al publicar el informe",
+      "unpublish_failed": "Error al despublicar el informe"
+    }
+  },
+  "dashboard": {
+    "activity_chart": {
+      "title": "Proyectos, evaluaciones y problemas",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los datos del gráfico.",
+      "empty": "Sin actividad en este período.",
+      "range_6m": "6 meses",
+      "range_3m": "3 meses",
+      "range_1m": "1 mes",
+      "range_1w": "1 semana",
+      "table_showing_weeks": "Mostrando las {count} semanas más recientes",
+      "table_showing_days": "Mostrando los {count} días más recientes",
+      "col_date": "Fecha",
+      "col_projects": "Proyectos",
+      "col_assessments": "Evaluaciones",
+      "col_issues": "Problemas",
+      "caption": "Proyectos, evaluaciones y problemas creados a lo largo del tiempo",
+      "line_projects": "Proyectos",
+      "line_assessments": "Evaluaciones",
+      "line_issues": "Problemas"
+    },
+    "chart_table_toggle": {
+      "group_aria_label": "Alternar vista",
+      "chart_aria_label": "Vista de gráfico",
+      "table_aria_label": "Vista de tabla"
+    },
+    "environment_heatmap": {
+      "title": "Problemas por entorno",
+      "subtitle": "Dispositivo × Tecnología de asistencia",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los datos.",
+      "empty": "Sin datos de entorno todavía.",
+      "col_device": "Dispositivo",
+      "caption_heatmap": "Mapa de calor de problemas abiertos por tipo de dispositivo y tecnología de asistencia. Las celdas más oscuras indican más problemas.",
+      "caption_table": "Problemas abiertos por tipo de dispositivo y tecnología de asistencia"
+    },
+    "issue_analysis": {
+      "heading": "Análisis de problemas",
+      "subtitle": "Problemas en todos los proyectos"
+    },
+    "issue_statistics": {
+      "title": "Estadísticas de problemas",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los datos.",
+      "center_label": "Problemas",
+      "col_severity": "Gravedad",
+      "col_count": "Recuento",
+      "row_total": "Total",
+      "status_open": "Abierto",
+      "status_resolved": "Resuelto",
+      "status_wont_fix": "No se corregirá",
+      "severity_critical": "Crítico",
+      "severity_high": "Alto",
+      "severity_medium": "Medio",
+      "severity_low": "Bajo"
+    },
+    "pour_radar": {
+      "title": "Problemas por principio POUR",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los datos.",
+      "empty": "No se encontraron problemas abiertos.",
+      "col_principle": "Principio",
+      "col_issues": "Problemas",
+      "col_percent": "% del total",
+      "row_total": "Total",
+      "caption": "Problemas por principio POUR — solo problemas abiertos",
+      "principle_perceivable": "Perceptible",
+      "principle_operable": "Operable",
+      "principle_understandable": "Comprensible",
+      "principle_robust": "Robusto"
+    },
+    "repeat_offenders": {
+      "title": "Criterios reincidentes",
+      "subtitle": "Clasificados por proyectos afectados",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los datos.",
+      "empty": "Sin datos todavía.",
+      "col_code": "Código",
+      "col_criterion": "Criterio",
+      "col_projects": "Proyectos",
+      "col_issues": "Problemas",
+      "tooltip_projects": "Proyectos"
+    },
+    "status_filter": {
+      "group_aria_label": "Filtrar por estado",
+      "open": "Abierto",
+      "resolved": "Resuelto",
+      "wont_fix": "No se corregirá"
+    },
+    "tag_treemap": {
+      "title": "Etiquetas de problemas",
+      "subtitle": "Problemas abiertos por frecuencia de etiqueta",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los datos.",
+      "empty": "No se encontraron etiquetas.",
+      "col_tag": "Etiqueta",
+      "col_issues": "Problemas",
+      "col_percent": "% del total"
+    },
+    "wcag_criteria": {
+      "title": "Criterios WCAG",
+      "subtitle": "Filtrado por principio",
+      "loading": "Cargando…",
+      "error": "No se pudieron cargar los criterios WCAG.",
+      "empty": "No hay problemas registrados para los criterios {principle} todavía.",
+      "tooltip_issues": "Problemas"
+    }
+  },
+  "projects": {
+    "form": {
+      "name_label": "Nombre del proyecto",
+      "name_placeholder": "ej. Rediseño de la aplicación móvil",
+      "description_label": "Descripción",
+      "description_placeholder": "Breve descripción del proyecto",
+      "product_url_label": "URL del producto",
+      "product_url_placeholder": "https://ejemplo.com",
+      "save_button": "Guardar proyecto",
+      "save_button_loading": "Guardando…",
+      "cancel_button": "Cancelar"
+    },
+    "settings_menu": {
+      "aria_label": "Configuración del proyecto",
+      "add_assessment": "Añadir evaluación",
+      "edit": "Editar proyecto",
+      "delete": "Eliminar proyecto"
+    },
+    "delete_dialog": {
+      "title": "¿Eliminar proyecto?",
+      "description": "Esto eliminará permanentemente este proyecto y todas sus evaluaciones y problemas.",
+      "confirm_button": "Eliminar proyecto",
+      "cancel_button": "Cancelar"
+    },
+    "card": {
+      "updated_label": "Actualizado",
+      "no_assessments": "Sin evaluaciones todavía"
+    },
+    "list": {
+      "empty_heading": "Sin proyectos todavía",
+      "empty_description": "Crea tu primer proyecto para comenzar.",
+      "new_button": "Nuevo proyecto"
+    },
+    "toast": {
+      "created": "Proyecto creado",
+      "updated": "Proyecto actualizado",
+      "deleted": "Proyecto eliminado",
+      "create_failed": "Error al crear el proyecto",
+      "update_failed": "Error al actualizar el proyecto",
+      "delete_failed": "Error al eliminar el proyecto"
     }
   }
 }
