@@ -12,22 +12,7 @@ import {
 import type { Report, ReportStats } from '@/lib/db/reports';
 import type { IssueWithContext } from '@/lib/db/issues';
 import type { Project } from '@/lib/db/projects';
-
-// Define locally since ReportContent may not be exported from validators
-interface ReportContent {
-  executive_summary?: { body?: string };
-  top_risks?: { items?: string[] };
-  quick_wins?: { items?: string[] };
-  user_impact?: {
-    screen_reader?: string;
-    low_vision?: string;
-    color_vision?: string;
-    keyboard_only?: string;
-    cognitive?: string;
-    deaf_hard_of_hearing?: string;
-    [key: string]: string | undefined;
-  };
-}
+import type { ReportContent } from '@/lib/validators/reports';
 
 function parseContent(content: string | null | undefined): ReportContent {
   try {
