@@ -52,13 +52,18 @@ Create reports with an executive summary, severity breakdown, and WCAG criteria 
 
 ### Create VPATs
 
-Build VPATs against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. Criteria rows populate from your issues. AI can write the conformance narratives and explain its rationale. VPATs require human review before publishing.
+Build VPATs against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. The editor organizes criteria into per-section tabs (Level A/AA/AAA, Functional Performance Criteria, Software, Documentation, etc.) and includes a cover sheet for product and vendor details.
 
-| Export format | Description                                                                         |
-| ------------- | ----------------------------------------------------------------------------------- |
-| HTML          | VPAT in HTML format                                                                 |
-| Word (.docx)  | Standard VPAT table format for client delivery                                      |
-| OpenACR YAML  | Machine-readable format for the [GSA ACR Editor](https://acreditor.section508.gov/) |
+Criteria rows populate from your issues. If your product has multiple scopes — say, a web app and a downloadable document — you can track separate conformance ratings and remarks per component within a single VPAT row.
+
+AI can write conformance narratives and explain its rationale. An optional AI Review Pass runs a second check on each generated row to validate the conformance rating against the evidence. VPATs require human review before publishing.
+
+| Export format | Description                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| HTML          | VPAT in HTML format                                                                                                      |
+| Word (.docx)  | Standard VPAT table format for client delivery                                                                           |
+| OpenACR YAML  | Machine-readable format for the [GSA ACR Editor](https://acreditor.section508.gov/)                                      |
+| PDF           | Browser print-to-PDF. Note: browser-generated PDFs are untagged. The UI prompts you to use DOCX for accessible delivery. |
 
 <br />
 <br />
@@ -71,7 +76,9 @@ Build VPATs against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. Criteria row
 
 ## AI features (optional)
 
-A11y Logger works without AI. If you want help drafting report narratives or VPAT conformance notes, bring your own API key. You can use it as much or as little as you want. Configure your key in Settings or a .env once and use it across all projects.
+A11y Logger works without AI. If you want help drafting report narratives or VPAT conformance notes, bring your own API key. Configure it once in Settings (or a `.env`) and use it across all projects.
+
+You can assign a different model to each task type: issue analysis, VPAT generation, report writing, and the AI Review Pass. Leave a task model blank and it falls back to the provider default.
 
 Supported providers:
 
@@ -79,6 +86,18 @@ Supported providers:
 - **Anthropic**
 - **Gemini**
 - **Ollama** (local — no data leaves your machine)
+
+---
+
+## Language support
+
+The UI is available in English, French, Spanish, and German. Switch languages from the header. VPAT criteria are translated where available; untranslated entries are displayed in English and marked with an EN badge.
+
+---
+
+## Team use
+
+A11y Logger is single-user by default. If you're running a shared install, enable optional local authentication in Settings — you can create user accounts and require login without any cloud dependency.
 
 ---
 
