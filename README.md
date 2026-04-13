@@ -12,7 +12,7 @@ A11y Logger is an open-source tool for accessibility consultants and program man
 
 ## Why this exists
 
-Most accessibility management tools require expensive subscriptions/contracts, upselling sales demos, or have workflows that are just tied exclusively to that platform. A11y Logger is the tool we wanted to use ourselves, built by accessibility specialists around actual SME workflows.
+Most accessibility management tools require expensive subscriptions/contracts, upselling sales demos, or have workflows that are just tied exclusively to that platform. A11y Logger is the tool I wanted to use myself, so it's built by an accessibility specialist around actual SME workflows.
 
 ---
 
@@ -20,9 +20,9 @@ Most accessibility management tools require expensive subscriptions/contracts, u
 
 ### Log Issues
 
-Log a finding with its WCAG code, severity, affected URL, environment, and screenshots or videos. Each issue links directly to the relevant VPAT criteria rows.
+Log an a11y violation with its WCAG code, severity, affected URL, environment, and screenshots or videos. Each issue links directly to the relevant VPAT criteria rows.
 
-Or describe an issue to the AI and let it draft the issue for you to edit as you see fit.
+For faster workflow, describe an issue to the AI and let it draft the issue for you to edit as you see fit.
 
 <img src="docs/screenshots/issues.png" alt="Issue log showing a list of accessibility findings with WCAG codes and severity badges" width="800">
 
@@ -32,9 +32,11 @@ Or describe an issue to the AI and let it draft the issue for you to edit as you
 
 Log issues and group them into assessments. Each assessment can be a scope of work, such as a product, a sprint, or a client engagement. Assessments are grouped into projects. This gives you a flexible system to organize your work.
 
+<img src="docs/screenshots/objects.png" alt="Diagram showing how objects are structred in this app. Projects are a top-level object with Assessments as children. Assessments have children that are issues." width="800">
+
 ### Generate Reports
 
-Create reports with an executive summary, severity breakdown, and WCAG criteria analysis. AI can draft the narrative sections if you bring your own API key, or you can write them yourself.
+Create reports with an executive summary, severity breakdown, and WCAG criteria analysis. AI can draft the narrative sections if you bring your own API key, or you can write them yourself. These reports can be exported in a variety of formats.
 
 | Export format      | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
@@ -54,9 +56,9 @@ Create reports with an executive summary, severity breakdown, and WCAG criteria 
 
 Build VPATs against WCAG 2.1, WCAG 2.2, Section 508, or EN 301 549. The editor organizes criteria into per-section tabs (Level A/AA/AAA, Functional Performance Criteria, Software, Documentation, etc.) and includes a cover sheet for product and vendor details.
 
-Criteria rows populate from your issues. If your product has multiple scopes — say, a web app and a downloadable document — you can track separate conformance ratings and remarks per component within a single VPAT row.
+If you use the AI feature, criteria rows populate from your issues. If your product has multiple scopes such as a web app and a downloadable document, you can track separate conformance ratings and remarks per component within a single VPAT row.
 
-AI can write conformance narratives and explain its rationale. An optional AI Review Pass runs a second check on each generated row to validate the conformance rating against the evidence. VPATs require human review before publishing.
+AI can write conformance narratives and explain its rationale. An optional AI Review Pass runs a second check on each generated row to validate the conformance rating against the evidence. VPATs require human review before publishing. VPATs can also be exported in several formats.
 
 | Export format | Description                                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -91,13 +93,13 @@ Supported providers:
 
 ## Language support
 
-The UI is available in English, French, Spanish, and German. Switch languages from the header. VPAT criteria are translated where available; untranslated entries are displayed in English and marked with an EN badge.
+One of the first tasks to complete before this moves out of beta is internationalization. The UI is currenlty available in English, with many parts of the UI also available in French, Spanish, and German. Switch languages from the header. VPAT criteria are translated where available.
 
 ---
 
 ## Team use
 
-A11y Logger is single-user by default. If you're running a shared install, enable optional local authentication in Settings — you can create user accounts and require login without any cloud dependency.
+A11y Logger is single-user by default. If you're running a shared install, enable optional local authentication in Settings. You can create user accounts and require login without any cloud dependency. Be careful though because forgot password support is not yet implemented.
 
 ---
 
