@@ -171,6 +171,17 @@
       "accessible_alternative": "Für ein zugängliches PDF für formelle Zwecke laden Sie das DOCX herunter und verwenden Sie die Option 'Als PDF exportieren' in Word oder LibreOffice mit aktivierten Barrierefreiheitsoptionen.",
       "continue_to_print": "Weiter zum Drucken",
       "download_docx": "Stattdessen DOCX herunterladen"
+    },
+    "ai_panel": {
+      "dialog_aria_label": "KI-Analyse für Kriterium {criterion_code}",
+      "heading": "KI-Analyse — {criterion_code}",
+      "close_aria_label": "Schließen",
+      "confidence": "Konfidenz",
+      "low_confidence_warning": "Begrenzte Belege — erwägen Sie zusätzliche Tests.",
+      "suggested_conformance": "Vorgeschlagene Konformität",
+      "issues_referenced": "Referenzierte Probleme",
+      "no_issues_referenced": "Keine Probleme referenziert.",
+      "reasoning": "Begründung"
     }
   },
   "auth": {

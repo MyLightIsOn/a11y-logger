@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SeverityBadge } from '@/components/issues/severity-badge';
@@ -20,18 +21,14 @@ const SUGGESTED_CONFORMANCE_COLORS: Record<string, string> = {
   not_applicable: 'bg-gray-100 border-gray-400 text-gray-600',
 };
 
-const SUGGESTED_CONFORMANCE_LABELS: Record<string, string> = {
-  supports: 'Supports',
-  does_not_support: 'Does Not Support',
-  not_applicable: 'Not Applicable',
-};
-
 interface VpatAiPanelProps {
   row: VpatCriterionRow;
   onClose: () => void;
 }
 
 export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
+  const t = useTranslations('vpats.ai_panel');
+  const tConformance = useTranslations('vpats.conformance');
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -58,12 +55,12 @@ export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
       className="fixed inset-y-0 right-0 w-96 bg-background border-l shadow-xl z-50 flex flex-col"
       role="dialog"
       aria-modal="true"
-      aria-label={`AI Analysis for criterion ${row.criterion_code}`}
+      aria-label={t('dialog_aria_label', { criterion_code: row.criterion_code })}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <div>
-          <h2 className="font-semibold">AI Analysis — {row.criterion_code}</h2>
+          <h2 className="font-semibold">{t('heading', { criterion_code: row.criterion_code })}</h2>
           <p className="text-sm text-muted-foreground">{row.criterion_name}</p>
         </div>
         <Button
@@ -71,7 +68,7 @@ export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
           variant="ghost"
           size="icon"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={t('close_aria_label')}
           ref={closeButtonRef}
         >
           <X className="h-4 w-4" />
@@ -82,7 +79,7 @@ export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {row.ai_confidence && (
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Confidence</span>
+            <span className="text-sm font-medium">{t('confidence')}</span>
             <Badge
               variant="outline"
               className={`text-xs ${CONFIDENCE_COLORS[row.ai_confidence] ?? ''}`}
@@ -90,28 +87,28 @@ export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
               {row.ai_confidence}
             </Badge>
             {row.ai_confidence === 'low' && (
-              <span className="text-xs text-amber-700">
-                Limited evidence — consider additional testing.
-              </span>
+              <span className="text-xs text-amber-700">{t('low_confidence_warning')}</span>
             )}
           </div>
         )}
 
         {row.ai_suggested_conformance && (
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Suggested Conformance</span>
+            <span className="text-sm font-medium">{t('suggested_conformance')}</span>
             <Badge
               variant="outline"
               className={`text-xs ${SUGGESTED_CONFORMANCE_COLORS[row.ai_suggested_conformance] ?? ''}`}
             >
-              {SUGGESTED_CONFORMANCE_LABELS[row.ai_suggested_conformance]}
+              {tConformance(
+                row.ai_suggested_conformance as 'supports' | 'does_not_support' | 'not_applicable'
+              )}
             </Badge>
           </div>
         )}
 
         <div>
           <p className="text-sm font-medium mb-2">
-            Issues Referenced
+            {t('issues_referenced')}
             {row.ai_referenced_issues && row.ai_referenced_issues.length > 0 && (
               <span className="font-normal text-muted-foreground ml-1">
                 ({row.ai_referenced_issues.length})
@@ -139,20 +136,19 @@ export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">No issues referenced.</p>
+            <p className="text-sm text-muted-foreground">{t('no_issues_referenced')}</p>
           )}
         </div>
 
         {row.ai_reasoning && (
           <div>
-            <p className="text-sm font-medium mb-1">Reasoning</p>
+            <p className="text-sm font-medium mb-1">{t('reasoning')}</p>
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">{row.ai_reasoning}</p>
           </div>
         )}
 
         {row.last_generated_at && (
           <p className="text-xs text-muted-foreground border-t pt-2">
-            Generated{' '}
             {new Date(row.last_generated_at).toLocaleString(undefined, {
               month: 'short',
               day: 'numeric',

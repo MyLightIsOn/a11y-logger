@@ -171,6 +171,17 @@
       "accessible_alternative": "Pour un PDF accessible adapté à une divulgation formelle, téléchargez le DOCX et utilisez l'option « Exporter en PDF » de Word ou LibreOffice avec les options d'accessibilité activées.",
       "continue_to_print": "Continuer vers l'impression",
       "download_docx": "Télécharger DOCX à la place"
+    },
+    "ai_panel": {
+      "dialog_aria_label": "Analyse IA pour le critère {criterion_code}",
+      "heading": "Analyse IA — {criterion_code}",
+      "close_aria_label": "Fermer",
+      "confidence": "Confiance",
+      "low_confidence_warning": "Preuves limitées — envisagez des tests supplémentaires.",
+      "suggested_conformance": "Conformité suggérée",
+      "issues_referenced": "Problèmes référencés",
+      "no_issues_referenced": "Aucun problème référencé.",
+      "reasoning": "Raisonnement"
     }
   },
   "auth": {
