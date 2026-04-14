@@ -13,27 +13,15 @@ import { generateOpenAcrYaml } from '@/lib/export/openacr';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 import type { Vpat } from '@/lib/db/vpats';
 import type { ExportTranslations } from '@/lib/export/vpat-shared';
+import { SECTION_MSG_KEY } from '@/lib/export/vpat-shared';
 import { getSetting } from '@/lib/db/settings';
 
 type RouteContext = { params: Promise<{ id: string; version: string }> };
 
-/** Maps SECTION_LABELS keys to their corresponding message-file keys. */
-const SECTION_MSG_KEY: Record<string, string> = {
-  A: 'tableA',
-  AA: 'tableAA',
-  AAA: 'tableAAA',
-  Chapter3: 'chapter3',
-  Chapter5: 'chapter5',
-  Chapter6: 'chapter6',
-  Clause4: 'clause4',
-  Clause5: 'clause5',
-  Clause12: 'clause12',
-};
-
-async function getExportTranslations(): Promise<ExportTranslations> {
-  const locale = getSetting('language') ?? 'en';
-  if (locale === 'en') {
-    return { sectionLabels: {}, conformanceLabels: {} };
+async function getExportTranslations(): Promise<ExportTranslations | undefined> {
+  const locale = getSetting('language');
+  if (typeof locale !== 'string' || locale === 'en') {
+    return undefined;
   }
   const messages = (await import(`@/messages/${locale}.json`)) as {
     default: { vpats: { sections: Record<string, string>; conformance: Record<string, string> } };

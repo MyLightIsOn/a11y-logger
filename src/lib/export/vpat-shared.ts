@@ -35,6 +35,19 @@ export const CONFORMANCE_DISPLAY: Record<string, string> = {
   not_evaluated: 'Not Evaluated',
 };
 
+/** Maps SECTION_LABELS keys to their corresponding message-file keys. */
+export const SECTION_MSG_KEY: Record<string, string> = {
+  A: 'tableA',
+  AA: 'tableAA',
+  AAA: 'tableAAA',
+  Chapter3: 'chapter3',
+  Chapter5: 'chapter5',
+  Chapter6: 'chapter6',
+  Clause4: 'clause4',
+  Clause5: 'clause5',
+  Clause12: 'clause12',
+};
+
 /** Optional locale-specific overrides for section and conformance labels in exports. */
 export interface ExportTranslations {
   sectionLabels: Record<string, string>;
