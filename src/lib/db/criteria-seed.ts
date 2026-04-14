@@ -1830,7 +1830,7 @@ export function seedCriteria(): void {
   if (existingEn === 0) {
     const insertEn = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', ?, NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', ?, NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
 
     const editionsEn = JSON.stringify(['EU', 'INT']);
@@ -1848,6 +1848,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_EXTENDED,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -1863,6 +1864,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES,
           EN_CLAUSE4.length + index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -1878,6 +1880,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES,
           EN_CLAUSE4.length + EN_CLAUSE5.length + index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -1928,7 +1931,7 @@ export function seedCriteria(): void {
   if (existingClause6 === 0) {
     const insertEn6 = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', 'Clause6', NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', 'Clause6', NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
     const editionsEn = JSON.stringify(['EU', 'INT']);
     const insertAllEn6 = db.transaction(() => {
@@ -1943,6 +1946,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_VOICE,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -1961,7 +1965,7 @@ export function seedCriteria(): void {
   if (existingClause7 === 0) {
     const insertEn7 = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', 'Clause7', NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', 'Clause7', NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
     const editionsEn = JSON.stringify(['EU', 'INT']);
     const insertAllEn7 = db.transaction(() => {
@@ -1976,6 +1980,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_VIDEO,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -1994,7 +1999,7 @@ export function seedCriteria(): void {
   if (existingClause8 === 0) {
     const insertEn8 = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', 'Clause8', NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', 'Clause8', NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
     const editionsEn = JSON.stringify(['EU', 'INT']);
     const insertAllEn8 = db.transaction(() => {
@@ -2009,6 +2014,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_HARDWARE,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -2027,7 +2033,7 @@ export function seedCriteria(): void {
   if (existingClause10 === 0) {
     const insertEn10 = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', 'Clause10', NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', 'Clause10', NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
     const editionsEn = JSON.stringify(['EU', 'INT']);
     const insertAllEn10 = db.transaction(() => {
@@ -2042,6 +2048,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_DOCUMENTS,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -2060,7 +2067,7 @@ export function seedCriteria(): void {
   if (existingClause11 === 0) {
     const insertEn11 = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', 'Clause11', NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', 'Clause11', NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
     const editionsEn = JSON.stringify(['EU', 'INT']);
     const insertAllEn11 = db.transaction(() => {
@@ -2075,6 +2082,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_SOFTWARE,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
@@ -2093,7 +2101,7 @@ export function seedCriteria(): void {
   if (existingClause13 === 0) {
     const insertEn13 = db.prepare(`
       INSERT INTO criteria (id, code, name, description, standard, chapter_section, wcag_version, level, editions, product_types, sort_order, name_fr, name_es, name_de)
-      VALUES (?, ?, ?, ?, 'EN301549', 'Clause13', NULL, NULL, ?, ?, ?, ?, NULL, ?)
+      VALUES (?, ?, ?, ?, 'EN301549', 'Clause13', NULL, NULL, ?, ?, ?, ?, ?, ?)
     `);
     const editionsEn = JSON.stringify(['EU', 'INT']);
     const insertAllEn13 = db.transaction(() => {
@@ -2108,6 +2116,7 @@ export function seedCriteria(): void {
           PRODUCT_TYPES_RELAY,
           index + 1,
           t?.fr ?? null,
+          null,
           t?.de ?? null
         );
       });
