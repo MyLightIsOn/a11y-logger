@@ -220,7 +220,11 @@
       "base_url_placeholder": "https://api.example.com/v1",
       "ollama_base_url_placeholder": "http://localhost:11434/v1",
       "save_button": "Guardar configuración de IA",
-      "save_button_loading": "Guardando…"
+      "save_button_loading": "Guardando…",
+      "description": "Configure su proveedor de IA para habilitar funciones asistidas por IA. Compatible con proveedores en la nube (OpenAI, Anthropic, Google Gemini) y modelos locales sin conexión a través de Ollama. Su clave API se almacena localmente y nunca se envía a nuestros servidores.",
+      "custom_provider_description": "Cualquier API que siga el formato de chat de OpenAI funciona aquí — Groq, Together AI, LM Studio y la mayoría de los modelos autoalojados. Apúntela a la URL base, elija un nombre de modelo y se comportará igual que OpenAI.",
+      "show_api_key": "Mostrar clave API",
+      "hide_api_key": "Ocultar clave API"
     },
     "auth": {
       "heading": "Autenticación",

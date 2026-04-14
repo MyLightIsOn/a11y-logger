@@ -210,11 +210,7 @@ export function AIConfigSection({
       <Card>
         <CardHeader>
           <CardTitle>{t('heading')}</CardTitle>
-          <CardDescription>
-            Configure your AI provider to enable AI-assisted features. Supports cloud providers
-            (OpenAI, Anthropic, Google Gemini) and local offline models via Ollama. Your API key is
-            stored locally and never sent to our servers.
-          </CardDescription>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {hasEnvOverride && (
@@ -254,11 +250,7 @@ export function AIConfigSection({
           </div>
 
           {selectedProvider === 'openai-compatible' && (
-            <p className="text-sm text-muted-foreground">
-              Any API that follows the OpenAI chat format works here — Groq, Together AI, LM Studio,
-              and most self-hosted models. Point it at the base URL, pick a model name, and it will
-              behave the same as OpenAI.
-            </p>
+            <p className="text-sm text-muted-foreground">{t('custom_provider_description')}</p>
           )}
 
           {needsApiKey(selectedProvider) && (
@@ -287,7 +279,7 @@ export function AIConfigSection({
                     variant="outline"
                     size="icon"
                     onClick={() => setShowKey(!showKey)}
-                    aria-label={showKey ? 'Hide API key' : 'Show API key'}
+                    aria-label={showKey ? t('hide_api_key') : t('show_api_key')}
                   >
                     {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>

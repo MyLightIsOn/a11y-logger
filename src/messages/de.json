@@ -220,7 +220,11 @@
       "base_url_placeholder": "https://api.example.com/v1",
       "ollama_base_url_placeholder": "http://localhost:11434/v1",
       "save_button": "KI-Einstellungen speichern",
-      "save_button_loading": "Speichern…"
+      "save_button_loading": "Speichern…",
+      "description": "Konfigurieren Sie Ihren KI-Anbieter, um KI-gestützte Funktionen zu aktivieren. Unterstützt Cloud-Anbieter (OpenAI, Anthropic, Google Gemini) und lokale Offline-Modelle über Ollama. Ihr API-Schlüssel wird lokal gespeichert und nie an unsere Server gesendet.",
+      "custom_provider_description": "Jede API, die dem OpenAI-Chat-Format folgt, funktioniert hier — Groq, Together AI, LM Studio und die meisten selbst gehosteten Modelle. Zeigen Sie auf die Basis-URL, wählen Sie einen Modellnamen, und es verhält sich wie OpenAI.",
+      "show_api_key": "API-Schlüssel anzeigen",
+      "hide_api_key": "API-Schlüssel verbergen"
     },
     "auth": {
       "heading": "Authentifizierung",
