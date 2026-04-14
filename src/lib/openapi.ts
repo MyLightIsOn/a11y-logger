@@ -92,7 +92,7 @@ registry.registerPath({
           schema: z
             .object({
               success: z.literal(true),
-              data: z.object({ username: z.string(), role: z.string() }),
+              data: z.object({ id: z.string(), username: z.string(), role: z.string() }),
             })
             .openapi('LoginResponse'),
         },
@@ -117,6 +117,26 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: z.object({ success: z.literal(true) }).openapi('LogoutResponse'),
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/auth/toggle',
+  tags: ['Auth'],
+  summary: 'Get authentication status',
+  description: 'Returns whether authentication is currently enabled.',
+  responses: {
+    200: {
+      description: 'Current auth status',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ success: z.literal(true), data: z.object({ enabled: z.boolean() }) })
+            .openapi('AuthStatusResponse'),
         },
       },
     },
@@ -150,6 +170,10 @@ registry.registerPath({
             .openapi('AuthToggleResponse'),
         },
       },
+    },
+    409: {
+      description: 'No user accounts exist',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
     },
   },
 });
@@ -290,9 +314,8 @@ registry.registerPath({
   security: auth,
   request: { params: z.object({ id: z.string().openapi({ example: 'user-uuid' }) }) },
   responses: {
-    200: {
+    204: {
       description: 'Deleted',
-      content: { 'application/json': { schema: z.object({ success: z.literal(true) }) } },
     },
     401: {
       description: 'Unauthenticated',
@@ -332,7 +355,7 @@ registry.registerPath({
 });
 
 registry.registerPath({
-  method: 'post',
+  method: 'put',
   path: '/api/settings',
   tags: ['Settings'],
   summary: 'Batch update settings',
@@ -434,7 +457,9 @@ registry.registerPath({
   method: 'post',
   path: '/api/settings/reset',
   tags: ['Settings'],
-  summary: 'Reset all settings to defaults',
+  summary: 'Reset all data (full database wipe)',
+  description:
+    'Deletes all user data including projects, assessments, issues, reports, VPATs, and users. This action is irreversible.',
   security: auth,
   responses: {
     200: {
