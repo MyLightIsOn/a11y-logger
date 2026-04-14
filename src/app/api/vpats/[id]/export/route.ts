@@ -12,8 +12,45 @@ import { getCoverSheet } from '@/lib/db/vpat-cover-sheet';
 import { generateVpatHtml } from '@/lib/export/vpat-template';
 import { generateVpatDocx } from '@/lib/export/vpat-docx';
 import { generateOpenAcrYaml } from '@/lib/export/openacr';
+import type { ExportTranslations } from '@/lib/export/vpat-shared';
+import { getSetting } from '@/lib/db/settings';
 
 type RouteContext = { params: Promise<{ id: string }> };
+
+/** Maps SECTION_LABELS keys to their corresponding message-file keys. */
+const SECTION_MSG_KEY: Record<string, string> = {
+  A: 'tableA',
+  AA: 'tableAA',
+  AAA: 'tableAAA',
+  Chapter3: 'chapter3',
+  Chapter5: 'chapter5',
+  Chapter6: 'chapter6',
+  Clause4: 'clause4',
+  Clause5: 'clause5',
+  Clause12: 'clause12',
+};
+
+async function getExportTranslations(): Promise<ExportTranslations> {
+  const locale = getSetting('language') ?? 'en';
+  if (locale === 'en') {
+    return { sectionLabels: {}, conformanceLabels: {} };
+  }
+  const messages = (await import(`@/messages/${locale}.json`)) as {
+    default: { vpats: { sections: Record<string, string>; conformance: Record<string, string> } };
+  };
+  const msgSections = messages.default.vpats.sections;
+  // Remap message-file keys (tableA, chapter3…) back to SECTION_LABELS keys (A, Chapter3…)
+  const sectionLabels: Record<string, string> = {};
+  for (const [sectionKey, msgKey] of Object.entries(SECTION_MSG_KEY)) {
+    if (msgSections[msgKey]) {
+      sectionLabels[sectionKey] = msgSections[msgKey];
+    }
+  }
+  return {
+    sectionLabels,
+    conformanceLabels: messages.default.vpats.conformance,
+  };
+}
 
 const SUPPORTED_FORMATS = ['html', 'pdf', 'docx', 'openacr'] as const;
 type SupportedFormat = (typeof SUPPORTED_FORMATS)[number];
@@ -76,9 +113,10 @@ export async function GET(request: Request, { params }: RouteContext) {
     const rows = await getCriterionRows(id);
     const coverSheet = getCoverSheet(id);
     const slug = safeTitle(vpat.title);
+    const exportTranslations = await getExportTranslations();
 
     if ((format as SupportedFormat) === 'docx') {
-      const buffer = await generateVpatDocx(vpat, project, rows, coverSheet);
+      const buffer = await generateVpatDocx(vpat, project, rows, coverSheet, exportTranslations);
       return new Response(new Uint8Array(buffer), {
         status: 200,
         headers: {
@@ -100,7 +138,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     }
 
     // html (default)
-    const html = generateVpatHtml(vpat, project, rows, coverSheet);
+    const html = generateVpatHtml(vpat, project, rows, coverSheet, exportTranslations);
     const filename = `vpat-${slug}.html`;
 
     return new Response(html, {

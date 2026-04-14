@@ -2,11 +2,20 @@ import type { Vpat } from '@/lib/db/vpats';
 import type { Project } from '@/lib/db/projects';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 import type { VpatCoverSheetRow } from '@/lib/db/schema';
-import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from './vpat-shared';
+import {
+  SECTION_ORDER,
+  SECTION_LABELS,
+  CONFORMANCE_DISPLAY,
+  compareCode,
+  type ExportTranslations,
+} from './vpat-shared';
 import { escapeHtml } from './report-shared';
 
-function getConformanceDisplay(conformance: string): string {
-  return CONFORMANCE_DISPLAY[conformance] ?? conformance;
+function getConformanceDisplay(
+  conformance: string,
+  labels: Record<string, string> = CONFORMANCE_DISPLAY
+): string {
+  return labels[conformance] ?? conformance;
 }
 
 function getConformanceClass(conformance: string): string {
@@ -43,8 +52,12 @@ export function generateVpatHtml(
   vpat: Vpat,
   project: Project,
   rows: VpatCriterionRow[],
-  coverSheet?: VpatCoverSheetRow | null
+  coverSheet?: VpatCoverSheetRow | null,
+  translations?: ExportTranslations
 ): string {
+  const sectionLabels = translations?.sectionLabels ?? SECTION_LABELS;
+  const conformanceLabels = translations?.conformanceLabels ?? CONFORMANCE_DISPLAY;
+
   const generatedDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -75,7 +88,7 @@ export function generateVpatHtml(
   const sectionsHtml = orderedSections
     .map((section) => {
       const sectionRows = bySection.get(section)!;
-      const sectionLabel = SECTION_LABELS[section] ?? section;
+      const sectionLabel = sectionLabels[section] ?? section;
 
       const rowsHtml = sectionRows
         .map((row) => {
@@ -96,7 +109,7 @@ export function generateVpatHtml(
           <tr>
             ${criteriaCell}
             <td class="component-cell">${escapeHtml(comp.component_name)}</td>
-            <td class="conformance-cell ${getConformanceClass(conformance)}">${escapeHtml(getConformanceDisplay(conformance))}</td>
+            <td class="conformance-cell ${getConformanceClass(conformance)}">${escapeHtml(getConformanceDisplay(conformance, conformanceLabels))}</td>
             <td class="remarks-cell">${remarks ? escapeHtml(remarks) : '<span class="no-remarks">—</span>'}</td>
           </tr>`;
               })
@@ -113,7 +126,7 @@ export function generateVpatHtml(
           <tr>
             <td class="criterion-cell">${criteriaLabel}</td>
             ${componentCell}
-            <td class="conformance-cell ${getConformanceClass(conformance)}">${escapeHtml(getConformanceDisplay(conformance))}</td>
+            <td class="conformance-cell ${getConformanceClass(conformance)}">${escapeHtml(getConformanceDisplay(conformance, conformanceLabels))}</td>
             <td class="remarks-cell">${remarks ? escapeHtml(remarks) : '<span class="no-remarks">—</span>'}</td>
           </tr>`;
         })
