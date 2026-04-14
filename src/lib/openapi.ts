@@ -1772,7 +1772,16 @@ registry.registerPath({
   tags: ['VPATs'],
   summary: 'Mark VPAT as reviewed',
   security: auth,
-  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  request: {
+    params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({ reviewer_name: z.string().min(1).openapi({ example: 'Jane Smith' }) }),
+        },
+      },
+    },
+  },
   responses: {
     200: {
       description: 'VPAT reviewed',
@@ -1781,6 +1790,10 @@ registry.registerPath({
           schema: z.object({ success: z.literal(true), data: z.object({ id: z.string() }) }),
         },
       },
+    },
+    400: {
+      description: 'reviewer_name is required',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
     },
     401: {
       description: 'Unauthenticated',
@@ -1929,7 +1942,7 @@ registry.registerPath({
       description: 'Not found',
       content: { 'application/json': { schema: ErrorResponseSchema } },
     },
-    503: {
+    422: {
       description: 'AI not configured',
       content: { 'application/json': { schema: ErrorResponseSchema } },
     },
@@ -2017,7 +2030,7 @@ registry.registerPath({
       description: 'Not found',
       content: { 'application/json': { schema: ErrorResponseSchema } },
     },
-    503: {
+    422: {
       description: 'AI not configured',
       content: { 'application/json': { schema: ErrorResponseSchema } },
     },
