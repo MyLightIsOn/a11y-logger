@@ -52,23 +52,23 @@
       "reviewed": "Überprüft"
     },
     "sections": {
-      "tableA": "Table 1: Success Criteria, Level A",
-      "tableAA": "Table 2: Success Criteria, Level AA",
-      "tableAAA": "Table 3: Success Criteria, Level AAA",
-      "chapter3": "Chapter 3: Functional Performance Criteria",
-      "chapter5": "Chapter 5: Software",
-      "chapter6": "Chapter 6: Support Documentation and Services",
-      "clause4": "Clause 4: Functional Performance Statements",
-      "clause5": "Clause 5: Generic Requirements",
-      "clause11": "Clause 11: Non-Web Software",
-      "clause12": "Clause 12: Documentation and Support Services"
+      "tableA": "Tabelle 1: Erfolgskriterien, Stufe A",
+      "tableAA": "Tabelle 2: Erfolgskriterien, Stufe AA",
+      "tableAAA": "Tabelle 3: Erfolgskriterien, Stufe AAA",
+      "chapter3": "Kapitel 3: Kriterien für funktionale Leistung",
+      "chapter5": "Kapitel 5: Software",
+      "chapter6": "Kapitel 6: Supportdokumentation und Dienste",
+      "clause4": "Klausel 4: Aussagen zur funktionalen Leistung",
+      "clause5": "Klausel 5: Allgemeine Anforderungen",
+      "clause11": "Klausel 11: Nicht-Web-Software",
+      "clause12": "Klausel 12: Dokumentation und Support-Dienste"
     },
     "pdf": {
-      "title": "Export to PDF",
-      "description": "Generate a PDF export of this VPAT.",
-      "generate": "Generate PDF",
-      "download": "Download PDF",
-      "generating": "Generating…"
+      "title": "Als PDF exportieren",
+      "description": "Einen PDF-Export dieses VPATs erstellen.",
+      "generate": "PDF erstellen",
+      "download": "PDF herunterladen",
+      "generating": "Wird erstellt…"
     },
     "card": {
       "no_project": "Kein Projekt",
@@ -190,11 +190,11 @@
   },
   "settings": {
     "language": {
-      "label": "Language",
-      "en": "English",
-      "fr": "French",
-      "es": "Spanish",
-      "de": "German"
+      "label": "Sprache",
+      "en": "Englisch",
+      "fr": "Französisch",
+      "es": "Spanisch",
+      "de": "Deutsch"
     },
     "ai": {
       "heading": "KI-Konfiguration",

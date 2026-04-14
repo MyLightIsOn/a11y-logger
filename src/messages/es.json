@@ -52,23 +52,23 @@
       "reviewed": "Revisado"
     },
     "sections": {
-      "tableA": "Table 1: Success Criteria, Level A",
-      "tableAA": "Table 2: Success Criteria, Level AA",
-      "tableAAA": "Table 3: Success Criteria, Level AAA",
-      "chapter3": "Chapter 3: Functional Performance Criteria",
-      "chapter5": "Chapter 5: Software",
-      "chapter6": "Chapter 6: Support Documentation and Services",
-      "clause4": "Clause 4: Functional Performance Statements",
-      "clause5": "Clause 5: Generic Requirements",
-      "clause11": "Clause 11: Non-Web Software",
-      "clause12": "Clause 12: Documentation and Support Services"
+      "tableA": "Tabla 1: Criterios de Éxito, Nivel A",
+      "tableAA": "Tabla 2: Criterios de Éxito, Nivel AA",
+      "tableAAA": "Tabla 3: Criterios de Éxito, Nivel AAA",
+      "chapter3": "Capítulo 3: Criterios de Rendimiento Funcional",
+      "chapter5": "Capítulo 5: Software",
+      "chapter6": "Capítulo 6: Documentación de Soporte y Servicios",
+      "clause4": "Cláusula 4: Declaraciones de Rendimiento Funcional",
+      "clause5": "Cláusula 5: Requisitos Genéricos",
+      "clause11": "Cláusula 11: Software No Web",
+      "clause12": "Cláusula 12: Documentación y Servicios de Soporte"
     },
     "pdf": {
-      "title": "Export to PDF",
-      "description": "Generate a PDF export of this VPAT.",
-      "generate": "Generate PDF",
-      "download": "Download PDF",
-      "generating": "Generating…"
+      "title": "Exportar a PDF",
+      "description": "Generar una exportación PDF de este VPAT.",
+      "generate": "Generar PDF",
+      "download": "Descargar PDF",
+      "generating": "Generando…"
     },
     "card": {
       "no_project": "Sin proyecto",
@@ -190,11 +190,11 @@
   },
   "settings": {
     "language": {
-      "label": "Language",
-      "en": "English",
-      "fr": "French",
-      "es": "Spanish",
-      "de": "German"
+      "label": "Idioma",
+      "en": "Inglés",
+      "fr": "Francés",
+      "es": "Español",
+      "de": "Alemán"
     },
     "ai": {
       "heading": "Configuración de IA",

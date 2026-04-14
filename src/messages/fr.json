@@ -52,23 +52,23 @@
       "reviewed": "Révisé"
     },
     "sections": {
-      "tableA": "Table 1: Success Criteria, Level A",
-      "tableAA": "Table 2: Success Criteria, Level AA",
-      "tableAAA": "Table 3: Success Criteria, Level AAA",
-      "chapter3": "Chapter 3: Functional Performance Criteria",
-      "chapter5": "Chapter 5: Software",
-      "chapter6": "Chapter 6: Support Documentation and Services",
-      "clause4": "Clause 4: Functional Performance Statements",
-      "clause5": "Clause 5: Generic Requirements",
-      "clause11": "Clause 11: Non-Web Software",
-      "clause12": "Clause 12: Documentation and Support Services"
+      "tableA": "Tableau 1 : Critères de succès, Niveau A",
+      "tableAA": "Tableau 2 : Critères de succès, Niveau AA",
+      "tableAAA": "Tableau 3 : Critères de succès, Niveau AAA",
+      "chapter3": "Chapitre 3 : Critères de performance fonctionnelle",
+      "chapter5": "Chapitre 5 : Logiciel",
+      "chapter6": "Chapitre 6 : Documentation d'assistance et services",
+      "clause4": "Clause 4 : Déclarations de performance fonctionnelle",
+      "clause5": "Clause 5 : Exigences génériques",
+      "clause11": "Clause 11 : Logiciel non Web",
+      "clause12": "Clause 12 : Documentation et services d'assistance"
     },
     "pdf": {
-      "title": "Export to PDF",
-      "description": "Generate a PDF export of this VPAT.",
-      "generate": "Generate PDF",
-      "download": "Download PDF",
-      "generating": "Generating…"
+      "title": "Exporter en PDF",
+      "description": "Générer une exportation PDF de ce VPAT.",
+      "generate": "Générer le PDF",
+      "download": "Télécharger le PDF",
+      "generating": "Génération…"
     },
     "card": {
       "no_project": "Aucun projet",
@@ -190,11 +190,11 @@
   },
   "settings": {
     "language": {
-      "label": "Language",
-      "en": "English",
-      "fr": "French",
-      "es": "Spanish",
-      "de": "German"
+      "label": "Langue",
+      "en": "Anglais",
+      "fr": "Français",
+      "es": "Espagnol",
+      "de": "Allemand"
     },
     "ai": {
       "heading": "Configuration de l'IA",
