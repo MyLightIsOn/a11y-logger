@@ -1,7 +1,14 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/api/auth/login', '/api/auth/logout', '/api/auth/toggle'];
+const PUBLIC_PATHS = [
+  '/login',
+  '/api/auth/login',
+  '/api/auth/logout',
+  '/api/auth/toggle',
+  '/api-docs',
+  '/api/openapi.json',
+];
 
 const SECRET = process.env.ENCRYPTION_SECRET ?? 'offline-default-secret-change-in-production';
 
