@@ -477,6 +477,728 @@ registry.registerPath({
   },
 });
 
+// ─── Projects ────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects',
+  tags: ['Projects'],
+  summary: 'List projects',
+  security: auth,
+  responses: {
+    200: {
+      description: 'List of projects',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  id: z.string(),
+                  name: z.string(),
+                  description: z.string().nullable(),
+                  product_url: z.string().nullable(),
+                  status: z.string(),
+                  created_at: z.string(),
+                })
+              ),
+            })
+            .openapi('ProjectsListResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/projects',
+  tags: ['Projects'],
+  summary: 'Create project',
+  security: auth,
+  request: { body: { content: { 'application/json': { schema: CreateProjectSchema } } } },
+  responses: {
+    201: {
+      description: 'Project created',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                id: z.string(),
+                name: z.string(),
+                description: z.string().nullable(),
+                product_url: z.string().nullable(),
+                status: z.string(),
+                created_at: z.string(),
+              }),
+            })
+            .openapi('ProjectResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects/{projectId}',
+  tags: ['Projects'],
+  summary: 'Get project',
+  security: auth,
+  request: { params: z.object({ projectId: z.string().openapi({ example: 'proj-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Project',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              name: z.string(),
+              description: z.string().nullable(),
+              product_url: z.string().nullable(),
+              status: z.string(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'put',
+  path: '/api/projects/{projectId}',
+  tags: ['Projects'],
+  summary: 'Update project',
+  security: auth,
+  request: {
+    params: z.object({ projectId: z.string().openapi({ example: 'proj-uuid' }) }),
+    body: { content: { 'application/json': { schema: UpdateProjectSchema } } },
+  },
+  responses: {
+    200: {
+      description: 'Updated project',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              name: z.string(),
+              description: z.string().nullable(),
+              product_url: z.string().nullable(),
+              status: z.string(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'delete',
+  path: '/api/projects/{projectId}',
+  tags: ['Projects'],
+  summary: 'Delete project',
+  security: auth,
+  request: { params: z.object({ projectId: z.string().openapi({ example: 'proj-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Deleted',
+      content: { 'application/json': { schema: z.object({ success: z.literal(true) }) } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+// ─── Assessments ──────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects/{projectId}/assessments',
+  tags: ['Assessments'],
+  summary: 'List assessments for a project',
+  security: auth,
+  request: { params: z.object({ projectId: z.string().openapi({ example: 'proj-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'List of assessments',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  id: z.string(),
+                  name: z.string(),
+                  status: z.string(),
+                  project_id: z.string(),
+                  created_at: z.string(),
+                })
+              ),
+            })
+            .openapi('AssessmentsListResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Project not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/projects/{projectId}/assessments',
+  tags: ['Assessments'],
+  summary: 'Create assessment',
+  security: auth,
+  request: {
+    params: z.object({ projectId: z.string().openapi({ example: 'proj-uuid' }) }),
+    body: { content: { 'application/json': { schema: CreateAssessmentSchema } } },
+  },
+  responses: {
+    201: {
+      description: 'Assessment created',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                id: z.string(),
+                name: z.string(),
+                status: z.string(),
+                project_id: z.string(),
+                created_at: z.string(),
+              }),
+            })
+            .openapi('AssessmentResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Project not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}',
+  tags: ['Assessments'],
+  summary: 'Get assessment',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Assessment',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              name: z.string(),
+              status: z.string(),
+              project_id: z.string(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'put',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}',
+  tags: ['Assessments'],
+  summary: 'Update assessment',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+    }),
+    body: { content: { 'application/json': { schema: UpdateAssessmentSchema } } },
+  },
+  responses: {
+    200: {
+      description: 'Updated assessment',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              name: z.string(),
+              status: z.string(),
+              project_id: z.string(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'delete',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}',
+  tags: ['Assessments'],
+  summary: 'Delete assessment',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Deleted',
+      content: { 'application/json': { schema: z.object({ success: z.literal(true) }) } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+// ─── Issues ───────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}/issues',
+  tags: ['Issues'],
+  summary: 'List issues in an assessment',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'List of issues',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  id: z.string(),
+                  title: z.string(),
+                  severity: z.string().nullable(),
+                  status: z.string(),
+                  created_at: z.string(),
+                })
+              ),
+            })
+            .openapi('IssuesListResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}/issues',
+  tags: ['Issues'],
+  summary: 'Create issue',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+    }),
+    body: { content: { 'application/json': { schema: CreateIssueSchema } } },
+  },
+  responses: {
+    201: {
+      description: 'Issue created',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                id: z.string(),
+                title: z.string(),
+                severity: z.string().nullable(),
+                status: z.string(),
+                created_at: z.string(),
+              }),
+            })
+            .openapi('IssueResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}/issues/{issueId}',
+  tags: ['Issues'],
+  summary: 'Get issue',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+      issueId: z.string().openapi({ example: 'issue-uuid' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Issue',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              title: z.string(),
+              severity: z.string().nullable(),
+              status: z.string(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'put',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}/issues/{issueId}',
+  tags: ['Issues'],
+  summary: 'Update issue',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+      issueId: z.string().openapi({ example: 'issue-uuid' }),
+    }),
+    body: { content: { 'application/json': { schema: UpdateIssueSchema } } },
+  },
+  responses: {
+    200: {
+      description: 'Updated issue',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              title: z.string(),
+              severity: z.string().nullable(),
+              status: z.string(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'delete',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}/issues/{issueId}',
+  tags: ['Issues'],
+  summary: 'Delete issue',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+      issueId: z.string().openapi({ example: 'issue-uuid' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Deleted',
+      content: { 'application/json': { schema: z.object({ success: z.literal(true) }) } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/projects/{projectId}/assessments/{assessmentId}/issues/import',
+  tags: ['Issues'],
+  summary: 'Import issues (CSV)',
+  description:
+    'Accepts a `multipart/form-data` request with a `file` field containing a CSV of issues.',
+  security: auth,
+  request: {
+    params: z.object({
+      projectId: z.string().openapi({ example: 'proj-uuid' }),
+      assessmentId: z.string().openapi({ example: 'assess-uuid' }),
+    }),
+    body: {
+      content: {
+        'multipart/form-data': {
+          schema: z.object({
+            file: z.string().openapi({ format: 'binary', description: 'CSV file of issues' }),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Import result',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({ imported: z.number(), skipped: z.number() }),
+            })
+            .openapi('ImportIssuesResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/projects/{projectId}/issues',
+  tags: ['Issues'],
+  summary: 'List all issues for a project (across all assessments)',
+  security: auth,
+  request: { params: z.object({ projectId: z.string().openapi({ example: 'proj-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'List of issues',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.array(
+              z.object({
+                id: z.string(),
+                title: z.string(),
+                severity: z.string().nullable(),
+                status: z.string(),
+                assessment_id: z.string(),
+                created_at: z.string(),
+              })
+            ),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/issues/by-criterion',
+  tags: ['Issues'],
+  summary: 'Get issues grouped by WCAG criterion',
+  security: auth,
+  request: {
+    query: z.object({
+      projectId: z
+        .string()
+        .optional()
+        .openapi({ example: 'proj-uuid', description: 'Filter by project' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Issues grouped by criterion code',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.record(z.string(), z.array(z.object({ id: z.string(), title: z.string() }))),
+            })
+            .openapi('IssuesByCriterionResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
 // ─── Generator export ────────────────────────────────────────────────────────
 
 export function generateOpenApiDocument() {
