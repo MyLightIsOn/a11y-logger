@@ -181,7 +181,8 @@
       "suggested_conformance": "Vorgeschlagene Konformität",
       "issues_referenced": "Referenzierte Probleme",
       "no_issues_referenced": "Keine Probleme referenziert.",
-      "reasoning": "Begründung"
+      "reasoning": "Begründung",
+      "generated_at": "Generiert"
     }
   },
   "auth": {

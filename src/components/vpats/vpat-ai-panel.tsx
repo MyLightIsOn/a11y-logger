@@ -149,6 +149,7 @@ export function VpatAiPanel({ row, onClose }: VpatAiPanelProps) {
 
         {row.last_generated_at && (
           <p className="text-xs text-muted-foreground border-t pt-2">
+            {t('generated_at')}{' '}
             {new Date(row.last_generated_at).toLocaleString(undefined, {
               month: 'short',
               day: 'numeric',

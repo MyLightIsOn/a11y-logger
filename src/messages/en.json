@@ -181,7 +181,8 @@
       "suggested_conformance": "Suggested Conformance",
       "issues_referenced": "Issues Referenced",
       "no_issues_referenced": "No issues referenced.",
-      "reasoning": "Reasoning"
+      "reasoning": "Reasoning",
+      "generated_at": "Generated"
     }
   },
   "auth": {

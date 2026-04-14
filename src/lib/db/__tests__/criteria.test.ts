@@ -121,8 +121,9 @@ describe('Criterion translation fields', () => {
   it('translation fields default to null when not set', async () => {
     const sections = await getCriteriaForEdition('WCAG', ['web'], '2.1', 'AA');
     const first = sections[0]!.criteria[0]!;
-    expect(first.name_fr).toBeNull();
-    expect(first.description_fr).toBeNull();
+    // WCAG criteria now have fr/es translations populated from WCAG_TRANSLATIONS seed
+    expect(first.name_fr).not.toBeNull();
+    expect(first.description_fr).toBeNull(); // description translations are still null
   });
 
   it('getCriterion returns translation fields', async () => {

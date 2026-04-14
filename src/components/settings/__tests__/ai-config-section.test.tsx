@@ -22,6 +22,10 @@ const messages = {
       ollama_base_url_placeholder: 'http://localhost:11434/v1',
       save_button: 'Save AI Settings',
       save_button_loading: 'Saving…',
+      description: 'Configure your AI provider settings.',
+      custom_provider_description: 'Use any API that follows the OpenAI chat format.',
+      show_api_key: 'Show API key',
+      hide_api_key: 'Hide API key',
     },
   },
 };
