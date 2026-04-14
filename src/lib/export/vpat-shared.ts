@@ -10,6 +10,7 @@ export const SECTION_ORDER = [
   'Chapter6',
   'Clause4',
   'Clause5',
+  'Clause11',
   'Clause12',
 ];
 
@@ -23,6 +24,7 @@ export const SECTION_LABELS: Record<string, string> = {
   Chapter6: 'Chapter 6: Support Documentation and Services',
   Clause4: 'Clause 4: Functional Performance Statements',
   Clause5: 'Clause 5: Generic Requirements',
+  Clause11: 'Clause 11: Non-Web Software',
   Clause12: 'Clauses 11-12: Documentation and Support Services',
 };
 
@@ -45,6 +47,7 @@ export const SECTION_MSG_KEY: Record<string, string> = {
   Chapter6: 'chapter6',
   Clause4: 'clause4',
   Clause5: 'clause5',
+  Clause11: 'clause11',
   Clause12: 'clause12',
 };
 
