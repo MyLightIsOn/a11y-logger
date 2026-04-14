@@ -118,6 +118,12 @@ Open [http://localhost:3000](http://localhost:3000). Data is stored in `./data/`
 
 ---
 
+## API Documentation
+
+Interactive API documentation is available at [`/api-docs`](http://localhost:3000/api-docs) when the app is running. The raw OpenAPI 3.0 spec is served at `/api/openapi.json`.
+
+---
+
 ## Contributing
 
 A11y Logger is open source under AGPL-3.0. Bug fixes, features, documentation, and accessibility improvements to the tool itself are all welcome.
