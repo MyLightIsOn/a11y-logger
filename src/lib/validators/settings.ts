@@ -1,12 +1,21 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-export const SettingValueSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+extendZodWithOpenApi(z);
 
-export const UpdateSettingSchema = z.object({
-  value: SettingValueSchema,
-});
+export const SettingValueSchema = z
+  .union([z.string(), z.number(), z.boolean(), z.null()])
+  .openapi({ example: 'anthropic' });
 
-export const BatchUpdateSettingsSchema = z.record(z.string(), SettingValueSchema);
+export const UpdateSettingSchema = z
+  .object({
+    value: SettingValueSchema,
+  })
+  .openapi('UpdateSettingRequest');
+
+export const BatchUpdateSettingsSchema = z
+  .record(z.string(), SettingValueSchema)
+  .openapi('BatchUpdateSettingsRequest');
 
 export type SettingValue = z.infer<typeof SettingValueSchema>;
 export type UpdateSettingInput = z.infer<typeof UpdateSettingSchema>;
