@@ -1199,6 +1199,982 @@ registry.registerPath({
   },
 });
 
+// ─── Reports ──────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/reports',
+  tags: ['Reports'],
+  summary: 'List reports',
+  security: auth,
+  responses: {
+    200: {
+      description: 'List of reports',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  id: z.string(),
+                  title: z.string(),
+                  published: z.boolean(),
+                  created_at: z.string(),
+                })
+              ),
+            })
+            .openapi('ReportsListResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/reports',
+  tags: ['Reports'],
+  summary: 'Create report',
+  security: auth,
+  request: { body: { content: { 'application/json': { schema: CreateReportSchema } } } },
+  responses: {
+    201: {
+      description: 'Report created',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                id: z.string(),
+                title: z.string(),
+                published: z.boolean(),
+                created_at: z.string(),
+              }),
+            })
+            .openapi('ReportResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Assessment not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/reports/{id}',
+  tags: ['Reports'],
+  summary: 'Get report',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'report-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Report',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              title: z.string(),
+              published: z.boolean(),
+              content: ReportContentSchema.optional(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'put',
+  path: '/api/reports/{id}',
+  tags: ['Reports'],
+  summary: 'Update report',
+  security: auth,
+  request: {
+    params: z.object({ id: z.string().openapi({ example: 'report-uuid' }) }),
+    body: { content: { 'application/json': { schema: UpdateReportSchema } } },
+  },
+  responses: {
+    200: {
+      description: 'Updated report',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              title: z.string(),
+              published: z.boolean(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'delete',
+  path: '/api/reports/{id}',
+  tags: ['Reports'],
+  summary: 'Delete report',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'report-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Deleted',
+      content: { 'application/json': { schema: z.object({ success: z.literal(true) }) } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/reports/{id}/issues',
+  tags: ['Reports'],
+  summary: 'List issues included in a report',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'report-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Issues',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.array(
+              z.object({ id: z.string(), title: z.string(), severity: z.string().nullable() })
+            ),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/reports/{id}/publish',
+  tags: ['Reports'],
+  summary: 'Publish report',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'report-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Report published',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({ id: z.string(), published: z.literal(true) }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/reports/{id}/export',
+  tags: ['Reports'],
+  summary: 'Export report as DOCX',
+  description: 'Returns a binary DOCX file.',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'report-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'DOCX file',
+      content: {
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+          schema: z.string().openapi({ format: 'binary' }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+// ─── VPATs ────────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/vpats',
+  tags: ['VPATs'],
+  summary: 'List VPATs',
+  security: auth,
+  request: {
+    query: z.object({
+      projectId: z
+        .string()
+        .optional()
+        .openapi({ example: 'proj-uuid', description: 'Filter by project' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'List of VPATs',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  id: z.string(),
+                  title: z.string(),
+                  standard_edition: z.string(),
+                  published: z.boolean(),
+                  created_at: z.string(),
+                })
+              ),
+            })
+            .openapi('VpatsListResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats',
+  tags: ['VPATs'],
+  summary: 'Create VPAT',
+  security: auth,
+  request: { body: { content: { 'application/json': { schema: CreateVpatSchema } } } },
+  responses: {
+    201: {
+      description: 'VPAT created',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                id: z.string(),
+                title: z.string(),
+                standard_edition: z.string(),
+                published: z.boolean(),
+                created_at: z.string(),
+              }),
+            })
+            .openapi('VpatResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Project not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/vpats/{id}',
+  tags: ['VPATs'],
+  summary: 'Get VPAT',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'VPAT',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              title: z.string(),
+              standard_edition: z.string(),
+              published: z.boolean(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'put',
+  path: '/api/vpats/{id}',
+  tags: ['VPATs'],
+  summary: 'Update VPAT',
+  security: auth,
+  request: {
+    params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }),
+    body: { content: { 'application/json': { schema: UpdateVpatSchema } } },
+  },
+  responses: {
+    200: {
+      description: 'Updated VPAT',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              title: z.string(),
+              standard_edition: z.string(),
+              published: z.boolean(),
+              created_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'delete',
+  path: '/api/vpats/{id}',
+  tags: ['VPATs'],
+  summary: 'Delete VPAT',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Deleted',
+      content: { 'application/json': { schema: z.object({ success: z.literal(true) }) } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/cover-sheet',
+  tags: ['VPATs'],
+  summary: 'Update VPAT cover sheet',
+  security: auth,
+  request: {
+    params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              vendor_name: z.string().optional(),
+              product_name: z.string().optional(),
+              product_version: z.string().optional(),
+              report_date: z.string().optional(),
+              contact_email: z.string().optional(),
+              notes: z.string().optional(),
+            })
+            .openapi('CoverSheetRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Cover sheet updated',
+      content: {
+        'application/json': {
+          schema: z.object({ success: z.literal(true), data: z.object({ id: z.string() }) }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/publish',
+  tags: ['VPATs'],
+  summary: 'Publish VPAT',
+  description: 'Marks the VPAT as published. All criterion rows must be reviewed first.',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'VPAT published',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({ id: z.string(), published: z.literal(true) }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    422: {
+      description: 'Unresolved rows or not reviewed',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/unpublish',
+  tags: ['VPATs'],
+  summary: 'Unpublish VPAT',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'VPAT unpublished',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({ id: z.string(), published: z.literal(false) }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/review',
+  tags: ['VPATs'],
+  summary: 'Mark VPAT as reviewed',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'VPAT reviewed',
+      content: {
+        'application/json': {
+          schema: z.object({ success: z.literal(true), data: z.object({ id: z.string() }) }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    422: {
+      description: 'Unresolved rows',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/export',
+  tags: ['VPATs'],
+  summary: 'Export VPAT as DOCX',
+  description: 'Returns a binary DOCX file.',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'DOCX file',
+      content: {
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+          schema: z.string().openapi({ format: 'binary' }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'patch',
+  path: '/api/vpats/{id}/rows/{rowId}',
+  tags: ['VPATs'],
+  summary: 'Update a criterion row',
+  security: auth,
+  request: {
+    params: z.object({
+      id: z.string().openapi({ example: 'vpat-uuid' }),
+      rowId: z.string().openapi({ example: 'row-uuid' }),
+    }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              conformance: z
+                .enum([
+                  'supports',
+                  'partially_supports',
+                  'does_not_support',
+                  'not_applicable',
+                  'not_evaluated',
+                ])
+                .optional()
+                .openapi({ example: 'supports' }),
+              remarks: z
+                .string()
+                .max(5000)
+                .optional()
+                .openapi({ example: 'All images have appropriate alt text.' }),
+            })
+            .openapi('UpdateRowRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Updated row',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              conformance: z.string().nullable(),
+              remarks: z.string().nullable(),
+            }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/rows/{rowId}/generate',
+  tags: ['VPATs'],
+  summary: 'AI-generate conformance text for a criterion row',
+  security: auth,
+  request: {
+    params: z.object({
+      id: z.string().openapi({ example: 'vpat-uuid' }),
+      rowId: z.string().openapi({ example: 'row-uuid' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Generated row',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              id: z.string(),
+              conformance: z.string().nullable(),
+              remarks: z.string().nullable(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'put',
+  path: '/api/vpats/{id}/rows/{rowId}/components/{componentName}',
+  tags: ['VPATs'],
+  summary: 'Update a component within a criterion row',
+  security: auth,
+  request: {
+    params: z.object({
+      id: z.string().openapi({ example: 'vpat-uuid' }),
+      rowId: z.string().openapi({ example: 'row-uuid' }),
+      componentName: z.string().openapi({ example: 'web' }),
+    }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              conformance: z
+                .enum([
+                  'supports',
+                  'partially_supports',
+                  'does_not_support',
+                  'not_applicable',
+                  'not_evaluated',
+                ])
+                .optional(),
+              remarks: z.string().max(5000).optional(),
+            })
+            .openapi('UpdateComponentRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Updated component',
+      content: {
+        'application/json': {
+          schema: z.object({ success: z.literal(true), data: z.object({ id: z.string() }) }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/rows/generate-all',
+  tags: ['VPATs'],
+  summary: 'AI-generate conformance text for all criterion rows',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'Generation complete',
+      content: {
+        'application/json': {
+          schema: z.object({ success: z.literal(true), data: z.object({ generated: z.number() }) }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/vpats/{id}/versions',
+  tags: ['VPATs'],
+  summary: 'List published versions of a VPAT',
+  security: auth,
+  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  responses: {
+    200: {
+      description: 'List of versions',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(z.object({ version: z.number(), published_at: z.string() })),
+            })
+            .openapi('VpatVersionsResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/vpats/{id}/versions/{version}',
+  tags: ['VPATs'],
+  summary: 'Get a specific published version of a VPAT',
+  security: auth,
+  request: {
+    params: z.object({
+      id: z.string().openapi({ example: 'vpat-uuid' }),
+      version: z.string().openapi({ example: '1' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'VPAT version snapshot',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({
+              version: z.number(),
+              snapshot: z.unknown(),
+              published_at: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/{id}/versions/{version}/export',
+  tags: ['VPATs'],
+  summary: 'Export a specific VPAT version as DOCX',
+  description: 'Returns a binary DOCX file for the specified published version.',
+  security: auth,
+  request: {
+    params: z.object({
+      id: z.string().openapi({ example: 'vpat-uuid' }),
+      version: z.string().openapi({ example: '1' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'DOCX file',
+      content: {
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+          schema: z.string().openapi({ format: 'binary' }),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/vpats/import',
+  tags: ['VPATs'],
+  summary: 'Import a VPAT from a YAML/ZIP file',
+  description:
+    'Accepts a `multipart/form-data` request with a `file` field containing a VPAT export file.',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'multipart/form-data': {
+          schema: z
+            .object({
+              file: z
+                .string()
+                .openapi({ format: 'binary', description: 'VPAT export file (YAML or ZIP)' }),
+              project_id: z.string().openapi({ example: 'proj-uuid' }),
+            })
+            .openapi('ImportVpatRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'VPAT imported',
+      content: {
+        'application/json': {
+          schema: z.object({
+            success: z.literal(true),
+            data: z.object({ id: z.string(), title: z.string() }),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
 // ─── Generator export ────────────────────────────────────────────────────────
 
 export function generateOpenApiDocument() {
