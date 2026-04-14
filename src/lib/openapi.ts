@@ -2188,6 +2188,682 @@ registry.registerPath({
   },
 });
 
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+
+const dashboardQueryParams = z.object({
+  projectId: z
+    .string()
+    .optional()
+    .openapi({ example: 'proj-uuid', description: 'Filter by project' }),
+  statuses: z
+    .string()
+    .optional()
+    .openapi({
+      example: 'open,wont_fix',
+      description: 'Comma-separated issue statuses to include',
+    }),
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/issue-statistics',
+  tags: ['Dashboard'],
+  summary: 'Issue counts by severity',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'Severity breakdown',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                critical: z.number(),
+                high: z.number(),
+                medium: z.number(),
+                low: z.number(),
+              }),
+            })
+            .openapi('IssueStatisticsResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/pour-radar',
+  tags: ['Dashboard'],
+  summary: 'POUR radar chart data',
+  description:
+    'Returns issue counts grouped by POUR principle (Perceivable, Operable, Understandable, Robust).',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'POUR breakdown',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(z.object({ principle: z.string(), count: z.number() })),
+            })
+            .openapi('PourRadarResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/timeseries',
+  tags: ['Dashboard'],
+  summary: 'Issue count over time',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'Time series data',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(z.object({ date: z.string(), count: z.number() })),
+            })
+            .openapi('TimeseriesResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/repeat-offenders',
+  tags: ['Dashboard'],
+  summary: 'Most frequently violated WCAG criteria',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'Repeat offender criteria',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({ code: z.string(), count: z.number(), description: z.string() })
+              ),
+            })
+            .openapi('RepeatOffendersResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/wcag-criteria',
+  tags: ['Dashboard'],
+  summary: 'Issue counts by WCAG criterion',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'Issues by WCAG criterion',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(z.object({ code: z.string(), count: z.number() })),
+            })
+            .openapi('WcagCriteriaResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/tags',
+  tags: ['Dashboard'],
+  summary: 'Issue counts by tag',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'Issues by tag',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(z.object({ tag: z.string(), count: z.number() })),
+            })
+            .openapi('TagsResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/dashboard/environment',
+  tags: ['Dashboard'],
+  summary: 'Issue counts by environment (device, browser, OS)',
+  security: auth,
+  request: { query: dashboardQueryParams },
+  responses: {
+    200: {
+      description: 'Environment breakdown',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                device_type: z.record(z.string(), z.number()),
+                browser: z.record(z.string(), z.number()),
+                operating_system: z.record(z.string(), z.number()),
+              }),
+            })
+            .openapi('EnvironmentResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+// ─── Criteria ─────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/criteria',
+  tags: ['Criteria'],
+  summary: 'List all WCAG/508/EN301549 criteria',
+  security: auth,
+  responses: {
+    200: {
+      description: 'All criteria',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  code: z.string(),
+                  title: z.string(),
+                  standard: z.string(),
+                  level: z.string().optional(),
+                })
+              ),
+            })
+            .openapi('CriteriaResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+// ─── AI ───────────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/test-connection',
+  tags: ['AI'],
+  summary: 'Test AI provider connection',
+  security: auth,
+  responses: {
+    200: {
+      description: 'Connection OK',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ success: z.literal(true), data: z.object({ provider: z.string() }) })
+            .openapi('AiTestResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/generate-issue',
+  tags: ['AI'],
+  summary: 'AI-generate issue field suggestions',
+  description:
+    'Sends an accessibility observation to the configured AI provider and returns suggested field values. Only returns a field if the corresponding `current` field is empty.',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              ai_description: z
+                .string()
+                .openapi({
+                  example: 'The submit button has no visible focus indicator when tabbed to.',
+                }),
+              current: z
+                .object({
+                  title: z.string().nullable().optional(),
+                  description: z.string().nullable().optional(),
+                  severity: z.string().nullable().optional(),
+                  user_impact: z.string().nullable().optional(),
+                  suggested_fix: z.string().nullable().optional(),
+                  wcag_codes: z.array(z.string()).optional(),
+                  section_508_codes: z.array(z.string()).optional(),
+                  eu_codes: z.array(z.string()).optional(),
+                })
+                .optional(),
+            })
+            .openapi('GenerateIssueRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'AI suggestions (null fields already have values)',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                title: z.string().nullable(),
+                description: z.string().nullable(),
+                severity: z.string().nullable(),
+                user_impact: z.string().nullable(),
+                suggested_fix: z.string().nullable(),
+                wcag_codes: z.array(z.string()).nullable(),
+                section_508_codes: z.array(z.string()).nullable(),
+                eu_codes: z.array(z.string()).nullable(),
+              }),
+            })
+            .openapi('GenerateIssueResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/generate-vpat-narrative',
+  tags: ['AI'],
+  summary: 'AI-generate a VPAT narrative for a criterion',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              criterion_code: z.string().openapi({ example: '1.1.1' }),
+              criterion_title: z.string().openapi({ example: 'Non-text Content' }),
+              issues: z
+                .array(z.object({ title: z.string(), description: z.string().optional() }))
+                .optional(),
+            })
+            .openapi('GenerateVpatNarrativeRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Generated narrative',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({ conformance: z.string(), remarks: z.string() }),
+            })
+            .openapi('GenerateVpatNarrativeResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/report/executive-summary',
+  tags: ['AI'],
+  summary: 'AI-generate an executive summary for a report',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({ report_id: z.string().openapi({ example: 'report-uuid' }) })
+            .openapi('AiReportSectionRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Generated executive summary',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ success: z.literal(true), data: z.object({ body: z.string() }) })
+            .openapi('AiExecutiveSummaryResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Report not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/report/quick-wins',
+  tags: ['AI'],
+  summary: 'AI-generate quick wins for a report',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({ report_id: z.string().openapi({ example: 'report-uuid' }) }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Generated quick wins',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ success: z.literal(true), data: z.object({ items: z.array(z.string()) }) })
+            .openapi('AiQuickWinsResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Report not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/report/top-risks',
+  tags: ['AI'],
+  summary: 'AI-generate top risks for a report',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({ report_id: z.string().openapi({ example: 'report-uuid' }) }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Generated top risks',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ success: z.literal(true), data: z.object({ items: z.array(z.string()) }) })
+            .openapi('AiTopRisksResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Report not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/report/user-impact',
+  tags: ['AI'],
+  summary: 'AI-generate user impact section for a report',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({ report_id: z.string().openapi({ example: 'report-uuid' }) }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Generated user impact',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                screen_reader: z.string(),
+                low_vision: z.string(),
+                color_vision: z.string(),
+                keyboard_only: z.string(),
+                cognitive: z.string(),
+                deaf_hard_of_hearing: z.string(),
+              }),
+            })
+            .openapi('AiUserImpactResponse'),
+        },
+      },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Report not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    503: {
+      description: 'AI not configured',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/media/upload',
+  tags: ['Media'],
+  summary: 'Upload a media file',
+  description:
+    'Accepts `multipart/form-data`. Allowed types: image/png, image/jpeg, image/gif, image/webp, video/mp4, video/webm, video/quicktime. Max size: 10MB.',
+  security: auth,
+  request: {
+    body: {
+      content: {
+        'multipart/form-data': {
+          schema: z
+            .object({
+              file: z.string().openapi({ format: 'binary', description: 'Media file' }),
+              projectId: z.string().openapi({ example: 'proj-uuid' }),
+              issueId: z.string().openapi({ example: 'issue-uuid' }),
+            })
+            .openapi('MediaUploadRequest'),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Upload successful',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              success: z.literal(true),
+              data: z.object({
+                url: z
+                  .string()
+                  .openapi({ example: '/api/media/proj-uuid/issue-uuid/screenshot.png' }),
+              }),
+            })
+            .openapi('MediaUploadResponse'),
+        },
+      },
+    },
+    400: {
+      description: 'Validation error (file type, size, or missing fields)',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/media/{path}',
+  tags: ['Media'],
+  summary: 'Serve a media file',
+  description: 'Serves a previously uploaded media file by its path.',
+  security: auth,
+  request: {
+    params: z.object({
+      path: z.string().openapi({ example: 'proj-uuid/issue-uuid/screenshot.png' }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Media file bytes',
+      content: { 'image/*': { schema: z.string().openapi({ format: 'binary' }) } },
+    },
+    401: {
+      description: 'Unauthenticated',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+    404: {
+      description: 'Not found',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
+  },
+});
+
 // ─── Generator export ────────────────────────────────────────────────────────
 
 export function generateOpenApiDocument() {
