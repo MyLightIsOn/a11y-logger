@@ -2195,13 +2195,10 @@ const dashboardQueryParams = z.object({
     .string()
     .optional()
     .openapi({ example: 'proj-uuid', description: 'Filter by project' }),
-  statuses: z
-    .string()
-    .optional()
-    .openapi({
-      example: 'open,wont_fix',
-      description: 'Comma-separated issue statuses to include',
-    }),
+  statuses: z.string().optional().openapi({
+    example: 'open,wont_fix',
+    description: 'Comma-separated issue statuses to include',
+  }),
 });
 
 registry.registerPath({
@@ -2387,7 +2384,6 @@ registry.registerPath({
   tags: ['Dashboard'],
   summary: 'Issue counts by environment (device, browser, OS)',
   security: auth,
-  request: { query: dashboardQueryParams },
   responses: {
     200: {
       description: 'Environment breakdown',
@@ -2421,22 +2417,48 @@ registry.registerPath({
   tags: ['Criteria'],
   summary: 'List all WCAG/508/EN301549 criteria',
   security: auth,
+  request: {
+    query: z.object({
+      edition: z
+        .enum(['WCAG', '508', 'EU', 'INT'])
+        .openapi({ description: 'Standard edition (required)', example: 'WCAG' }),
+      wcag_version: z
+        .enum(['2.0', '2.1', '2.2'])
+        .optional()
+        .openapi({ description: 'WCAG version (default: 2.1)', example: '2.1' }),
+      wcag_level: z
+        .enum(['A', 'AA', 'AAA'])
+        .optional()
+        .openapi({ description: 'WCAG conformance level (default: AA)', example: 'AA' }),
+      product_scope: z
+        .string()
+        .optional()
+        .openapi({ description: 'Comma-separated product scopes (default: web)', example: 'web' }),
+    }),
+  },
   responses: {
     200: {
-      description: 'All criteria',
+      description: 'All criteria grouped by section',
       content: {
         'application/json': {
           schema: z
             .object({
               success: z.literal(true),
-              data: z.array(
-                z.object({
-                  code: z.string(),
-                  title: z.string(),
-                  standard: z.string(),
-                  level: z.string().optional(),
-                })
-              ),
+              data: z.object({
+                sections: z.array(
+                  z.object({
+                    title: z.string(),
+                    criteria: z.array(
+                      z.object({
+                        code: z.string(),
+                        title: z.string(),
+                        level: z.string().optional(),
+                      })
+                    ),
+                  })
+                ),
+                total: z.number(),
+              }),
             })
             .openapi('CriteriaResponse'),
         },
@@ -2472,6 +2494,10 @@ registry.registerPath({
       description: 'Unauthenticated',
       content: { 'application/json': { schema: ErrorResponseSchema } },
     },
+    500: {
+      description: 'Internal error',
+      content: { 'application/json': { schema: ErrorResponseSchema } },
+    },
     503: {
       description: 'AI not configured',
       content: { 'application/json': { schema: ErrorResponseSchema } },
@@ -2493,11 +2519,9 @@ registry.registerPath({
         'application/json': {
           schema: z
             .object({
-              ai_description: z
-                .string()
-                .openapi({
-                  example: 'The submit button has no visible focus indicator when tabbed to.',
-                }),
+              ai_description: z.string().openapi({
+                example: 'The submit button has no visible focus indicator when tabbed to.',
+              }),
               current: z
                 .object({
                   title: z.string().nullable().optional(),
@@ -2566,11 +2590,8 @@ registry.registerPath({
         'application/json': {
           schema: z
             .object({
-              criterion_code: z.string().openapi({ example: '1.1.1' }),
-              criterion_title: z.string().openapi({ example: 'Non-text Content' }),
-              issues: z
-                .array(z.object({ title: z.string(), description: z.string().optional() }))
-                .optional(),
+              projectId: z.string().openapi({ example: 'proj-uuid' }),
+              criterionCode: z.string().openapi({ example: '1.1.1' }),
             })
             .openapi('GenerateVpatNarrativeRequest'),
         },
@@ -2585,7 +2606,7 @@ registry.registerPath({
           schema: z
             .object({
               success: z.literal(true),
-              data: z.object({ conformance: z.string(), remarks: z.string() }),
+              data: z.object({ narrative: z.string() }),
             })
             .openapi('GenerateVpatNarrativeResponse'),
         },
@@ -2659,7 +2680,9 @@ registry.registerPath({
     body: {
       content: {
         'application/json': {
-          schema: z.object({ report_id: z.string().openapi({ example: 'report-uuid' }) }),
+          schema: z
+            .object({ report_id: z.string().openapi({ example: 'report-uuid' }) })
+            .openapi('AiReportSectionRequest'),
         },
       },
     },
@@ -2700,7 +2723,9 @@ registry.registerPath({
     body: {
       content: {
         'application/json': {
-          schema: z.object({ report_id: z.string().openapi({ example: 'report-uuid' }) }),
+          schema: z
+            .object({ report_id: z.string().openapi({ example: 'report-uuid' }) })
+            .openapi('AiReportSectionRequest'),
         },
       },
     },
@@ -2851,7 +2876,7 @@ registry.registerPath({
   responses: {
     200: {
       description: 'Media file bytes',
-      content: { 'image/*': { schema: z.string().openapi({ format: 'binary' }) } },
+      content: { '*/*': { schema: z.string().openapi({ format: 'binary' }) } },
     },
     401: {
       description: 'Unauthenticated',
