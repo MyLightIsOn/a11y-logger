@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { SortableTable } from '@/components/ui/sortable-table';
 import type { ProjectWithCounts } from '@/lib/db/projects';
 
@@ -9,10 +10,11 @@ interface ProjectsTableProps {
 }
 
 export function ProjectsTable({ projects }: ProjectsTableProps) {
+  const t = useTranslations('projects.table');
   const columns = [
     {
       key: 'name' as const,
-      label: 'Name',
+      label: t('col_name'),
       className: 'w-[30%]',
       cellClassName: 'max-w-0',
       render: (row: ProjectWithCounts) => (
@@ -23,7 +25,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
     },
     {
       key: 'description' as const,
-      label: 'Description',
+      label: t('col_description'),
       className: 'w-[50%]',
       cellClassName: 'max-w-0',
       render: (row: ProjectWithCounts) => (
@@ -34,14 +36,14 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
     },
     {
       key: 'assessment_count' as const,
-      label: 'Assessments',
+      label: t('col_assessments'),
       className: 'w-[10%] text-center',
       cellClassName: 'text-center',
       render: (row: ProjectWithCounts) => row.assessment_count,
     },
     {
       key: 'issue_count' as const,
-      label: 'Issues',
+      label: t('col_issues'),
       className: 'w-[10%] text-center',
       cellClassName: 'text-center',
       render: (row: ProjectWithCounts) => row.issue_count,
@@ -55,7 +57,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
       defaultSortKey="name"
       defaultSortDir="asc"
       getKey={(r) => r.id}
-      emptyMessage="No projects yet."
+      emptyMessage={t('empty')}
     />
   );
 }
