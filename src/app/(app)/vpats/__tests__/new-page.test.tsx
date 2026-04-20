@@ -2,6 +2,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import jsYaml from 'js-yaml';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import NewVpatPage from '../new/page';
 
 const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
@@ -14,6 +16,14 @@ vi.mock('next/navigation', () => ({
 vi.mock('js-yaml', () => ({
   default: { load: vi.fn() },
 }));
+
+function renderPage() {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      <NewVpatPage />
+    </NextIntlClientProvider>
+  );
+}
 
 beforeEach(() => {
   pushMock.mockClear();
@@ -30,7 +40,7 @@ afterEach(() => {
 
 describe('NewVpatPage', () => {
   it('shows step 1 edition selection on mount', () => {
-    render(<NewVpatPage />);
+    renderPage();
     expect(screen.getByText(/Select Edition/i)).toBeInTheDocument();
     expect(screen.getByText('WCAG')).toBeInTheDocument();
     expect(screen.getByText('Section 508')).toBeInTheDocument();
@@ -39,28 +49,28 @@ describe('NewVpatPage', () => {
   });
 
   it('advances to step 2 after selecting an edition', () => {
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText('WCAG'));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(screen.getByText(/Product Scope/i)).toBeInTheDocument();
   });
 
   it('shows WCAG version selector on step 2 for WCAG edition', () => {
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText('WCAG'));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(screen.getByLabelText(/WCAG Version/i)).toBeInTheDocument();
   });
 
   it('hides WCAG version selector for 508 edition', () => {
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText('Section 508'));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(screen.queryByLabelText(/WCAG Version/i)).not.toBeInTheDocument();
   });
 
   it('shows step 3 details after scope is configured', () => {
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText('WCAG'));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
@@ -86,7 +96,7 @@ describe('NewVpatPage', () => {
       } as unknown as Response;
     });
 
-    render(<NewVpatPage />);
+    renderPage();
 
     // Step 1: Select 508
     fireEvent.click(screen.getByText('Section 508'));
@@ -122,19 +132,19 @@ describe('NewVpatPage', () => {
   });
 
   it('shows Import from OpenACR tile in step 1', () => {
-    render(<NewVpatPage />);
+    renderPage();
     expect(screen.getByText(/Import from OpenACR/i)).toBeInTheDocument();
   });
 
   it('advances to YAML upload step when Import tile is selected', () => {
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText(/Import from OpenACR/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(screen.getByLabelText(/yaml file/i)).toBeInTheDocument();
   });
 
   it('Next on upload step is disabled until a valid file is parsed', () => {
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText(/Import from OpenACR/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(screen.getByRole('button', { name: /next/i })).toBeDisabled();
@@ -158,7 +168,7 @@ describe('NewVpatPage', () => {
       },
     });
 
-    render(<NewVpatPage />);
+    renderPage();
     fireEvent.click(screen.getByText(/Import from OpenACR/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
 
@@ -199,7 +209,7 @@ describe('NewVpatPage', () => {
       },
     });
 
-    render(<NewVpatPage />);
+    renderPage();
 
     fireEvent.click(screen.getByText(/Import from OpenACR/i));
     fireEvent.click(screen.getByRole('button', { name: /next/i }));

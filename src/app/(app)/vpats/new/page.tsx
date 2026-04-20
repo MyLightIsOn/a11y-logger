@@ -6,6 +6,7 @@ import Link from 'next/link';
 import jsYaml from 'js-yaml';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,39 +22,48 @@ import {
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { parseOpenAcr, type OpenAcrParseResult } from '@/lib/import/parse-openacr';
 
-const EDITIONS = [
-  {
-    value: 'WCAG',
-    label: 'WCAG',
-    description: 'Private sector / general web accessibility disclosure',
-  },
-  { value: '508', label: 'Section 508', description: 'U.S. federal government procurement' },
-  { value: 'EU', label: 'EN 301 549', description: 'European public sector / EAA compliance' },
-  {
-    value: 'INT',
-    label: 'International',
-    description: 'Most comprehensive; includes all three standards',
-  },
-  {
-    value: 'IMPORT',
-    label: 'Import from OpenACR',
-    description: 'Import an existing OpenACR YAML file',
-  },
-] as const;
-
-const PRODUCT_SCOPES = [
-  { value: 'web', label: 'Web' },
-  { value: 'software-desktop', label: 'Desktop Software' },
-  { value: 'software-mobile', label: 'Mobile Software' },
-  { value: 'documents', label: 'Documents' },
-  { value: 'hardware', label: 'Hardware' },
-  { value: 'telephony', label: 'Telephony' },
-];
-
 type Edition = 'WCAG' | '508' | 'EU' | 'INT' | 'IMPORT';
 
 export default function NewVpatPage() {
+  const t = useTranslations('vpats.wizard');
   const router = useRouter();
+
+  const EDITIONS = [
+    {
+      value: 'WCAG',
+      label: t('edition_wcag_label'),
+      description: t('edition_wcag_description'),
+    },
+    {
+      value: '508',
+      label: t('edition_508_label'),
+      description: t('edition_508_description'),
+    },
+    {
+      value: 'EU',
+      label: t('edition_eu_label'),
+      description: t('edition_eu_description'),
+    },
+    {
+      value: 'INT',
+      label: t('edition_int_label'),
+      description: t('edition_int_description'),
+    },
+    {
+      value: 'IMPORT',
+      label: t('edition_import_label'),
+      description: t('edition_import_description'),
+    },
+  ] as const;
+
+  const PRODUCT_SCOPES = [
+    { value: 'web', label: t('scope_web') },
+    { value: 'software-desktop', label: t('scope_desktop') },
+    { value: 'software-mobile', label: t('scope_mobile') },
+    { value: 'documents', label: t('scope_documents') },
+    { value: 'hardware', label: t('scope_hardware') },
+    { value: 'telephony', label: t('scope_telephony') },
+  ];
 
   // Wizard state
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -110,15 +120,13 @@ export default function NewVpatPage() {
         const doc = jsYaml.load(text);
         const result = parseOpenAcr(doc);
         if (!result) {
-          setParseError(
-            'File does not appear to be a valid OpenACR YAML (missing catalog or chapters).'
-          );
+          setParseError(t('invalid_openacr'));
           return;
         }
         setYamlString(text);
         setParsed(result);
       } catch {
-        setParseError('Could not parse YAML. Please check the file format.');
+        setParseError(t('yaml_parse_error'));
       }
     };
     reader.readAsText(file);
@@ -127,15 +135,15 @@ export default function NewVpatPage() {
   async function handleCreateSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) {
-      toast.error('Title is required');
+      toast.error(t('title_required'));
       return;
     }
     if (!projectId) {
-      toast.error('Project is required');
+      toast.error(t('project_required'));
       return;
     }
     if (productScope.length === 0) {
-      toast.error('Select at least one product scope');
+      toast.error(t('scope_required'));
       return;
     }
 
@@ -158,13 +166,13 @@ export default function NewVpatPage() {
       });
       const json = await res.json();
       if (!json.success) {
-        toast.error(json.error ?? 'Failed to create VPAT');
+        toast.error(json.error ?? t('create_failed'));
         return;
       }
-      toast.success('VPAT created');
+      toast.success(t('create_success'));
       router.push(`/vpats/${json.data.id}`);
     } catch {
-      toast.error('Failed to create VPAT');
+      toast.error(t('create_failed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -173,7 +181,7 @@ export default function NewVpatPage() {
   async function handleImportSubmit() {
     if (isSubmitting) return;
     if (!projectId) {
-      toast.error('Project is required');
+      toast.error(t('project_required'));
       return;
     }
 
@@ -186,13 +194,13 @@ export default function NewVpatPage() {
       });
       const json = await res.json();
       if (!res.ok) {
-        toast.error(json.error ?? 'Import failed');
+        toast.error(json.error ?? t('import_failed'));
         return;
       }
-      toast.success('VPAT imported');
+      toast.success(t('import_success'));
       router.push(`/vpats/${json.data.id}`);
     } catch {
-      toast.error('Import failed');
+      toast.error(t('import_failed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -200,15 +208,15 @@ export default function NewVpatPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <Breadcrumbs items={[{ label: 'VPATs', href: '/vpats' }, { label: 'New VPAT' }]} />
-      <h1 className="text-2xl font-bold">New VPAT</h1>
+      <Breadcrumbs items={[{ label: 'VPATs', href: '/vpats' }, { label: t('page_title') }]} />
+      <h1 className="text-2xl font-bold">{t('page_title')}</h1>
 
       {/* Step 1: Edition */}
       {step === 1 && (
         <Card>
           <CardHeader>
-            <CardTitle>Step 1 of 3: Select Edition</CardTitle>
-            <CardDescription>Choose the standard your VPAT will cover.</CardDescription>
+            <CardTitle>{t('step1_title')}</CardTitle>
+            <CardDescription>{t('step1_description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {EDITIONS.map((ed) => (
@@ -236,7 +244,7 @@ export default function NewVpatPage() {
             ))}
             <div className="flex justify-end pt-2">
               <Button type="button" onClick={() => setStep(2)}>
-                Next <ChevronRight />
+                {t('next_button')} <ChevronRight />
               </Button>
             </div>
           </CardContent>
@@ -247,12 +255,12 @@ export default function NewVpatPage() {
       {step === 2 && edition === 'IMPORT' && (
         <Card>
           <CardHeader>
-            <CardTitle>Step 2 of 3: Upload OpenACR</CardTitle>
-            <CardDescription>Upload a valid OpenACR YAML file to import.</CardDescription>
+            <CardTitle>{t('step2_upload_title')}</CardTitle>
+            <CardDescription>{t('step2_upload_description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="yaml-file-input">YAML File</Label>
+              <Label htmlFor="yaml-file-input">{t('yaml_file_label')}</Label>
               <input
                 id="yaml-file-input"
                 ref={fileInputRef}
@@ -274,10 +282,10 @@ export default function NewVpatPage() {
             )}
             <div className="flex justify-between pt-2">
               <Button type="button" variant="cancel" onClick={() => setStep(1)}>
-                <ChevronLeft /> Back
+                <ChevronLeft /> {t('back_button')}
               </Button>
               <Button type="button" onClick={() => setStep(3)} disabled={!parsed}>
-                Next <ChevronRight />
+                {t('next_button')} <ChevronRight />
               </Button>
             </div>
           </CardContent>
@@ -288,13 +296,13 @@ export default function NewVpatPage() {
       {step === 2 && edition !== 'IMPORT' && (
         <Card>
           <CardHeader>
-            <CardTitle>Step 2 of 3: Scope</CardTitle>
-            <CardDescription>Configure the scope for this VPAT.</CardDescription>
+            <CardTitle>{t('step2_scope_title')}</CardTitle>
+            <CardDescription>{t('step2_scope_description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             {edition !== '508' && (
               <div className="space-y-1.5">
-                <Label htmlFor="wcag-version">WCAG Version</Label>
+                <Label htmlFor="wcag-version">{t('wcag_version_label')}</Label>
                 <Select
                   value={wcagVersion}
                   onValueChange={(v) => setWcagVersion(v as '2.1' | '2.2')}
@@ -312,7 +320,7 @@ export default function NewVpatPage() {
 
             {edition !== '508' && edition !== 'EU' && (
               <fieldset className="space-y-2">
-                <legend className="text-sm font-bold">Conformance Level</legend>
+                <legend className="text-sm font-bold">{t('conformance_level_legend')}</legend>
                 {(['A', 'AA', 'AAA'] as const).map((lvl) => (
                   <label key={lvl} className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -324,10 +332,10 @@ export default function NewVpatPage() {
                     />
                     <span className="text-sm">
                       {lvl === 'A'
-                        ? 'Level A only'
+                        ? t('level_a_only')
                         : lvl === 'AA'
-                          ? 'Level A + AA'
-                          : 'Level A + AA + AAA'}
+                          ? t('level_a_aa')
+                          : t('level_a_aa_aaa')}
                     </span>
                   </label>
                 ))}
@@ -336,16 +344,15 @@ export default function NewVpatPage() {
 
             {(edition === '508' || edition === 'EU') && (
               <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
-                Conformance level is locked to A + AA for{' '}
-                {edition === '508' ? 'Section 508' : 'EN 301 549'}.
+                {t('conformance_locked', {
+                  edition: edition === '508' ? t('edition_508_label') : t('edition_eu_label'),
+                })}
               </p>
             )}
 
             <fieldset className="space-y-2">
-              <legend className="text-sm font-bold">Product Scope</legend>
-              <p className="text-sm text-muted-foreground">
-                Select all product types this VPAT covers.
-              </p>
+              <legend className="text-sm font-bold">{t('product_scope_legend')}</legend>
+              <p className="text-sm text-muted-foreground">{t('product_scope_description')}</p>
               <div className="grid grid-cols-2 gap-2">
                 {PRODUCT_SCOPES.map((scope) => (
                   <label key={scope.value} className="flex items-center gap-2 cursor-pointer">
@@ -363,10 +370,10 @@ export default function NewVpatPage() {
 
             <div className="flex justify-between pt-2">
               <Button type="button" variant="cancel" onClick={() => setStep(1)}>
-                <ChevronLeft /> Back
+                <ChevronLeft /> {t('back_button')}
               </Button>
               <Button type="button" onClick={() => setStep(3)} disabled={productScope.length === 0}>
-                Next <ChevronRight />
+                {t('next_button')} <ChevronRight />
               </Button>
             </div>
           </CardContent>
@@ -377,8 +384,8 @@ export default function NewVpatPage() {
       {step === 3 && edition === 'IMPORT' && (
         <Card>
           <CardHeader>
-            <CardTitle>Step 3 of 3: Select Project</CardTitle>
-            <CardDescription>Associate this import with a project.</CardDescription>
+            <CardTitle>{t('step3_import_title')}</CardTitle>
+            <CardDescription>{t('step3_import_description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {parsed && (
@@ -392,7 +399,7 @@ export default function NewVpatPage() {
             )}
             <div className="space-y-2">
               <Label htmlFor="import-project">
-                Project <span className="text-destructive">*</span>
+                {t('project_label')} <span className="text-destructive">*</span>
               </Label>
               <select
                 id="import-project"
@@ -400,7 +407,7 @@ export default function NewVpatPage() {
                 onChange={(e) => setProjectId(e.target.value)}
                 className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="">— Select a project —</option>
+                <option value="">{t('select_project')}</option>
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
@@ -408,19 +415,19 @@ export default function NewVpatPage() {
                 ))}
               </select>
               {projectsError && (
-                <p className="text-sm text-destructive">Failed to load projects. Please refresh.</p>
+                <p className="text-sm text-destructive">{t('projects_load_failed')}</p>
               )}
             </div>
             <div className="flex justify-between pt-2">
               <Button type="button" variant="cancel" onClick={() => setStep(2)}>
-                <ChevronLeft /> Back
+                <ChevronLeft /> {t('back_button')}
               </Button>
               <div className="flex gap-2">
                 <Button type="button" variant="cancel" asChild>
-                  <Link href="/vpats">Cancel</Link>
+                  <Link href="/vpats">{t('cancel_button')}</Link>
                 </Button>
                 <Button onClick={handleImportSubmit} disabled={!projectId || isSubmitting}>
-                  {isSubmitting ? 'Importing…' : 'Import'}
+                  {isSubmitting ? t('importing') : t('import_button')}
                 </Button>
               </div>
             </div>
@@ -433,25 +440,25 @@ export default function NewVpatPage() {
         <form onSubmit={handleCreateSubmit}>
           <Card>
             <CardHeader>
-              <CardTitle>Step 3 of 3: Details</CardTitle>
-              <CardDescription>Name your VPAT and associate it with a project.</CardDescription>
+              <CardTitle>{t('step3_create_title')}</CardTitle>
+              <CardDescription>{t('step3_create_description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title">
-                  Title <span className="text-destructive">*</span>
+                  {t('title_label')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Acme SaaS Platform VPAT 2026"
+                  placeholder={t('title_placeholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="project">
-                  Project <span className="text-destructive">*</span>
+                  {t('project_label')} <span className="text-destructive">*</span>
                 </Label>
                 <select
                   id="project"
@@ -459,7 +466,7 @@ export default function NewVpatPage() {
                   onChange={(e) => setProjectId(e.target.value)}
                   className="block w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
-                  <option value="">— Select a project —</option>
+                  <option value="">{t('select_project')}</option>
                   {projects.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
@@ -467,32 +474,30 @@ export default function NewVpatPage() {
                   ))}
                 </select>
                 {projectsError && (
-                  <p className="text-sm text-destructive">
-                    Failed to load projects. Please refresh the page.
-                  </p>
+                  <p className="text-sm text-destructive">{t('projects_load_failed_long')}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description (optional)</Label>
+                <Label htmlFor="description">{t('description_label')}</Label>
                 <Textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Brief notes about this assessment…"
+                  placeholder={t('description_placeholder')}
                   rows={3}
                 />
               </div>
 
               <div className="flex justify-between pt-2">
                 <Button type="button" variant="outline" onClick={() => setStep(2)}>
-                  Back
+                  {t('back_button')}
                 </Button>
                 <div className="flex gap-2">
                   <Button type="button" variant="cancel" asChild>
-                    <Link href="/vpats">Cancel</Link>
+                    <Link href="/vpats">{t('cancel_button')}</Link>
                   </Button>
                   <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Creating…' : 'Create VPAT'}
+                    {isSubmitting ? t('creating') : t('create_button')}
                   </Button>
                 </div>
               </div>
