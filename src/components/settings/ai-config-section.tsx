@@ -46,15 +46,6 @@ interface AIConfigSectionProps {
   }) => Promise<void>;
 }
 
-const PROVIDERS = [
-  { value: 'none', label: 'None' },
-  { value: 'openai', label: 'OpenAI' },
-  { value: 'anthropic', label: 'Anthropic' },
-  { value: 'google', label: 'Google Gemini' },
-  { value: 'ollama', label: 'Ollama (local)' },
-  { value: 'openai-compatible', label: 'OpenAI-compatible (custom)' },
-];
-
 const needsApiKey = (p: string) =>
   ['openai', 'anthropic', 'google', 'openai-compatible'].includes(p);
 const needsBaseUrl = (p: string) => ['ollama', 'openai-compatible'].includes(p);
@@ -80,6 +71,7 @@ function TaskModelSelector({
   onChange,
   disabled,
 }: TaskModelSelectorProps) {
+  const t = useTranslations('settings.ai');
   const knownModels = KNOWN_MODELS[provider] ?? [];
   const isCustomValue = value !== '' && !knownModels.some((m) => m.value === value);
   const [showOther, setShowOther] = useState(isCustomValue);
@@ -110,16 +102,16 @@ function TaskModelSelector({
             disabled={disabled}
           >
             <SelectTrigger id={id} aria-label={label}>
-              <SelectValue placeholder="Provider default" />
+              <SelectValue placeholder={t('provider_default')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={PROVIDER_DEFAULT}>Provider default</SelectItem>
+              <SelectItem value={PROVIDER_DEFAULT}>{t('provider_default')}</SelectItem>
               {knownModels.map((m) => (
                 <SelectItem key={m.value} value={m.value}>
                   {m.label}
                 </SelectItem>
               ))}
-              <SelectItem value="other">Other…</SelectItem>
+              <SelectItem value="other">{t('other_model')}</SelectItem>
             </SelectContent>
           </Select>
           {showOther && (
@@ -162,6 +154,14 @@ export function AIConfigSection({
   onSave,
 }: AIConfigSectionProps) {
   const t = useTranslations('settings.ai');
+  const PROVIDERS = [
+    { value: 'none', label: t('provider_none') },
+    { value: 'openai', label: t('provider_openai') },
+    { value: 'anthropic', label: t('provider_anthropic') },
+    { value: 'google', label: t('provider_google') },
+    { value: 'ollama', label: t('provider_ollama') },
+    { value: 'openai-compatible', label: t('provider_compatible') },
+  ];
   const [selectedProvider, setSelectedProvider] = useState(envSource?.provider ?? provider);
   const [key, setKey] = useState(apiKey);
   const [selectedBaseUrl, setSelectedBaseUrl] = useState(envSource?.baseUrl ?? baseUrl);
@@ -219,10 +219,7 @@ export function AIConfigSection({
               className="flex gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300"
             >
               <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-              <p>
-                Some settings are controlled by environment variables and are read-only here. Remove
-                the corresponding environment variables to manage them from this page.
-              </p>
+              <p>{t('env_override_note')}</p>
             </div>
           )}
 
@@ -237,7 +234,7 @@ export function AIConfigSection({
               disabled={providerFromEnv}
             >
               <SelectTrigger id="ai-provider">
-                <SelectValue placeholder="Select provider" />
+                <SelectValue placeholder={t('select_provider')} />
               </SelectTrigger>
               <SelectContent>
                 {PROVIDERS.map((p) => (
@@ -258,12 +255,12 @@ export function AIConfigSection({
               <Label htmlFor="api-key">
                 {t('api_key_label')}{' '}
                 {selectedProvider === 'openai-compatible' && (
-                  <span className="text-muted-foreground">(optional)</span>
+                  <span className="text-muted-foreground">{t('optional')}</span>
                 )}
                 {envSource?.apiKey && <EnvBadge />}
               </Label>
               {envSource?.apiKey ? (
-                <p className="text-sm text-muted-foreground">Set via environment variable</p>
+                <p className="text-sm text-muted-foreground">{t('set_via_env')}</p>
               ) : (
                 <div className="flex gap-2">
                   <Input
@@ -315,11 +312,8 @@ export function AIConfigSection({
       {showTaskModels && (
         <Card>
           <CardHeader>
-            <CardTitle>Model per Task</CardTitle>
-            <CardDescription>
-              Choose which model to use for each task. Leave a task on &quot;Provider default&quot;
-              to use the model your provider selects automatically.
-            </CardDescription>
+            <CardTitle>{t('model_per_task_title')}</CardTitle>
+            <CardDescription>{t('model_per_task_description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -343,21 +337,17 @@ export function AIConfigSection({
       {showTaskModels && (
         <Card>
           <CardHeader>
-            <CardTitle>AI Review Pass</CardTitle>
-            <CardDescription>
-              After generating a VPAT criterion row, a second AI call reviews the result and
-              corrects the conformance call if the evidence does not support it. This doubles the
-              number of AI calls for VPAT generation.
-            </CardDescription>
+            <CardTitle>{t('review_pass_title')}</CardTitle>
+            <CardDescription>{t('review_pass_description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between gap-4">
-              <Label htmlFor="review-pass-toggle">Enable AI Review Pass</Label>
+              <Label htmlFor="review-pass-toggle">{t('enable_review_pass')}</Label>
               <Switch
                 id="review-pass-toggle"
                 checked={reviewEnabled}
                 onCheckedChange={setReviewEnabled}
-                aria-label="Enable AI Review Pass"
+                aria-label={t('enable_review_pass')}
               />
             </div>
             {reviewEnabled && (

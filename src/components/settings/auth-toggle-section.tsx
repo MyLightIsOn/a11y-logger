@@ -45,9 +45,7 @@ export function AuthToggleSection({
     <Card>
       <CardHeader>
         <CardTitle>{t('heading')}</CardTitle>
-        <CardDescription>
-          When enabled, users must log in to access the app. Requires at least one user account.
-        </CardDescription>
+        <CardDescription>{t('card_description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
@@ -64,7 +62,9 @@ export function AuthToggleSection({
             >
               {loading ? t('updating_label') : enabled ? t('disable_button') : t('enable_button')}
             </Button>
-            {!hasUsers && <p className="text-xs text-muted-foreground">Create an account first.</p>}
+            {!hasUsers && (
+              <p className="text-xs text-muted-foreground">{t('create_account_first')}</p>
+            )}
           </div>
         </div>
       </CardContent>
