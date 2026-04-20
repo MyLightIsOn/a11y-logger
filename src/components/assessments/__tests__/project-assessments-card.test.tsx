@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { ProjectAssessmentsCard } from '../project-assessments-card';
 import type { AssessmentWithCounts } from '@/lib/db/assessments';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const assessment: AssessmentWithCounts = {
   id: 'a1',
@@ -18,20 +28,22 @@ const assessment: AssessmentWithCounts = {
 };
 
 test('renders assessments card heading', () => {
-  render(
+  renderWithIntl(
     <ProjectAssessmentsCard projectId="p1" projectName="My Project" assessments={[assessment]} />
   );
   expect(screen.getByText('Assessments')).toBeInTheDocument();
 });
 
 test('shows table view by default', () => {
-  render(
+  renderWithIntl(
     <ProjectAssessmentsCard projectId="p1" projectName="My Project" assessments={[assessment]} />
   );
   expect(screen.getByRole('table')).toBeInTheDocument();
 });
 
 test('shows empty state when no assessments', () => {
-  render(<ProjectAssessmentsCard projectId="p1" projectName="My Project" assessments={[]} />);
+  renderWithIntl(
+    <ProjectAssessmentsCard projectId="p1" projectName="My Project" assessments={[]} />
+  );
   expect(screen.getByText('No assessments yet.')).toBeInTheDocument();
 });

@@ -1,21 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 import { AllIssuesTable } from '../all-issues-table';
 import type { IssueWithContext } from '@/lib/db/issues';
 
-const messages = {
-  issues: {
-    badge: {
-      severity: { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low' },
-      status: { open: 'Open', resolved: 'Resolved', wont_fix: "Won't Fix" },
-    },
-  },
-};
-
 function renderWithIntl(ui: React.ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
+    <NextIntlClientProvider locale="en" messages={en}>
       {ui}
     </NextIntlClientProvider>
   );

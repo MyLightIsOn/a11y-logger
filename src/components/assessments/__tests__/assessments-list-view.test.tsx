@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 vi.mock('@/components/assessments/all-assessments-table', () => ({
   AllAssessmentsTable: () => <div data-testid="assessments-table" />,
@@ -13,6 +15,14 @@ vi.mock('@/components/assessments/assessment-card', () => ({
 
 import { AssessmentsListView } from '../assessments-list-view';
 import type { AssessmentWithProject } from '@/lib/db/assessments';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const mockAssessment: AssessmentWithProject = {
   id: 'a1',
@@ -32,12 +42,12 @@ const mockAssessment: AssessmentWithProject = {
 
 describe('AssessmentsListView layout', () => {
   it('renders the New Assessment link', () => {
-    render(<AssessmentsListView assessments={[]} />);
+    renderWithIntl(<AssessmentsListView assessments={[]} />);
     expect(screen.getByRole('link', { name: /new assessment/i })).toBeInTheDocument();
   });
 
   it('ViewToggle is in the header row with the New Assessment button', () => {
-    render(<AssessmentsListView assessments={[]} />);
+    renderWithIntl(<AssessmentsListView assessments={[]} />);
     const heading = screen.getByRole('heading', { name: 'Assessments' });
     const headerRow = heading.closest('div')!;
     const viewGroup = screen.getByRole('group', { name: 'View options' });
@@ -45,19 +55,19 @@ describe('AssessmentsListView layout', () => {
   });
 
   it('ViewToggle is rendered on the page', () => {
-    render(<AssessmentsListView assessments={[]} />);
+    renderWithIntl(<AssessmentsListView assessments={[]} />);
     expect(screen.getByRole('group', { name: 'View options' })).toBeInTheDocument();
   });
 
   it('switches to grid view when Grid view button is clicked', async () => {
-    render(<AssessmentsListView assessments={[mockAssessment]} />);
+    renderWithIntl(<AssessmentsListView assessments={[mockAssessment]} />);
     await userEvent.click(screen.getByRole('button', { name: /grid view/i }));
     expect(screen.getByTestId('assessment-card')).toBeInTheDocument();
     expect(screen.queryByTestId('assessments-table')).not.toBeInTheDocument();
   });
 
   it('wraps content in a section with aria-labelledby', () => {
-    render(<AssessmentsListView assessments={[]} />);
+    renderWithIntl(<AssessmentsListView assessments={[]} />);
     const heading = screen.getByRole('heading', { name: 'Assessments' });
     expect(heading).toHaveAttribute('id', 'assessments-heading');
     const section = heading.closest('section');
@@ -65,13 +75,13 @@ describe('AssessmentsListView layout', () => {
   });
 
   it('shows empty state with dashed border when no assessments', () => {
-    render(<AssessmentsListView assessments={[]} />);
+    renderWithIntl(<AssessmentsListView assessments={[]} />);
     const empty = screen.getByText(/no assessments yet/i).closest('div');
     expect(empty).toHaveClass('border-dashed');
   });
 
   it('empty state has a Create your first assessment link', () => {
-    render(<AssessmentsListView assessments={[]} />);
+    renderWithIntl(<AssessmentsListView assessments={[]} />);
     expect(screen.getByRole('link', { name: /create your first assessment/i })).toBeInTheDocument();
   });
 });

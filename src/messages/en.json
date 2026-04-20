@@ -588,7 +588,7 @@
     "list": {
       "empty_heading": "No issues yet",
       "empty_description": "Add your first issue to get started.",
-      "new_button": "Add Issue",
+      "new_button": "New Issue",
       "page_title": "Issues",
       "search_placeholder": "Search issues…",
       "search_label": "Search issues",
