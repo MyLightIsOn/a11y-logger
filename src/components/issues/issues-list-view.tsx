@@ -125,7 +125,7 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
 
               <div className="flex items-center gap-2">
                 <label htmlFor="issues-search" className="sr-only">
-                  Search issues
+                  {t('search_label')}
                 </label>
                 <Input
                   id="issues-search"
