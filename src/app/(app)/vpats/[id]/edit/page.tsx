@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,19 +21,33 @@ import { VpatIssuesPanel, type PanelIssue } from '@/components/vpats/vpat-issues
 import { GenerateAllConfirmDialog } from '@/components/vpats/generate-all-confirm-dialog';
 import type { VpatCriterionRow, VpatCriterionComponent } from '@/lib/db/vpat-criterion-rows';
 import type { VpatData } from '@/lib/db/vpats';
-import { EDITION_SECTION_KEYS, SECTION_TAB_LABELS } from '@/lib/vpat-tabs';
+import { EDITION_SECTION_KEYS } from '@/lib/vpat-tabs';
 
-function getEditionBadgeLabel(vpat: VpatData): string {
-  if (vpat.standard_edition === '508') return 'Section 508';
-  if (vpat.standard_edition === 'EU') return 'EN 301 549';
-  if (vpat.standard_edition === 'INT') return 'International';
-  return `WCAG ${vpat.wcag_version} · ${vpat.wcag_level}`;
-}
+/** Maps section key → vpats.tabs translation key */
+const SECTION_TAB_KEY: Record<string, string> = {
+  A: 'level_a',
+  AA: 'level_aa',
+  AAA: 'level_aaa',
+  Chapter3: 'chapter3',
+  Chapter4: 'chapter4',
+  Chapter5: 'chapter5',
+  Chapter6: 'chapter6',
+  Clause4: 'clause4',
+  Clause5: 'clause5',
+  Clause6: 'clause6',
+  Clause7: 'clause7',
+  Clause8: 'clause8',
+  Clause10: 'clause10',
+  Clause11: 'clause11',
+  Clause12: 'clause12',
+  Clause13: 'clause13',
+};
 
 export default function VpatEditPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const vpatId = params.id;
+  const t = useTranslations('vpats');
 
   const [vpat, setVpat] = useState<VpatData | null>(null);
   const [rows, setRows] = useState<VpatCriterionRow[]>([]);
@@ -62,7 +77,7 @@ export default function VpatEditPage() {
         const res = await fetch(`/api/vpats/${vpatId}`);
         const json = await res.json();
         if (!json.success) {
-          toast.error('Failed to load VPAT');
+          toast.error(t('detail.load_failed'));
           router.push('/vpats');
           return;
         }
@@ -75,14 +90,14 @@ export default function VpatEditPage() {
           setHasShownEditWarning(true);
         }
       } catch {
-        toast.error('Failed to load VPAT');
+        toast.error(t('detail.load_failed'));
         router.push('/vpats');
       } finally {
         setIsLoading(false);
       }
     }
     load();
-  }, [vpatId, router]);
+  }, [vpatId, router, t]);
 
   // Updates local state + queues change for save.
   // When update.component_name is set, immediately PUTs to the component API
@@ -168,7 +183,7 @@ export default function VpatEditPage() {
             }).then((r) => r.json())
           )
         ).then((results) => {
-          if (results.some((r) => !r.success)) throw new Error('Some changes failed to save');
+          if (results.some((r) => !r.success)) throw new Error(t('detail.save_failed'));
         });
         saves.push(rowSave);
       }
@@ -181,11 +196,11 @@ export default function VpatEditPage() {
       await Promise.all(saves);
       router.push(`/vpats/${vpatId}`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save');
+      toast.error(err instanceof Error ? err.message : t('detail.save_failed'));
     } finally {
       setIsSaving(false);
     }
-  }, [vpatId, router]);
+  }, [vpatId, router, t]);
 
   const handleGenerateRow = useCallback(
     async (rowId: string) => {
@@ -196,17 +211,17 @@ export default function VpatEditPage() {
         });
         const json = await res.json();
         if (!json.success) {
-          toast.error(json.error ?? 'AI generation failed');
+          toast.error(json.error ?? t('detail.ai_failed'));
           return;
         }
         setRows((prev) => prev.map((r) => (r.id === rowId ? json.data : r)));
       } catch {
-        toast.error('AI generation failed');
+        toast.error(t('detail.ai_failed'));
       } finally {
         setGeneratingRowId(null);
       }
     },
-    [vpatId]
+    [vpatId, t]
   );
 
   const handleRequestGenerateAll = useCallback(() => {
@@ -294,14 +309,23 @@ export default function VpatEditPage() {
     [vpat]
   );
 
-  if (isLoading) return <div className="text-muted-foreground text-sm p-6">Loading…</div>;
+  if (isLoading)
+    return <div className="text-muted-foreground text-sm p-6">{t('detail.loading')}</div>;
   if (!vpat) return null;
 
   const isReviewed = vpat.status === 'reviewed';
   const isPublished = vpat.status === 'published';
   const resolved = rows.filter((r) => r.conformance !== 'not_evaluated').length;
   const total = rows.length;
-  const editionLabel = getEditionBadgeLabel(vpat);
+
+  function getEditionLabel(v: VpatData): string {
+    if (v.standard_edition === '508') return t('detail.edition_508');
+    if (v.standard_edition === 'EU') return t('detail.edition_eu');
+    if (v.standard_edition === 'INT') return t('detail.edition_int');
+    return t('detail.edition_wcag', { version: v.wcag_version, level: v.wcag_level });
+  }
+
+  const editionLabel = getEditionLabel(vpat);
 
   return (
     <div className="space-y-6">
@@ -309,7 +333,7 @@ export default function VpatEditPage() {
         items={[
           { label: 'VPATs', href: '/vpats' },
           { label: vpat.title, href: `/vpats/${vpatId}` },
-          { label: 'Edit VPAT' },
+          { label: t('settings_menu.edit_vpat') },
         ]}
       />
 
@@ -328,7 +352,11 @@ export default function VpatEditPage() {
                     : 'bg-yellow-100 border border-yellow-500 text-primary dark:text-primary-foreground'
               }
             >
-              {isPublished ? 'Published' : isReviewed ? 'Reviewed' : 'Draft'}
+              {isPublished
+                ? t('status.published')
+                : isReviewed
+                  ? t('status.reviewed')
+                  : t('status.draft')}
             </Badge>
           </div>
         </div>
@@ -337,9 +365,7 @@ export default function VpatEditPage() {
       {/* Progress */}
       <Card>
         <CardContent className="pt-4">
-          <p className="text-sm font-medium">
-            {resolved} of {total} criteria resolved
-          </p>
+          <p className="text-sm font-medium">{t('card.criteria_resolved', { resolved, total })}</p>
           <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
             <div
               className="h-full bg-primary transition-all"
@@ -373,11 +399,13 @@ export default function VpatEditPage() {
                 <TabsList variant="segmented" className="flex-nowrap w-max">
                   <TabsTrigger value="cover-sheet">
                     <FileText className="h-4 w-4" />
-                    Cover Sheet
+                    {t('tabs.cover_sheet')}
                   </TabsTrigger>
                   {sectionKeys.map((key) => (
                     <TabsTrigger key={key} value={key}>
-                      {SECTION_TAB_LABELS[key] ?? key}
+                      {SECTION_TAB_KEY[key]
+                        ? t(`tabs.${SECTION_TAB_KEY[key]}` as Parameters<typeof t>[0])
+                        : key}
                     </TabsTrigger>
                   ))}
                 </TabsList>
