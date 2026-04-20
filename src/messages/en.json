@@ -26,7 +26,13 @@
     "status": "Status",
     "actions": "Actions",
     "no_results": "No results found",
-    "required_field": "This field is required"
+    "required_field": "This field is required",
+    "table": {
+      "rows_per_page": "Rows per page:",
+      "page_of": "Page {page} of {total}",
+      "previous_page": "Previous page",
+      "next_page": "Next page"
+    }
   },
   "ui": {
     "theme_toggle": {
@@ -183,6 +189,113 @@
       "no_issues_referenced": "No issues referenced.",
       "reasoning": "Reasoning",
       "generated_at": "Generated"
+    },
+    "tabs": {
+      "cover_sheet": "Cover Sheet",
+      "version_history": "Version History",
+      "level_a": "Level A",
+      "level_aa": "Level AA",
+      "level_aaa": "Level AAA",
+      "chapter3": "FPC",
+      "chapter4": "Hardware",
+      "chapter5": "Software",
+      "chapter6": "Documentation",
+      "clause4": "Clause 4",
+      "clause5": "Clause 5",
+      "clause6": "Clause 6",
+      "clause7": "Clause 7",
+      "clause8": "Clause 8",
+      "clause10": "Clause 10",
+      "clause11": "Clause 11",
+      "clause12": "Clause 12",
+      "clause13": "Clause 13"
+    },
+    "detail": {
+      "loading": "Loading…",
+      "cover_sheet_empty": "No cover sheet information has been added yet.",
+      "edition_508": "Section 508",
+      "edition_eu": "EN 301 549",
+      "edition_int": "International",
+      "edition_wcag": "WCAG {version} · {level}",
+      "reviewed_by": "Reviewed by {name} on {date}",
+      "load_failed": "Failed to load VPAT",
+      "publish_failed": "Failed to publish",
+      "publish_success": "VPAT published",
+      "unpublish_failed": "Failed to unpublish",
+      "unpublish_success": "VPAT unpublished",
+      "review_failed": "Failed to mark as reviewed",
+      "review_success": "VPAT marked as reviewed",
+      "edit_reset_failed": "Failed to reset VPAT",
+      "save_failed": "Failed to save",
+      "ai_failed": "AI generation failed"
+    },
+    "version_history": {
+      "col_version": "Version",
+      "col_published": "Published",
+      "col_created_at": "Created At",
+      "empty": "No published versions yet. Publish this VPAT to create a snapshot."
+    },
+    "wizard": {
+      "page_title": "New VPAT",
+      "step1_title": "Step 1 of 3: Select Edition",
+      "step1_description": "Choose the standard your VPAT will cover.",
+      "step2_upload_title": "Step 2 of 3: Upload OpenACR",
+      "step2_upload_description": "Upload a valid OpenACR YAML file to import.",
+      "step2_scope_title": "Step 2 of 3: Scope",
+      "step2_scope_description": "Configure the scope for this VPAT.",
+      "step3_import_title": "Step 3 of 3: Select Project",
+      "step3_import_description": "Associate this import with a project.",
+      "step3_create_title": "Step 3 of 3: Details",
+      "step3_create_description": "Name your VPAT and associate it with a project.",
+      "edition_wcag_label": "WCAG",
+      "edition_wcag_description": "Private sector / general web accessibility disclosure",
+      "edition_508_label": "Section 508",
+      "edition_508_description": "U.S. federal government procurement",
+      "edition_eu_label": "EN 301 549",
+      "edition_eu_description": "European public sector / EAA compliance",
+      "edition_int_label": "International",
+      "edition_int_description": "Most comprehensive; includes all three standards",
+      "edition_import_label": "Import from OpenACR",
+      "edition_import_description": "Import an existing OpenACR YAML file",
+      "yaml_file_label": "YAML File",
+      "wcag_version_label": "WCAG Version",
+      "conformance_level_legend": "Conformance Level",
+      "level_a_only": "Level A only",
+      "level_a_aa": "Level A + AA",
+      "level_a_aa_aaa": "Level A + AA + AAA",
+      "conformance_locked": "Conformance level is locked to A + AA for {edition}.",
+      "product_scope_legend": "Product Scope",
+      "product_scope_description": "Select all product types this VPAT covers.",
+      "scope_web": "Web",
+      "scope_desktop": "Desktop Software",
+      "scope_mobile": "Mobile Software",
+      "scope_documents": "Documents",
+      "scope_hardware": "Hardware",
+      "scope_telephony": "Telephony",
+      "title_label": "Title",
+      "title_placeholder": "e.g. Acme SaaS Platform VPAT 2026",
+      "project_label": "Project",
+      "select_project": "— Select a project —",
+      "description_label": "Description (optional)",
+      "description_placeholder": "Brief notes about this assessment…",
+      "projects_load_failed": "Failed to load projects. Please refresh.",
+      "projects_load_failed_long": "Failed to load projects. Please refresh the page.",
+      "invalid_openacr": "File does not appear to be a valid OpenACR YAML (missing catalog or chapters).",
+      "yaml_parse_error": "Could not parse YAML. Please check the file format.",
+      "title_required": "Title is required",
+      "project_required": "Project is required",
+      "scope_required": "Select at least one product scope",
+      "create_success": "VPAT created",
+      "create_failed": "Failed to create VPAT",
+      "import_success": "VPAT imported",
+      "import_failed": "Import failed",
+      "importing": "Importing…",
+      "creating": "Creating…",
+      "create_button": "Create VPAT",
+      "import_button": "Import",
+      "back_button": "Back",
+      "next_button": "Next",
+      "cancel_button": "Cancel"
     }
   },
   "auth": {
@@ -201,6 +314,7 @@
     }
   },
   "settings": {
+    "page_title": "Settings",
     "language": {
       "label": "Language",
       "en": "English",
@@ -225,7 +339,24 @@
       "description": "Configure your AI provider to enable AI-assisted features. Supports cloud providers (OpenAI, Anthropic, Google Gemini) and local offline models via Ollama. Your API key is stored locally and never sent to our servers.",
       "custom_provider_description": "Any API that follows the OpenAI chat format works here — Groq, Together AI, LM Studio, and most self-hosted models. Point it at the base URL, pick a model name, and it will behave the same as OpenAI.",
       "show_api_key": "Show API key",
-      "hide_api_key": "Hide API key"
+      "hide_api_key": "Hide API key",
+      "provider_google": "Google Gemini",
+      "provider_ollama": "Ollama (local)",
+      "provider_compatible": "OpenAI-compatible (custom)",
+      "provider_none_short": "None",
+      "select_provider": "Select provider",
+      "provider_default": "Provider default",
+      "other_model": "Other…",
+      "optional": "(optional)",
+      "set_via_env": "Set via environment variable",
+      "env_override_note": "Some settings are controlled by environment variables and are read-only here. Remove the corresponding environment variables to manage them from this page.",
+      "model_per_task_title": "Model per Task",
+      "model_per_task_description": "Choose which model to use for each task. Leave a task on \"Provider default\" to use the model your provider selects automatically.",
+      "review_pass_title": "AI Review Pass",
+      "review_pass_description": "After generating a VPAT criterion row, a second AI call reviews the result and corrects the conformance call if the evidence does not support it. This doubles the number of AI calls for VPAT generation.",
+      "enable_review_pass": "Enable AI Review Pass",
+      "review_pass_model_label": "AI Review Pass Model",
+      "review_pass_model_description": "Used for the review critique pass. A smaller, faster model often works well here."
     },
     "auth": {
       "heading": "Authentication",
@@ -234,7 +365,9 @@
       "save_button": "Save Auth Settings",
       "updating_label": "Updating…",
       "enable_button": "Enable Auth",
-      "disable_button": "Disable Auth"
+      "disable_button": "Disable Auth",
+      "card_description": "When enabled, users must log in to access the app. Requires at least one user account.",
+      "create_account_first": "Create an account first."
     },
     "users": {
       "heading": "User Management",
@@ -242,7 +375,21 @@
       "username_label": "Username",
       "password_label": "Password",
       "new_password_label": "New Password",
-      "create_button": "Create Account"
+      "create_button": "Create Account",
+      "confirm_password_label": "Confirm Password",
+      "creating": "Creating…",
+      "save_password_button": "Save Password",
+      "cancel_button": "Cancel",
+      "saving": "Saving…",
+      "change_password_button": "Change Password",
+      "manage_credentials_description": "Manage your local account credentials.",
+      "create_account_description": "Create an account to enable authentication.",
+      "password_too_short": "Password must be at least 8 characters.",
+      "passwords_no_match": "Passwords do not match.",
+      "account_created": "Account created",
+      "create_failed": "Failed to create account.",
+      "password_updated": "Password updated",
+      "update_failed": "Failed to update password."
     },
     "data": {
       "heading": "Data Management",
@@ -253,7 +400,25 @@
       "clear_dialog_title": "Clear All Data?",
       "clear_dialog_description": "This will permanently delete all projects, assessments, issues, reports, and VPATs. This cannot be undone.",
       "clear_dialog_confirm": "Clear All Data",
-      "clear_dialog_cancel": "Cancel"
+      "clear_dialog_cancel": "Cancel",
+      "description": "Manage your local data storage, exports, and imports.",
+      "db_path_label": "Database Path",
+      "media_path_label": "Media Path",
+      "read_only_note": "These paths are read-only. To change them, set the <code>DATABASE_PATH</code> environment variable before starting the server.",
+      "reset_confirm_label": "Type RESET to confirm",
+      "danger_zone_description": "Reset the database. This will permanently delete all projects, assessments, issues, reports, and VPATs."
+    },
+    "tabs": {
+      "ai_config": "AI Configuration",
+      "data_management": "Data Management",
+      "security": "Security",
+      "about": "About"
+    },
+    "about": {
+      "heading": "About A11y Logger",
+      "version_label": "Version",
+      "license_label": "License",
+      "description": "A11y Logger is an open-source, offline-first accessibility auditing tool. No accounts or cloud services required."
     },
     "toast": {
       "ai_saved": "AI settings saved",
@@ -309,7 +474,23 @@
     "list": {
       "empty_heading": "No assessments yet",
       "empty_description": "Create your first assessment to get started.",
-      "new_button": "New Assessment"
+      "new_button": "New Assessment",
+      "page_title": "Assessments",
+      "create_first": "Create your first assessment"
+    },
+    "table": {
+      "col_name": "Name",
+      "col_project": "Project",
+      "col_status": "Status",
+      "col_issues": "Issues",
+      "empty": "No assessments yet."
+    },
+    "new": {
+      "page_title": "New Assessment",
+      "save_button": "Save Assessment",
+      "saving": "Saving…",
+      "cancel_button": "Cancel",
+      "project_required": "Please select a project"
     },
     "toast": {
       "created": "Assessment created",
@@ -407,7 +588,21 @@
     "list": {
       "empty_heading": "No issues yet",
       "empty_description": "Add your first issue to get started.",
-      "new_button": "Add Issue"
+      "new_button": "Add Issue",
+      "page_title": "Issues",
+      "search_placeholder": "Search issues…",
+      "search_label": "Search issues",
+      "all_tab": "All",
+      "no_results": "No issues found."
+    },
+    "table": {
+      "col_title": "Title",
+      "col_severity": "Severity",
+      "col_status": "Status",
+      "col_created": "Created",
+      "col_project": "Project",
+      "col_assessment": "Assessment",
+      "empty": "No issues yet."
     },
     "badge": {
       "severity": {
@@ -478,7 +673,42 @@
     "list": {
       "empty_heading": "No reports yet",
       "empty_description": "Create your first report to get started.",
-      "new_button": "New Report"
+      "new_button": "New Report",
+      "page_title": "Reports",
+      "empty_cta_description": "Create your first accessibility report to document findings and share with stakeholders.",
+      "empty_cta_button": "Create your first report"
+    },
+    "table": {
+      "col_title": "Title",
+      "col_status": "Status",
+      "col_updated": "Updated",
+      "status_published": "Published",
+      "status_draft": "Draft"
+    },
+    "new": {
+      "page_title": "New Report",
+      "no_projects_heading": "No projects found",
+      "no_projects_description": "You need at least one project before creating a report.",
+      "create_project_link": "Create a project"
+    },
+    "wizard": {
+      "step_select_projects": "Select Projects",
+      "step_select_assessments": "Select Assessments",
+      "step_name_report": "Name Your Report",
+      "step_label": "Step {n}",
+      "projects_label": "Projects",
+      "assessments_label": "Assessments",
+      "select_projects_placeholder": "Select projects…",
+      "select_assessments_placeholder": "Select assessments…",
+      "no_assessments_placeholder": "No assessments for selected projects",
+      "report_title_label": "Report Title",
+      "report_title_placeholder": "Report title",
+      "title_required": "Title is required",
+      "create_failed": "Failed to create report",
+      "creating": "Creating…",
+      "create_button": "Create Report",
+      "back_button": "Back",
+      "next_button": "Next"
     },
     "status": {
       "draft": "Draft",
@@ -604,6 +834,13 @@
       "error": "Failed to load WCAG criteria.",
       "empty": "No issues logged for {principle} criteria yet.",
       "tooltip_issues": "Issues"
+    },
+    "stats": {
+      "open_critical_issues": "Open Critical Issues",
+      "in_progress_assessments": "In-Progress Assessments",
+      "resolved_this_month": "Resolved This Month",
+      "active_projects": "Active Projects",
+      "of_total": "of {total} total"
     }
   },
   "projects": {
@@ -637,7 +874,22 @@
     "list": {
       "empty_heading": "No projects yet",
       "empty_description": "Create your first project to get started.",
-      "new_button": "New Project"
+      "new_button": "New Project",
+      "page_title": "Projects",
+      "create_first": "Create your first project"
+    },
+    "table": {
+      "col_name": "Name",
+      "col_description": "Description",
+      "col_assessments": "Assessments",
+      "col_issues": "Issues",
+      "empty": "No projects yet."
+    },
+    "new": {
+      "page_title": "New Project",
+      "save_button": "Save Project",
+      "saving": "Saving…",
+      "cancel_button": "Cancel"
     },
     "toast": {
       "created": "Project created",

@@ -26,7 +26,13 @@
     "status": "Statut",
     "actions": "Actions",
     "no_results": "Aucun résultat trouvé",
-    "required_field": "Ce champ est obligatoire"
+    "required_field": "Ce champ est obligatoire",
+    "table": {
+      "rows_per_page": "Lignes par page :",
+      "page_of": "Page {page} sur {total}",
+      "previous_page": "Page précédente",
+      "next_page": "Page suivante"
+    }
   },
   "ui": {
     "theme_toggle": {
@@ -183,6 +189,113 @@
       "no_issues_referenced": "Aucun problème référencé.",
       "reasoning": "Raisonnement",
       "generated_at": "Généré"
+    },
+    "tabs": {
+      "cover_sheet": "Feuille de couverture",
+      "version_history": "Historique des versions",
+      "level_a": "Niveau A",
+      "level_aa": "Niveau AA",
+      "level_aaa": "Niveau AAA",
+      "chapter3": "FPC",
+      "chapter4": "Matériel",
+      "chapter5": "Logiciel",
+      "chapter6": "Documentation",
+      "clause4": "Clause 4",
+      "clause5": "Clause 5",
+      "clause6": "Clause 6",
+      "clause7": "Clause 7",
+      "clause8": "Clause 8",
+      "clause10": "Clause 10",
+      "clause11": "Clause 11",
+      "clause12": "Clause 12",
+      "clause13": "Clause 13"
+    },
+    "detail": {
+      "loading": "Chargement…",
+      "cover_sheet_empty": "Aucune information de feuille de couverture n'a encore été ajoutée.",
+      "edition_508": "Section 508",
+      "edition_eu": "EN 301 549",
+      "edition_int": "International",
+      "edition_wcag": "WCAG {version} · {level}",
+      "reviewed_by": "Révisé par {name} le {date}",
+      "load_failed": "Échec du chargement du VPAT",
+      "publish_failed": "Échec de la publication",
+      "publish_success": "VPAT publié",
+      "unpublish_failed": "Échec de la dépublication",
+      "unpublish_success": "VPAT dépublié",
+      "review_failed": "Échec de la révision",
+      "review_success": "VPAT marqué comme révisé",
+      "edit_reset_failed": "Échec de la réinitialisation du VPAT",
+      "save_failed": "Échec de l'enregistrement",
+      "ai_failed": "Échec de la génération IA"
+    },
+    "version_history": {
+      "col_version": "Version",
+      "col_published": "Publié",
+      "col_created_at": "Créé le",
+      "empty": "Aucune version publiée pour l'instant. Publiez ce VPAT pour créer un instantané."
+    },
+    "wizard": {
+      "page_title": "Nouveau VPAT",
+      "step1_title": "Étape 1 sur 3 : Sélectionner l'édition",
+      "step1_description": "Choisissez la norme que votre VPAT couvrira.",
+      "step2_upload_title": "Étape 2 sur 3 : Télécharger OpenACR",
+      "step2_upload_description": "Téléchargez un fichier OpenACR YAML valide à importer.",
+      "step2_scope_title": "Étape 2 sur 3 : Portée",
+      "step2_scope_description": "Configurez la portée de ce VPAT.",
+      "step3_import_title": "Étape 3 sur 3 : Sélectionner le projet",
+      "step3_import_description": "Associez cette importation à un projet.",
+      "step3_create_title": "Étape 3 sur 3 : Détails",
+      "step3_create_description": "Nommez votre VPAT et associez-le à un projet.",
+      "edition_wcag_label": "WCAG",
+      "edition_wcag_description": "Divulgation d'accessibilité web pour le secteur privé",
+      "edition_508_label": "Section 508",
+      "edition_508_description": "Marchés publics du gouvernement fédéral américain",
+      "edition_eu_label": "EN 301 549",
+      "edition_eu_description": "Secteur public européen / conformité EAA",
+      "edition_int_label": "International",
+      "edition_int_description": "Le plus complet ; inclut les trois normes",
+      "edition_import_label": "Importer depuis OpenACR",
+      "edition_import_description": "Importer un fichier OpenACR YAML existant",
+      "yaml_file_label": "Fichier YAML",
+      "wcag_version_label": "Version WCAG",
+      "conformance_level_legend": "Niveau de conformité",
+      "level_a_only": "Niveau A uniquement",
+      "level_a_aa": "Niveau A + AA",
+      "level_a_aa_aaa": "Niveau A + AA + AAA",
+      "conformance_locked": "Le niveau de conformité est verrouillé à A + AA pour {edition}.",
+      "product_scope_legend": "Portée du produit",
+      "product_scope_description": "Sélectionnez tous les types de produits couverts par ce VPAT.",
+      "scope_web": "Web",
+      "scope_desktop": "Logiciel de bureau",
+      "scope_mobile": "Logiciel mobile",
+      "scope_documents": "Documents",
+      "scope_hardware": "Matériel",
+      "scope_telephony": "Téléphonie",
+      "title_label": "Titre",
+      "title_placeholder": "ex. Acme SaaS Platform VPAT 2026",
+      "project_label": "Projet",
+      "select_project": "— Sélectionner un projet —",
+      "description_label": "Description (optionnel)",
+      "description_placeholder": "Notes brèves sur cette évaluation…",
+      "projects_load_failed": "Échec du chargement des projets. Veuillez actualiser.",
+      "projects_load_failed_long": "Échec du chargement des projets. Veuillez actualiser la page.",
+      "invalid_openacr": "Le fichier ne semble pas être un YAML OpenACR valide (catalogue ou chapitres manquants).",
+      "yaml_parse_error": "Impossible d'analyser le YAML. Veuillez vérifier le format du fichier.",
+      "title_required": "Le titre est requis",
+      "project_required": "Le projet est requis",
+      "scope_required": "Sélectionnez au moins une portée de produit",
+      "create_success": "VPAT créé",
+      "create_failed": "Échec de la création du VPAT",
+      "import_success": "VPAT importé",
+      "import_failed": "Échec de l'importation",
+      "importing": "Importation…",
+      "creating": "Création…",
+      "create_button": "Créer le VPAT",
+      "import_button": "Importer",
+      "back_button": "Retour",
+      "next_button": "Suivant",
+      "cancel_button": "Annuler"
     }
   },
   "auth": {
@@ -201,6 +314,7 @@
     }
   },
   "settings": {
+    "page_title": "Paramètres",
     "language": {
       "label": "Langue",
       "en": "Anglais",
@@ -225,7 +339,24 @@
       "description": "Configurez votre fournisseur d'IA pour activer les fonctionnalités assistées par IA. Prend en charge les fournisseurs cloud (OpenAI, Anthropic, Google Gemini) et les modèles locaux hors ligne via Ollama. Votre clé API est stockée localement et n'est jamais envoyée à nos serveurs.",
       "custom_provider_description": "Toute API suivant le format de chat OpenAI fonctionne ici — Groq, Together AI, LM Studio et la plupart des modèles auto-hébergés. Pointez-la vers l'URL de base, choisissez un nom de modèle, et elle se comportera comme OpenAI.",
       "show_api_key": "Afficher la clé API",
-      "hide_api_key": "Masquer la clé API"
+      "hide_api_key": "Masquer la clé API",
+      "provider_google": "Google Gemini",
+      "provider_ollama": "Ollama (local)",
+      "provider_compatible": "OpenAI compatible (personnalisé)",
+      "provider_none_short": "Aucun",
+      "select_provider": "Sélectionner un fournisseur",
+      "provider_default": "Par défaut du fournisseur",
+      "other_model": "Autre…",
+      "optional": "(optionnel)",
+      "set_via_env": "Défini via une variable d'environnement",
+      "env_override_note": "Certains paramètres sont contrôlés par des variables d'environnement et sont en lecture seule ici. Supprimez les variables d'environnement correspondantes pour les gérer depuis cette page.",
+      "model_per_task_title": "Modèle par tâche",
+      "model_per_task_description": "Choisissez quel modèle utiliser pour chaque tâche. Laissez une tâche sur \"Par défaut du fournisseur\" pour utiliser le modèle sélectionné automatiquement par votre fournisseur.",
+      "review_pass_title": "Passe de révision IA",
+      "review_pass_description": "Après la génération d'une ligne de critère VPAT, un second appel IA révise le résultat et corrige l'évaluation de conformité si les preuves ne la soutiennent pas. Cela double le nombre d'appels IA pour la génération VPAT.",
+      "enable_review_pass": "Activer la passe de révision IA",
+      "review_pass_model_label": "Modèle de passe de révision IA",
+      "review_pass_model_description": "Utilisé pour la passe de critique de révision. Un modèle plus petit et plus rapide fonctionne souvent bien ici."
     },
     "auth": {
       "heading": "Authentification",
@@ -234,7 +365,9 @@
       "save_button": "Enregistrer les paramètres d'authentification",
       "updating_label": "Mise à jour…",
       "enable_button": "Activer l'authentification",
-      "disable_button": "Désactiver l'authentification"
+      "disable_button": "Désactiver l'authentification",
+      "card_description": "Lorsque cette option est activée, les utilisateurs doivent se connecter pour accéder à l'application. Nécessite au moins un compte utilisateur.",
+      "create_account_first": "Créez d'abord un compte."
     },
     "users": {
       "heading": "Gestion des utilisateurs",
@@ -242,7 +375,21 @@
       "username_label": "Nom d'utilisateur",
       "password_label": "Mot de passe",
       "new_password_label": "Nouveau mot de passe",
-      "create_button": "Créer un compte"
+      "create_button": "Créer un compte",
+      "confirm_password_label": "Confirmer le mot de passe",
+      "creating": "Création…",
+      "save_password_button": "Enregistrer le mot de passe",
+      "cancel_button": "Annuler",
+      "saving": "Enregistrement…",
+      "change_password_button": "Changer le mot de passe",
+      "manage_credentials_description": "Gérer les identifiants de votre compte local.",
+      "create_account_description": "Créer un compte pour activer l'authentification.",
+      "password_too_short": "Le mot de passe doit comporter au moins 8 caractères.",
+      "passwords_no_match": "Les mots de passe ne correspondent pas.",
+      "account_created": "Compte créé",
+      "create_failed": "Échec de la création du compte.",
+      "password_updated": "Mot de passe mis à jour",
+      "update_failed": "Échec de la mise à jour du mot de passe."
     },
     "data": {
       "heading": "Gestion des données",
@@ -253,7 +400,25 @@
       "clear_dialog_title": "Effacer toutes les données ?",
       "clear_dialog_description": "Cela supprimera définitivement tous les projets, évaluations, problèmes, rapports et VPATs.",
       "clear_dialog_confirm": "Effacer toutes les données",
-      "clear_dialog_cancel": "Annuler"
+      "clear_dialog_cancel": "Annuler",
+      "description": "Gérer votre stockage de données local, les exportations et les importations.",
+      "db_path_label": "Chemin de la base de données",
+      "media_path_label": "Chemin des médias",
+      "read_only_note": "Ces chemins sont en lecture seule. Pour les modifier, définissez la variable d'environnement <code>DATABASE_PATH</code> avant de démarrer le serveur.",
+      "reset_confirm_label": "Tapez RESET pour confirmer",
+      "danger_zone_description": "Réinitialiser la base de données. Cela supprimera définitivement tous les projets, évaluations, problèmes, rapports et VPATs."
+    },
+    "tabs": {
+      "ai_config": "Configuration IA",
+      "data_management": "Gestion des données",
+      "security": "Sécurité",
+      "about": "À propos"
+    },
+    "about": {
+      "heading": "À propos de A11y Logger",
+      "version_label": "Version",
+      "license_label": "Licence",
+      "description": "A11y Logger est un outil d'audit d'accessibilité open-source, fonctionnant hors ligne. Aucun compte ni service cloud requis."
     },
     "toast": {
       "ai_saved": "Paramètres IA enregistrés",
@@ -309,7 +474,23 @@
     "list": {
       "empty_heading": "Aucune évaluation pour l'instant",
       "empty_description": "Créez votre première évaluation pour commencer.",
-      "new_button": "Nouvelle évaluation"
+      "new_button": "Nouvelle évaluation",
+      "page_title": "Évaluations",
+      "create_first": "Créer votre première évaluation"
+    },
+    "table": {
+      "col_name": "Nom",
+      "col_project": "Projet",
+      "col_status": "Statut",
+      "col_issues": "Problèmes",
+      "empty": "Aucune évaluation pour l'instant."
+    },
+    "new": {
+      "page_title": "Nouvelle évaluation",
+      "save_button": "Enregistrer l'évaluation",
+      "saving": "Enregistrement…",
+      "cancel_button": "Annuler",
+      "project_required": "Veuillez sélectionner un projet"
     },
     "toast": {
       "created": "Évaluation créée",
@@ -407,7 +588,21 @@
     "list": {
       "empty_heading": "Aucun problème pour l'instant",
       "empty_description": "Ajoutez votre premier problème pour commencer.",
-      "new_button": "Ajouter un problème"
+      "new_button": "Ajouter un problème",
+      "page_title": "Problèmes",
+      "search_placeholder": "Rechercher des problèmes…",
+      "search_label": "Rechercher des problèmes",
+      "all_tab": "Tous",
+      "no_results": "Aucun problème trouvé."
+    },
+    "table": {
+      "col_title": "Titre",
+      "col_severity": "Sévérité",
+      "col_status": "Statut",
+      "col_created": "Créé",
+      "col_project": "Projet",
+      "col_assessment": "Évaluation",
+      "empty": "Aucun problème pour l'instant."
     },
     "badge": {
       "severity": {
@@ -478,7 +673,42 @@
     "list": {
       "empty_heading": "Aucun rapport pour l'instant",
       "empty_description": "Créez votre premier rapport pour commencer.",
-      "new_button": "Nouveau rapport"
+      "new_button": "Nouveau rapport",
+      "page_title": "Rapports",
+      "empty_cta_description": "Créez votre premier rapport d'accessibilité pour documenter les résultats et les partager avec les parties prenantes.",
+      "empty_cta_button": "Créer votre premier rapport"
+    },
+    "table": {
+      "col_title": "Titre",
+      "col_status": "Statut",
+      "col_updated": "Mis à jour",
+      "status_published": "Publié",
+      "status_draft": "Brouillon"
+    },
+    "new": {
+      "page_title": "Nouveau rapport",
+      "no_projects_heading": "Aucun projet trouvé",
+      "no_projects_description": "Vous avez besoin d'au moins un projet avant de créer un rapport.",
+      "create_project_link": "Créer un projet"
+    },
+    "wizard": {
+      "step_select_projects": "Sélectionner des projets",
+      "step_select_assessments": "Sélectionner des évaluations",
+      "step_name_report": "Nommer votre rapport",
+      "step_label": "Étape {n}",
+      "projects_label": "Projets",
+      "assessments_label": "Évaluations",
+      "select_projects_placeholder": "Sélectionner des projets…",
+      "select_assessments_placeholder": "Sélectionner des évaluations…",
+      "no_assessments_placeholder": "Aucune évaluation pour les projets sélectionnés",
+      "report_title_label": "Titre du rapport",
+      "report_title_placeholder": "Titre du rapport",
+      "title_required": "Le titre est requis",
+      "create_failed": "Échec de la création du rapport",
+      "creating": "Création…",
+      "create_button": "Créer le rapport",
+      "back_button": "Retour",
+      "next_button": "Suivant"
     },
     "status": {
       "draft": "Brouillon",
@@ -604,6 +834,13 @@
       "error": "Impossible de charger les critères WCAG.",
       "empty": "Aucun problème enregistré pour les critères {principle} pour l'instant.",
       "tooltip_issues": "Problèmes"
+    },
+    "stats": {
+      "open_critical_issues": "Problèmes critiques ouverts",
+      "in_progress_assessments": "Évaluations en cours",
+      "resolved_this_month": "Résolus ce mois-ci",
+      "active_projects": "Projets actifs",
+      "of_total": "sur {total} au total"
     }
   },
   "projects": {
@@ -637,7 +874,22 @@
     "list": {
       "empty_heading": "Aucun projet pour l'instant",
       "empty_description": "Créez votre premier projet pour commencer.",
-      "new_button": "Nouveau projet"
+      "new_button": "Nouveau projet",
+      "page_title": "Projets",
+      "create_first": "Créer votre premier projet"
+    },
+    "table": {
+      "col_name": "Nom",
+      "col_description": "Description",
+      "col_assessments": "Évaluations",
+      "col_issues": "Problèmes",
+      "empty": "Aucun projet pour l'instant."
+    },
+    "new": {
+      "page_title": "Nouveau projet",
+      "save_button": "Enregistrer le projet",
+      "saving": "Enregistrement…",
+      "cancel_button": "Annuler"
     },
     "toast": {
       "created": "Projet créé",
