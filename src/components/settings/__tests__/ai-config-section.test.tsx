@@ -2,37 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { AIConfigSection } from '../ai-config-section';
 
 const onSave = vi.fn().mockResolvedValue(undefined);
 
-const messages = {
-  settings: {
-    ai: {
-      heading: 'AI Configuration',
-      provider_label: 'AI Provider',
-      provider_none: 'None (disable AI features)',
-      provider_openai: 'OpenAI',
-      provider_anthropic: 'Anthropic',
-      api_key_label: 'API Key',
-      api_key_placeholder: 'sk-...',
-      model_label: 'Model',
-      base_url_label: 'Base URL',
-      base_url_placeholder: 'https://api.openai.com/v1',
-      ollama_base_url_placeholder: 'http://localhost:11434/v1',
-      save_button: 'Save AI Settings',
-      save_button_loading: 'Saving…',
-      description: 'Configure your AI provider settings.',
-      custom_provider_description: 'Use any API that follows the OpenAI chat format.',
-      show_api_key: 'Show API key',
-      hide_api_key: 'Hide API key',
-    },
-  },
-};
-
 function renderWithIntl(ui: React.ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
+    <NextIntlClientProvider locale="en" messages={en}>
       {ui}
     </NextIntlClientProvider>
   );

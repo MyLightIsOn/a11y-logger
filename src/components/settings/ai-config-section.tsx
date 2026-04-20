@@ -353,8 +353,8 @@ export function AIConfigSection({
             {reviewEnabled && (
               <TaskModelSelector
                 id="ai-model-vpat-review"
-                label="AI Review Pass Model"
-                description="Used for the review critique pass. A smaller, faster model often works well here."
+                label={t('review_pass_model_label')}
+                description={t('review_pass_model_description')}
                 provider={selectedProvider}
                 value={models.vpat_review}
                 onChange={(v) => setModels((prev) => ({ ...prev, vpat_review: v }))}
