@@ -213,7 +213,7 @@
     "detail": {
       "loading": "Cargando…",
       "cover_sheet_empty": "Aún no se ha añadido información de la hoja de portada.",
-      "edition_508": "Sección 508",
+      "edition_508": "Section 508",
       "edition_eu": "EN 301 549",
       "edition_int": "Internacional",
       "edition_wcag": "WCAG {version} · {level}",
@@ -249,7 +249,7 @@
       "step3_create_description": "Nombra tu VPAT y asócialo con un proyecto.",
       "edition_wcag_label": "WCAG",
       "edition_wcag_description": "Divulgación de accesibilidad web para el sector privado",
-      "edition_508_label": "Sección 508",
+      "edition_508_label": "Section 508",
       "edition_508_description": "Compras del gobierno federal de EE.UU.",
       "edition_eu_label": "EN 301 549",
       "edition_eu_description": "Sector público europeo / cumplimiento EAA",

@@ -213,7 +213,7 @@
     "detail": {
       "loading": "Wird geladen…",
       "cover_sheet_empty": "Es wurden noch keine Informationen zum Deckblatt hinzugefügt.",
-      "edition_508": "Abschnitt 508",
+      "edition_508": "Section 508",
       "edition_eu": "EN 301 549",
       "edition_int": "International",
       "edition_wcag": "WCAG {version} · {level}",
@@ -249,7 +249,7 @@
       "step3_create_description": "Benennen Sie Ihr VPAT und verknüpfen Sie es mit einem Projekt.",
       "edition_wcag_label": "WCAG",
       "edition_wcag_description": "Barrierefreiheitserklärung für den privaten Sektor / allgemeines Web",
-      "edition_508_label": "Abschnitt 508",
+      "edition_508_label": "Section 508",
       "edition_508_description": "Beschaffung der US-Bundesbehörden",
       "edition_eu_label": "EN 301 549",
       "edition_eu_description": "Europäischer öffentlicher Sektor / EAA-Konformität",
