@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { IssueForm } from '@/components/issues/issue-form';
 import { Button } from '@/components/ui/button';
 import type { CreateIssueInput, UpdateIssueInput } from '@/lib/validators/issues';
@@ -16,6 +17,7 @@ interface NewIssueClientProps {
 }
 
 export function NewIssueClient({ projectId, assessmentId }: NewIssueClientProps) {
+  const t = useTranslations('issues');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -30,10 +32,10 @@ export function NewIssueClient({ projectId, assessmentId }: NewIssueClientProps)
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
-      toast.success('Issue created');
+      toast.success(t('toast.created'));
       router.push(`/projects/${projectId}/assessments/${assessmentId}/issues/${json.data.id}`);
     } catch {
-      toast.error('Failed to create issue');
+      toast.error(t('toast.create_failed'));
       setLoading(false);
     }
   };
@@ -42,7 +44,7 @@ export function NewIssueClient({ projectId, assessmentId }: NewIssueClientProps)
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">New Issue</h1>
+      <h1 className="text-2xl font-bold">{t('list.new_button')}</h1>
       <IssueForm
         projectId={projectId}
         onSubmit={handleSubmit}
@@ -52,12 +54,12 @@ export function NewIssueClient({ projectId, assessmentId }: NewIssueClientProps)
       <div className="flex items-center gap-2">
         <Button type="submit" form={FORM_ID} disabled={loading}>
           <Save className="h-4 w-4" />
-          Save Issue
+          {t('form.save_button')}
         </Button>
         <Button variant="cancel" asChild>
           <Link href={cancelHref}>
             <X className="h-4 w-4" />
-            Cancel
+            {t('form.cancel_button')}
           </Link>
         </Button>
       </div>
