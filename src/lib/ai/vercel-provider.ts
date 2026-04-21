@@ -38,7 +38,7 @@ export class VercelAIProvider implements AIProvider {
   ) {}
 
   private withLanguage(system: string): string {
-    return `${system}\n\nRespond entirely in ${this.language}.`;
+    return `${system}\n\nWrite all prose, descriptions, and user-facing text in ${this.language}. For JSON responses, keep all property names in English and translate only the string values.`;
   }
 
   /**

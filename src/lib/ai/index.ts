@@ -40,31 +40,28 @@ export function getAIProvider(task?: AITask, language?: string): AIProvider | nu
     case 'openai': {
       if (!apiKey) return null;
       const openai = createOpenAI({ apiKey });
-      return new VercelAIProvider(openai(model || 'gpt-4o-mini'), language ?? 'English');
+      return new VercelAIProvider(openai(model || 'gpt-4o-mini'), language);
     }
     case 'anthropic': {
       if (!apiKey) return null;
       const anthropic = createAnthropic({ apiKey });
-      return new VercelAIProvider(
-        anthropic(model || 'claude-haiku-4-5-20251001'),
-        language ?? 'English'
-      );
+      return new VercelAIProvider(anthropic(model || 'claude-haiku-4-5-20251001'), language);
     }
     case 'google': {
       if (!apiKey) return null;
       const google = createGoogleGenerativeAI({ apiKey });
-      return new VercelAIProvider(google(model || 'gemini-2.0-flash'), language ?? 'English');
+      return new VercelAIProvider(google(model || 'gemini-2.0-flash'), language);
     }
     case 'ollama': {
       if (!model) return null;
       const ollamaBase = baseUrl || 'http://localhost:11434/v1';
       const ollama = createOpenAI({ baseURL: ollamaBase, apiKey: 'ollama' });
-      return new VercelAIProvider(ollama(model), language ?? 'English');
+      return new VercelAIProvider(ollama(model), language);
     }
     case 'openai-compatible': {
       if (!baseUrl || !model) return null;
       const custom = createOpenAI({ baseURL: baseUrl, apiKey: apiKey || '' });
-      return new VercelAIProvider(custom(model), language ?? 'English');
+      return new VercelAIProvider(custom(model), language);
     }
     default:
       return null;

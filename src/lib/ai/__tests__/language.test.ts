@@ -7,4 +7,5 @@ describe('getLanguageName', () => {
   it('maps es to Spanish', () => expect(getLanguageName('es')).toBe('Spanish'));
   it('maps de to German', () => expect(getLanguageName('de')).toBe('German'));
   it('defaults to English for unknown locale', () => expect(getLanguageName('xx')).toBe('English'));
+  it('defaults to English for empty string', () => expect(getLanguageName('')).toBe('English'));
 });
