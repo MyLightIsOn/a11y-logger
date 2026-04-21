@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -66,6 +66,7 @@ export function ReportEditForm({ report, issues }: Props) {
   const tSections = useTranslations('reports.sections');
   const tForm = useTranslations('reports.form');
   const tPanel = useTranslations('reports.panel');
+  const locale = useLocale();
   // Lazy-initialise from the serialised JSON so parsing only runs once and
   // a corrupted content field degrades gracefully to an empty report.
   const [content, setContent] = useState<ReportContent>(() => {
@@ -114,7 +115,7 @@ export function ReportEditForm({ report, issues }: Props) {
       const res = await fetch(endpointMap[key], {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportId: report.id }),
+        body: JSON.stringify({ reportId: report.id, locale }),
       });
       const json = await res.json();
       if (!json.success) {

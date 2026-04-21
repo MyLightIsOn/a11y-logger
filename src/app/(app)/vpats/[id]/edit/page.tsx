@@ -208,6 +208,8 @@ export default function VpatEditPage() {
       try {
         const res = await fetch(`/api/vpats/${vpatId}/rows/${rowId}/generate`, {
           method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ locale }),
         });
         const json = await res.json();
         if (!json.success) {
@@ -250,7 +252,11 @@ export default function VpatEditPage() {
     for (const row of pending) {
       if (cancelGenerateAllRef.current) break;
       try {
-        const res = await fetch(`/api/vpats/${vpatId}/rows/${row.id}/generate`, { method: 'POST' });
+        const res = await fetch(`/api/vpats/${vpatId}/rows/${row.id}/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ locale }),
+        });
         const json = await res.json();
         if (json.success) {
           setRows((prev) => prev.map((r) => (r.id === row.id ? json.data : r)));
