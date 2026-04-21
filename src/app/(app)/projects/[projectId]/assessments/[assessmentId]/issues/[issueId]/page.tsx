@@ -32,6 +32,7 @@ export default async function IssueDetailPage({
 }) {
   const { projectId, assessmentId, issueId } = await params;
   const t = await getTranslations('issues.detail');
+  const tNav = await getTranslations('nav');
 
   const project = await getProject(projectId);
   if (!project) notFound();
@@ -46,9 +47,9 @@ export default async function IssueDetailPage({
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: 'Projects', href: '/projects' },
+          { label: tNav('projects'), href: '/projects' },
           { label: project.name, href: `/projects/${projectId}` },
-          { label: 'Assessments' },
+          { label: tNav('assessments') },
           { label: assessment.name, href: `/projects/${projectId}/assessments/${assessmentId}` },
           { label: t('breadcrumb_issues') },
           { label: issue.title },
