@@ -90,8 +90,7 @@ test('clicking Status header sorts rows by status', () => {
   expect(rows[1]).toHaveTextContent('Zebra Assessment');
 });
 
-test('AssessmentStatusBadge falls back to raw status label for unknown status', () => {
-  // Cast to bypass TypeScript's union type check — exercises the ?? fallback branch
-  render(<AssessmentStatusBadge status={'unknown_status' as 'ready'} />);
-  expect(screen.getByText('unknown_status')).toBeInTheDocument();
+test('AssessmentStatusBadge renders translated label for known statuses', () => {
+  renderWithIntl(<AssessmentStatusBadge status="ready" />);
+  expect(screen.getByText('Ready')).toBeInTheDocument();
 });

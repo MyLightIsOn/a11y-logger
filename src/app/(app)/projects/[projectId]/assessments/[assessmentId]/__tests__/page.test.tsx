@@ -1,5 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 vi.mock('@/lib/db/projects', () => ({
   getProject: () => ({ id: 'p1', name: 'My Project' }),
@@ -59,62 +69,62 @@ const defaultProps = {
 
 test('renders IssueStatistics component in the sidebar', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.getByTestId('issue-statistics')).toBeInTheDocument();
 });
 
 test('renders AssessmentIssuesCard', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.getByTestId('assessment-issues-card')).toBeInTheDocument();
 });
 
 test('renders assessment name in hero card', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.getByRole('heading', { name: 'My Assessment' })).toBeInTheDocument();
 });
 
 test('renders status badge', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.getByText('Ready')).toBeInTheDocument();
 });
 
 test('renders AssessmentSettingsMenu', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.getByTestId('assessment-settings-menu')).toBeInTheDocument();
 });
 
 test('does not render standalone Edit link', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.queryByRole('link', { name: /^edit$/i })).not.toBeInTheDocument();
 });
 
 test('does not render DeleteAssessmentButton on detail page', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
 });
 
 test('passes assessment status to AssessmentSettingsMenu', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.getByTestId('assessment-settings-menu')).toHaveAttribute('data-status', 'ready');
 });
 
 test('does not render StatusTransitionButton', async () => {
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
   expect(screen.queryByRole('button', { name: /transition/i })).not.toBeInTheDocument();
 });
 
 test('description is a sibling of the header row, not nested inside it', async () => {
   mockDescription = 'Audit of the checkout flow';
   const page = await AssessmentDetailPage(defaultProps);
-  render(page);
+  renderWithIntl(page);
 
   const description = screen.getByText('Audit of the checkout flow');
   const settingsMenu = screen.getByTestId('assessment-settings-menu');
