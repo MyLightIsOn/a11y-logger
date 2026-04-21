@@ -223,7 +223,7 @@ export default function VpatEditPage() {
         setGeneratingRowId(null);
       }
     },
-    [vpatId, t]
+    [vpatId, locale, t]
   );
 
   const handleRequestGenerateAll = useCallback(() => {
@@ -275,7 +275,7 @@ export default function VpatEditPage() {
     } else {
       toast.success(`Generated ${generated} of ${pending.length} criteria`);
     }
-  }, [vpatId, rows]);
+  }, [vpatId, locale, rows]);
 
   const handleCriterionClick = useCallback(
     async (criterionCode: string) => {
