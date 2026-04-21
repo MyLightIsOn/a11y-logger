@@ -6,18 +6,11 @@
 
 import { NextResponse } from 'next/server';
 import { getAIProvider } from '@/lib/ai';
+import { getLanguageName } from '@/lib/ai/language';
 import { buildIssueContext } from '../_shared';
 import { TOP_RISKS_SECTION } from '@/lib/ai/prompts';
 
 export async function POST(request: Request) {
-  const ai = getAIProvider('reports');
-  if (!ai) {
-    return NextResponse.json(
-      { success: false, error: 'AI not configured', code: 'AI_NOT_CONFIGURED' },
-      { status: 503 }
-    );
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -28,7 +21,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const { reportId } = body as Record<string, unknown>;
+  const { reportId, locale } = body as Record<string, unknown>;
+  const language = getLanguageName(typeof locale === 'string' ? locale : 'en');
+  const ai = getAIProvider('reports', language);
+  if (!ai) {
+    return NextResponse.json(
+      { success: false, error: 'AI not configured', code: 'AI_NOT_CONFIGURED' },
+      { status: 503 }
+    );
+  }
   if (typeof reportId !== 'string' || !reportId.trim()) {
     return NextResponse.json(
       { success: false, error: 'reportId is required', code: 'VALIDATION_ERROR' },
