@@ -574,7 +574,11 @@
       "choose_file": "Choose file",
       "uploading": "Uploading…",
       "uploading_file": "Uploading file…",
-      "remove_file": "Remove {fileName}"
+      "remove_file": "Remove {fileName}",
+      "error_type_not_allowed": "\"{fileName}\": file type not allowed.",
+      "error_too_large": "\"{fileName}\": file too large (max 10MB).",
+      "error_upload_failed": "\"{fileName}\": upload failed.",
+      "error_connection_failed": "\"{fileName}\": upload failed. Please check your connection."
     },
     "settings_menu": {
       "aria_label": "Issue settings",

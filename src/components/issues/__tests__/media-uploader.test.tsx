@@ -1,24 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { MediaUploader } from '@/components/issues/media-uploader';
-
-const messages = {
-  issues: {
-    attachments: {
-      upload_instructions: 'Upload screenshots or videos',
-      upload_formats: 'PNG, JPG, GIF, WebP, MP4, WebM, MOV up to 10MB',
-      choose_file: 'Choose file',
-      uploading: 'Uploading…',
-      uploading_file: 'Uploading file…',
-      remove_file: 'Remove {fileName}',
-    },
-  },
-};
 
 function renderWithIntl(ui: React.ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
+    <NextIntlClientProvider locale="en" messages={en}>
       {ui}
     </NextIntlClientProvider>
   );

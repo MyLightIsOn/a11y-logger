@@ -56,11 +56,11 @@ export function MediaUploader({
 
     for (const file of files) {
       if (!ALLOWED_TYPES.includes(file.type)) {
-        errors.push(`"${file.name}": file type not allowed.`);
+        errors.push(t('error_type_not_allowed', { fileName: file.name }));
         continue;
       }
       if (file.size > MAX_SIZE) {
-        errors.push(`"${file.name}": file too large (max 10MB).`);
+        errors.push(t('error_too_large', { fileName: file.name }));
         continue;
       }
 
@@ -80,10 +80,10 @@ export function MediaUploader({
         if (body.success) {
           onUpload(body.data.url);
         } else {
-          errors.push(`"${file.name}": ${body.error ?? 'upload failed.'}`);
+          errors.push(body.error ?? t('error_upload_failed', { fileName: file.name }));
         }
       } catch {
-        errors.push(`"${file.name}": upload failed. Please check your connection.`);
+        errors.push(t('error_connection_failed', { fileName: file.name }));
       }
     }
 
