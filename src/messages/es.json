@@ -44,6 +44,18 @@
     }
   },
   "vpats": {
+    "list": {
+      "heading": "VPATs",
+      "new_button": "New VPAT",
+      "empty_title": "No VPATs yet",
+      "empty_description": "Create a Voluntary Product Accessibility Template to document how your product conforms to WCAG criteria.",
+      "empty_cta": "Create VPAT",
+      "col_title": "Title",
+      "col_scope": "Scope",
+      "col_status": "Status",
+      "col_version": "Version",
+      "col_updated": "Updated"
+    },
     "conformance": {
       "not_evaluated": "No evaluado",
       "supports": "Cumple",
@@ -499,6 +511,11 @@
       "create_failed": "Error al crear la evaluación",
       "update_failed": "Error al actualizar la evaluación",
       "delete_failed": "Error al eliminar la evaluación"
+    },
+    "status": {
+      "ready": "Ready",
+      "in_progress": "In Progress",
+      "completed": "Completed"
     }
   },
   "issues": {
@@ -551,7 +568,13 @@
     },
     "attachments": {
       "heading": "Capturas de pantalla y vídeos",
-      "ai_status_message": "Generando problema con IA. Por favor, espera."
+      "ai_status_message": "Generando problema con IA. Por favor, espera.",
+      "upload_instructions": "Upload screenshots or videos",
+      "upload_formats": "PNG, JPG, GIF, WebP, MP4, WebM, MOV up to 10MB",
+      "choose_file": "Choose file",
+      "uploading": "Uploading…",
+      "uploading_file": "Uploading file…",
+      "remove_file": "Remove {fileName}"
     },
     "settings_menu": {
       "aria_label": "Configuración del problema",
@@ -626,6 +649,29 @@
       "update_failed": "Error al actualizar el problema",
       "delete_failed": "Error al eliminar el problema",
       "import_failed": "Error al importar los problemas"
+    },
+    "detail": {
+      "breadcrumb_issues": "Issues",
+      "field_description": "Description",
+      "field_url": "URL",
+      "field_user_impact": "User Impact",
+      "field_suggested_fix": "Suggested Fix",
+      "field_technical_details": "Technical Details",
+      "field_selector": "Selector",
+      "field_code_snippet": "Code Snippet",
+      "field_wcag_criteria": "WCAG Criteria",
+      "field_tags": "Tags",
+      "field_environment": "Environment",
+      "field_device": "Device",
+      "field_browser": "Browser",
+      "field_os": "OS",
+      "field_assistive_tech": "Assistive Tech",
+      "section_attachments": "Attachments",
+      "no_attachments": "No attachments",
+      "section_dates": "Dates",
+      "date_created": "Created",
+      "date_updated": "Updated",
+      "date_resolved": "Resolved"
     }
   },
   "reports": {
@@ -641,7 +687,15 @@
       "generate_button": "Generar",
       "generating_label": "Generando…",
       "generating_overlay": "Generando con IA...",
-      "delete_button": "Eliminar"
+      "delete_button": "Eliminar",
+      "personas": {
+        "screen_reader": "Screen Reader User",
+        "low_vision": "Low Vision",
+        "color_vision": "Color Vision",
+        "keyboard_only": "Keyboard Only",
+        "cognitive": "Cognitive",
+        "deaf_hard_of_hearing": "Deaf / Hard of Hearing"
+      }
     },
     "panel": {
       "assessment_issues_heading": "Problemas de evaluación"
