@@ -23,6 +23,18 @@ const messages = {
       quick_wins_add: 'Add Quick Wins',
       user_impact_title: 'User Impact',
       user_impact_add: 'Add User Impact',
+      generate_button: 'Generate',
+      generating_label: 'Generating…',
+      generating_overlay: 'Generating with AI...',
+      delete_button: 'Delete',
+      personas: {
+        screen_reader: 'Screen Reader User',
+        low_vision: 'Low Vision',
+        color_vision: 'Color Vision',
+        keyboard_only: 'Keyboard Only',
+        cognitive: 'Cognitive',
+        deaf_hard_of_hearing: 'Deaf / Hard of Hearing',
+      },
     },
     panel: {
       assessment_issues_heading: 'Assessment Issues',

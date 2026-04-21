@@ -1,6 +1,28 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 import { MediaUploader } from '@/components/issues/media-uploader';
+
+const messages = {
+  issues: {
+    attachments: {
+      upload_instructions: 'Upload screenshots or videos',
+      upload_formats: 'PNG, JPG, GIF, WebP, MP4, WebM, MOV up to 10MB',
+      choose_file: 'Choose file',
+      uploading: 'Uploading…',
+      uploading_file: 'Uploading file…',
+      remove_file: 'Remove {fileName}',
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -8,12 +30,12 @@ beforeEach(() => {
 
 describe('MediaUploader', () => {
   it('renders file input and upload button', () => {
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
     expect(screen.getByLabelText(/choose file/i)).toBeInTheDocument();
   });
 
   it('shows error when file type is not allowed', async () => {
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
     const file = new File(['content'], 'doc.pdf', { type: 'application/pdf' });
     fireEvent.change(input, { target: { files: [file] } });
@@ -26,7 +48,7 @@ describe('MediaUploader', () => {
     } as Response);
 
     const onUpload = vi.fn();
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={onUpload} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={onUpload} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
     const file = new File(['img'], 'photo.png', { type: 'image/png' });
     fireEvent.change(input, { target: { files: [file] } });
@@ -39,7 +61,7 @@ describe('MediaUploader', () => {
         Promise.resolve({ success: false, error: 'File too large. Maximum size is 10MB' }),
     } as Response);
 
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
     const file = new File(['img'], 'photo.png', { type: 'image/png' });
     fireEvent.change(input, { target: { files: [file] } });
@@ -47,7 +69,7 @@ describe('MediaUploader', () => {
   });
 
   it('renders image thumbnails for existing image URLs', () => {
-    render(
+    renderWithIntl(
       <MediaUploader
         projectId="p1"
         issueId="i1"
@@ -62,7 +84,7 @@ describe('MediaUploader', () => {
   });
 
   it('renders video elements for video URLs', () => {
-    render(
+    renderWithIntl(
       <MediaUploader
         projectId="p1"
         issueId="i1"
@@ -76,7 +98,7 @@ describe('MediaUploader', () => {
   });
 
   it('disables input when disabled prop is true', () => {
-    render(
+    renderWithIntl(
       <MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} disabled={true} />
     );
     const input = screen.getByLabelText(/choose file/i);
@@ -84,7 +106,7 @@ describe('MediaUploader', () => {
   });
 
   it('shows error when file is too large', async () => {
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
     // Create a file that reports as > 10MB
     const largeFile = new File(['x'], 'large.png', { type: 'image/png' });
@@ -98,7 +120,7 @@ describe('MediaUploader', () => {
       json: () => Promise.resolve({ success: true, data: { url: '/api/media/p1/i1/photo.png' } }),
     } as Response);
 
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
 
     // First: invalid file triggers error
@@ -115,7 +137,7 @@ describe('MediaUploader', () => {
   });
 
   it('renders a remove button for each uploaded url', () => {
-    render(
+    renderWithIntl(
       <MediaUploader
         projectId="p1"
         issueId="i1"
@@ -129,7 +151,7 @@ describe('MediaUploader', () => {
   });
 
   it('does not render remove buttons when onRemove is not provided', () => {
-    render(
+    renderWithIntl(
       <MediaUploader
         projectId="p1"
         issueId="i1"
@@ -141,7 +163,7 @@ describe('MediaUploader', () => {
   });
 
   it('file input has multiple attribute to allow selecting multiple files at once', () => {
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={vi.fn()} urls={[]} />);
     expect(screen.getByLabelText(/choose file/i)).toHaveAttribute('multiple');
   });
 
@@ -156,7 +178,7 @@ describe('MediaUploader', () => {
       } as Response);
 
     const onUpload = vi.fn();
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={onUpload} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={onUpload} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
     const files = [
       new File(['img1'], 'a.png', { type: 'image/png' }),
@@ -174,7 +196,7 @@ describe('MediaUploader', () => {
     } as Response);
 
     const onUpload = vi.fn();
-    render(<MediaUploader projectId="p1" issueId="i1" onUpload={onUpload} urls={[]} />);
+    renderWithIntl(<MediaUploader projectId="p1" issueId="i1" onUpload={onUpload} urls={[]} />);
     const input = screen.getByLabelText(/choose file/i);
     const file = new File(['video'], 'screen.mov', { type: 'video/quicktime' });
     fireEvent.change(input, { target: { files: [file] } });
@@ -182,7 +204,7 @@ describe('MediaUploader', () => {
   });
 
   it('renders video element for .mov urls', () => {
-    render(
+    renderWithIntl(
       <MediaUploader
         projectId="p1"
         issueId="i1"
@@ -197,7 +219,7 @@ describe('MediaUploader', () => {
 
   it('calls onRemove with the correct url when remove button is clicked', () => {
     const onRemove = vi.fn();
-    render(
+    renderWithIntl(
       <MediaUploader
         projectId="p1"
         issueId="i1"
