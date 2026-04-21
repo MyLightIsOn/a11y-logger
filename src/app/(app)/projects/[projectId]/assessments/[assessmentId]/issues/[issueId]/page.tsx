@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,6 +31,7 @@ export default async function IssueDetailPage({
   params: Promise<{ projectId: string; assessmentId: string; issueId: string }>;
 }) {
   const { projectId, assessmentId, issueId } = await params;
+  const t = await getTranslations('issues.detail');
 
   const project = await getProject(projectId);
   if (!project) notFound();
@@ -48,7 +50,7 @@ export default async function IssueDetailPage({
           { label: project.name, href: `/projects/${projectId}` },
           { label: 'Assessments' },
           { label: assessment.name, href: `/projects/${projectId}/assessments/${assessmentId}` },
-          { label: 'Issues' },
+          { label: t('breadcrumb_issues') },
           { label: issue.title },
         ]}
       />
@@ -85,7 +87,7 @@ export default async function IssueDetailPage({
             <CardContent className="divide-y">
               {issue.description && (
                 <div className="pb-6">
-                  <h2 className="text-sm font-semibold mb-2">Description</h2>
+                  <h2 className="text-sm font-semibold mb-2">{t('field_description')}</h2>
                   <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                     {issue.description}
                   </p>
@@ -94,7 +96,7 @@ export default async function IssueDetailPage({
 
               {issue.url && (
                 <div className="py-6">
-                  <h2 className="text-sm font-semibold mb-2">URL</h2>
+                  <h2 className="text-sm font-semibold mb-2">{t('field_url')}</h2>
                   <a
                     href={issue.url}
                     target="_blank"
@@ -108,7 +110,7 @@ export default async function IssueDetailPage({
 
               {issue.user_impact && (
                 <div className="py-6">
-                  <h2 className="text-sm font-semibold mb-2">User Impact</h2>
+                  <h2 className="text-sm font-semibold mb-2">{t('field_user_impact')}</h2>
                   <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                     {issue.user_impact}
                   </p>
@@ -117,7 +119,7 @@ export default async function IssueDetailPage({
 
               {issue.suggested_fix && (
                 <div className="py-6">
-                  <h2 className="text-sm font-semibold mb-2">Suggested Fix</h2>
+                  <h2 className="text-sm font-semibold mb-2">{t('field_suggested_fix')}</h2>
                   <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                     {issue.suggested_fix}
                   </p>
@@ -126,10 +128,10 @@ export default async function IssueDetailPage({
 
               {(issue.selector || issue.code_snippet) && (
                 <div className="py-6 space-y-4">
-                  <h2 className="text-sm font-semibold">Technical Details</h2>
+                  <h2 className="text-sm font-semibold">{t('field_technical_details')}</h2>
                   {issue.selector && (
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Selector</p>
+                      <p className="text-xs text-muted-foreground mb-1">{t('field_selector')}</p>
                       <code className="text-sm bg-muted px-2 py-1 rounded block break-all">
                         {issue.selector}
                       </code>
@@ -137,7 +139,9 @@ export default async function IssueDetailPage({
                   )}
                   {issue.code_snippet && (
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Code Snippet</p>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {t('field_code_snippet')}
+                      </p>
                       <pre className="text-sm bg-muted p-3 rounded overflow-x-auto whitespace-pre-wrap break-all">
                         {issue.code_snippet}
                       </pre>
@@ -148,7 +152,7 @@ export default async function IssueDetailPage({
 
               {issue.wcag_codes.length > 0 && (
                 <div className="py-6">
-                  <h2 className="text-sm font-semibold mb-2">WCAG Criteria</h2>
+                  <h2 className="text-sm font-semibold mb-2">{t('field_wcag_criteria')}</h2>
                   <div className="flex flex-wrap gap-2">
                     {issue.wcag_codes.map((code) => (
                       <Badge key={code} variant="outline" className="font-mono">
@@ -161,7 +165,7 @@ export default async function IssueDetailPage({
 
               {issue.tags.length > 0 && (
                 <div className="py-6">
-                  <h2 className="text-sm font-semibold mb-2">Tags</h2>
+                  <h2 className="text-sm font-semibold mb-2">{t('field_tags')}</h2>
                   <div className="flex flex-wrap gap-2">
                     {issue.tags.map((tag) => (
                       <Badge key={tag} variant="secondary">
@@ -173,13 +177,13 @@ export default async function IssueDetailPage({
               )}
 
               <div className="py-6">
-                <h2 className="text-sm font-semibold mb-3">Environment</h2>
+                <h2 className="text-sm font-semibold mb-3">{t('field_environment')}</h2>
                 <dl className="grid grid-cols-2 gap-3 text-sm">
                   {[
-                    { label: 'Device', value: issue.device_type },
-                    { label: 'Browser', value: issue.browser },
-                    { label: 'OS', value: issue.operating_system },
-                    { label: 'Assistive Tech', value: issue.assistive_technology },
+                    { label: t('field_device'), value: issue.device_type },
+                    { label: t('field_browser'), value: issue.browser },
+                    { label: t('field_os'), value: issue.operating_system },
+                    { label: t('field_assistive_tech'), value: issue.assistive_technology },
                   ].map(({ label, value }) => (
                     <div key={label}>
                       <dt className="text-muted-foreground">{label}</dt>
@@ -190,19 +194,19 @@ export default async function IssueDetailPage({
               </div>
 
               <div className="pt-6">
-                <h2 className="text-sm font-semibold mb-3">Dates</h2>
+                <h2 className="text-sm font-semibold mb-3">{t('section_dates')}</h2>
                 <dl className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <dt className="text-muted-foreground">Created</dt>
+                    <dt className="text-muted-foreground">{t('date_created')}</dt>
                     <dd className="font-medium">{formatDate(issue.created_at)}</dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">Updated</dt>
+                    <dt className="text-muted-foreground">{t('date_updated')}</dt>
                     <dd className="font-medium">{formatDate(issue.updated_at)}</dd>
                   </div>
                   {issue.resolved_at && (
                     <div>
-                      <dt className="text-muted-foreground">Resolved</dt>
+                      <dt className="text-muted-foreground">{t('date_resolved')}</dt>
                       <dd className="font-medium">{formatDate(issue.resolved_at)}</dd>
                     </div>
                   )}
@@ -216,13 +220,13 @@ export default async function IssueDetailPage({
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Attachments</CardTitle>
+              <CardTitle>{t('section_attachments')}</CardTitle>
             </CardHeader>
             <CardContent>
               {issue.evidence_media.length > 0 ? (
                 <MediaGallery urls={issue.evidence_media} />
               ) : (
-                <p className="text-sm text-muted-foreground">No attachments</p>
+                <p className="text-sm text-muted-foreground">{t('no_attachments')}</p>
               )}
             </CardContent>
           </Card>
