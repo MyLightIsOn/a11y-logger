@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +30,9 @@ interface VpatsListViewProps {
 }
 
 export function VpatsListView({ vpats }: VpatsListViewProps) {
+  const t = useTranslations('vpats.list');
+  const tStatus = useTranslations('vpats.status');
+  const tDetail = useTranslations('vpats.card');
   const [view, setView] = useState<'grid' | 'table'>('table');
 
   return (
@@ -36,13 +40,13 @@ export function VpatsListView({ vpats }: VpatsListViewProps) {
       <section aria-labelledby="vpats-heading">
         <div className="flex items-center justify-between">
           <h1 id="vpats-heading" className="text-lg font-semibold">
-            VPATs
+            {t('heading')}
           </h1>
           <div className="flex items-center gap-2">
             <Button asChild variant="success">
               <Link href="/vpats/new">
                 <Plus className="mr-2 h-4 w-4" />
-                New VPAT
+                {t('new_button')}
               </Link>
             </Button>
             <ViewToggle view={view} onViewChange={setView} />
@@ -54,13 +58,10 @@ export function VpatsListView({ vpats }: VpatsListViewProps) {
         <Card>
           <CardContent>
             <div className="border border-dashed rounded-lg p-12 text-center">
-              <h2 className="text-lg font-semibold mb-2">No VPATs yet</h2>
-              <p className="text-muted-foreground mb-4">
-                Create a Voluntary Product Accessibility Template to document how your product
-                conforms to WCAG criteria.
-              </p>
+              <h2 className="text-lg font-semibold mb-2">{t('empty_title')}</h2>
+              <p className="text-muted-foreground mb-4">{t('empty_description')}</p>
               <Button asChild size="sm">
-                <Link href="/vpats/new">Create VPAT</Link>
+                <Link href="/vpats/new">{t('empty_cta')}</Link>
               </Button>
             </div>
           </CardContent>
@@ -77,11 +78,11 @@ export function VpatsListView({ vpats }: VpatsListViewProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Scope</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-20">Version</TableHead>
-                  <TableHead>Updated</TableHead>
+                  <TableHead>{t('col_title')}</TableHead>
+                  <TableHead>{t('col_scope')}</TableHead>
+                  <TableHead>{t('col_status')}</TableHead>
+                  <TableHead className="w-20">{t('col_version')}</TableHead>
+                  <TableHead>{t('col_updated')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -93,11 +94,11 @@ export function VpatsListView({ vpats }: VpatsListViewProps) {
                       </Link>
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
-                      {vpat.resolved} of {vpat.total} criteria resolved
+                      {tDetail('criteria_resolved', { resolved: vpat.resolved, total: vpat.total })}
                     </TableCell>
                     <TableCell>
                       <Badge className={getStatusBadgeClass(vpat.status)}>
-                        {vpat.status === 'published' ? 'Published' : 'Draft'}
+                        {tStatus(vpat.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
