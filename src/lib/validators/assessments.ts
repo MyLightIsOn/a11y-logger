@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+
+extendZodWithOpenApi(z);
 
 const dateRangeRefine = (data: { test_date_start?: string; test_date_end?: string }) => {
   if (data.test_date_start && data.test_date_end) {
@@ -13,22 +16,34 @@ const dateRangeRefineOptions = {
 };
 
 const AssessmentBaseSchema = z.object({
-  name: z.string().min(1).max(200),
-  description: z.string().max(2000).optional(),
-  status: z.enum(['ready', 'in_progress', 'completed']).optional(),
-  test_date_start: z.string().datetime().optional(),
-  test_date_end: z.string().datetime().optional(),
-  assigned_to: z.string().optional(),
+  name: z.string().min(1).max(200).openapi({ example: 'Q1 Accessibility Audit' }),
+  description: z
+    .string()
+    .max(2000)
+    .optional()
+    .openapi({ example: 'Initial WCAG 2.2 AA assessment' }),
+  status: z
+    .enum(['ready', 'in_progress', 'completed'])
+    .optional()
+    .openapi({ example: 'in_progress' }),
+  test_date_start: z
+    .string()
+    .datetime()
+    .optional()
+    .openapi({ example: '2026-01-01T00:00:00.000Z' }),
+  test_date_end: z.string().datetime().optional().openapi({ example: '2026-01-31T23:59:59.000Z' }),
+  assigned_to: z.string().optional().openapi({ example: 'jane' }),
 });
 
 export const CreateAssessmentSchema = AssessmentBaseSchema.refine(
   dateRangeRefine,
   dateRangeRefineOptions
-);
+).openapi('CreateAssessmentRequest');
 
 export const UpdateAssessmentSchema = AssessmentBaseSchema.partial()
-  .extend({ project_id: z.string().uuid().optional() })
-  .refine(dateRangeRefine, dateRangeRefineOptions);
+  .extend({ project_id: z.string().uuid().optional().openapi({ example: 'proj-uuid-here' }) })
+  .refine(dateRangeRefine, dateRangeRefineOptions)
+  .openapi('UpdateAssessmentRequest');
 
 export type CreateAssessmentInput = z.infer<typeof CreateAssessmentSchema>;
 export type UpdateAssessmentInput = z.infer<typeof UpdateAssessmentSchema>;
