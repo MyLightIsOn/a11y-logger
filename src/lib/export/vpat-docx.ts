@@ -13,7 +13,13 @@ import type { Vpat } from '@/lib/db/vpats';
 import type { Project } from '@/lib/db/projects';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 import type { VpatCoverSheetRow } from '@/lib/db/schema';
-import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from './vpat-shared';
+import {
+  SECTION_ORDER,
+  SECTION_LABELS,
+  CONFORMANCE_DISPLAY,
+  compareCode,
+  type ExportTranslations,
+} from './vpat-shared';
 
 // Usable page width: Letter 8.5" − 2" margins = 6.5" = 9360 twips (DXA)
 const PAGE_WIDTH = 9360;
@@ -89,7 +95,10 @@ function multiComponentHeaderRow(): TableRow {
   });
 }
 
-function criterionRow(row: VpatCriterionRow): TableRow {
+function criterionRow(
+  row: VpatCriterionRow,
+  conformanceLabels: Record<string, string> = CONFORMANCE_DISPLAY
+): TableRow {
   const criteriaText = `${row.criterion_code} ${row.criterion_name}${row.criterion_level ? ` (Level ${row.criterion_level})` : ''}`;
   return new TableRow({
     children: [
@@ -99,9 +108,7 @@ function criterionRow(row: VpatCriterionRow): TableRow {
       }),
       new TableCell({
         width: { size: COL3.conformance, type: WidthType.DXA },
-        children: [
-          new Paragraph({ text: CONFORMANCE_DISPLAY[row.conformance] ?? row.conformance }),
-        ],
+        children: [new Paragraph({ text: conformanceLabels[row.conformance] ?? row.conformance })],
       }),
       new TableCell({
         width: { size: COL3.remarks, type: WidthType.DXA },
@@ -111,7 +118,10 @@ function criterionRow(row: VpatCriterionRow): TableRow {
   });
 }
 
-function multiComponentCriterionRows(row: VpatCriterionRow): TableRow[] {
+function multiComponentCriterionRows(
+  row: VpatCriterionRow,
+  conformanceLabels: Record<string, string> = CONFORMANCE_DISPLAY
+): TableRow[] {
   const criteriaText = `${row.criterion_code} ${row.criterion_name}${row.criterion_level ? ` (Level ${row.criterion_level})` : ''}`;
   const components = row.components ?? [];
 
@@ -130,7 +140,7 @@ function multiComponentCriterionRows(row: VpatCriterionRow): TableRow[] {
           new TableCell({
             width: { size: COL4.conformance, type: WidthType.DXA },
             children: [
-              new Paragraph({ text: CONFORMANCE_DISPLAY[row.conformance] ?? row.conformance }),
+              new Paragraph({ text: conformanceLabels[row.conformance] ?? row.conformance }),
             ],
           }),
           new TableCell({
@@ -162,7 +172,7 @@ function multiComponentCriterionRows(row: VpatCriterionRow): TableRow[] {
           new TableCell({
             width: { size: COL4.conformance, type: WidthType.DXA },
             children: [
-              new Paragraph({ text: CONFORMANCE_DISPLAY[comp.conformance] ?? comp.conformance }),
+              new Paragraph({ text: conformanceLabels[comp.conformance] ?? comp.conformance }),
             ],
           }),
           new TableCell({
@@ -192,8 +202,12 @@ export async function generateVpatDocx(
   vpat: Vpat,
   project: Project,
   rows: VpatCriterionRow[],
-  coverSheet?: VpatCoverSheetRow | null
+  coverSheet?: VpatCoverSheetRow | null,
+  translations?: ExportTranslations
 ): Promise<Buffer> {
+  const sectionLabels = translations?.sectionLabels ?? SECTION_LABELS;
+  const conformanceLabels = translations?.conformanceLabels ?? CONFORMANCE_DISPLAY;
+
   const generatedDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -298,10 +312,13 @@ export async function generateVpatDocx(
 
   for (const section of orderedSections) {
     const sectionRows = bySection.get(section)!;
-    const label = SECTION_LABELS[section] ?? section;
+    const label = sectionLabels[section] ?? section;
     const tableRows = isMultiComponent
-      ? [multiComponentHeaderRow(), ...sectionRows.flatMap(multiComponentCriterionRows)]
-      : [headerRow(), ...sectionRows.map(criterionRow)];
+      ? [
+          multiComponentHeaderRow(),
+          ...sectionRows.flatMap((r) => multiComponentCriterionRows(r, conformanceLabels)),
+        ]
+      : [headerRow(), ...sectionRows.map((r) => criterionRow(r, conformanceLabels))];
     const columnWidths = isMultiComponent
       ? [COL4.criteria, COL4.component, COL4.conformance, COL4.remarks]
       : [COL3.criteria, COL3.conformance, COL3.remarks];

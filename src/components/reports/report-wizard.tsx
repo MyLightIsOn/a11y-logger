@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,12 +32,13 @@ export function ReportWizard({ projects, assessments }: Props) {
   const [selectedAssessments, setSelectedAssessments] = useState<Set<string>>(new Set());
   const [title, setTitle] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const t = useTranslations('reports.wizard');
 
   const visibleAssessments = assessments.filter((a) => selectedProjects.has(a.project_id));
 
   const handleCreate = async () => {
     if (!title.trim()) {
-      toast.error('Title is required');
+      toast.error(t('title_required'));
       return;
     }
     setIsCreating(true);
@@ -48,20 +50,24 @@ export function ReportWizard({ projects, assessments }: Props) {
       });
       const json = await res.json();
       if (!json.success) {
-        toast.error(json.error ?? 'Failed to create report');
+        toast.error(json.error ?? t('create_failed'));
         return;
       }
       router.push(`/reports/${json.data.id}/edit`);
       router.refresh();
     } catch {
-      toast.error('Failed to create report');
+      toast.error(t('create_failed'));
     } finally {
       setIsCreating(false);
     }
   };
 
   const stepTitle =
-    step === 1 ? 'Select Projects' : step === 2 ? 'Select Assessments' : 'Name Your Report';
+    step === 1
+      ? t('step_select_projects')
+      : step === 2
+        ? t('step_select_assessments')
+        : t('step_name_report');
 
   return (
     <div className="max-w-2xl">
@@ -75,7 +81,7 @@ export function ReportWizard({ projects, assessments }: Props) {
           {step === 1 && (
             <>
               <div className="space-y-1.5">
-                <Label>Projects</Label>
+                <Label>{t('projects_label')}</Label>
                 <MultiSelect
                   options={projects.map((p) => ({ value: p.id, label: p.name }))}
                   selected={Array.from(selectedProjects)}
@@ -96,12 +102,12 @@ export function ReportWizard({ projects, assessments }: Props) {
                     }
                     setSelectedProjects(new Set(values));
                   }}
-                  placeholder="Select projects…"
+                  placeholder={t('select_projects_placeholder')}
                 />
               </div>
               <div className="flex justify-end">
                 <Button size="sm" onClick={() => setStep(2)} disabled={selectedProjects.size === 0}>
-                  Next
+                  {t('next_button')}
                 </Button>
               </div>
             </>
@@ -110,28 +116,28 @@ export function ReportWizard({ projects, assessments }: Props) {
           {step === 2 && (
             <>
               <div className="space-y-1.5">
-                <Label>Assessments</Label>
+                <Label>{t('assessments_label')}</Label>
                 <MultiSelect
                   options={visibleAssessments.map((a) => ({ value: a.id, label: a.name }))}
                   selected={Array.from(selectedAssessments)}
                   onChange={(values) => setSelectedAssessments(new Set(values))}
                   placeholder={
                     visibleAssessments.length === 0
-                      ? 'No assessments for selected projects'
-                      : 'Select assessments…'
+                      ? t('no_assessments_placeholder')
+                      : t('select_assessments_placeholder')
                   }
                 />
               </div>
               <div className="flex justify-between">
                 <Button variant="outline" size="sm" onClick={() => setStep(1)}>
-                  Back
+                  {t('back_button')}
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => setStep(3)}
                   disabled={selectedAssessments.size === 0}
                 >
-                  Next
+                  {t('next_button')}
                 </Button>
               </div>
             </>
@@ -140,20 +146,20 @@ export function ReportWizard({ projects, assessments }: Props) {
           {step === 3 && (
             <>
               <div className="space-y-1.5">
-                <Label htmlFor="report-title">Report Title</Label>
+                <Label htmlFor="report-title">{t('report_title_label')}</Label>
                 <Input
                   id="report-title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Report title"
+                  placeholder={t('report_title_placeholder')}
                 />
               </div>
               <div className="flex justify-between">
                 <Button variant="outline" size="sm" onClick={() => setStep(2)}>
-                  Back
+                  {t('back_button')}
                 </Button>
                 <Button size="sm" onClick={handleCreate} disabled={isCreating || !title.trim()}>
-                  {isCreating ? 'Creating…' : 'Create Report'}
+                  {isCreating ? t('creating') : t('create_button')}
                 </Button>
               </div>
             </>
@@ -165,6 +171,7 @@ export function ReportWizard({ projects, assessments }: Props) {
 }
 
 function StepIndicator({ current }: { current: number }) {
+  const t = useTranslations('reports.wizard');
   return (
     <div className="flex items-center gap-2 text-sm text-muted-foreground">
       {[1, 2, 3].map((n, i) => (
@@ -177,7 +184,7 @@ function StepIndicator({ current }: { current: number }) {
                 : 'flex items-center gap-1'
             }
           >
-            Step {n}
+            {t('step_label', { n })}
           </span>
         </span>
       ))}

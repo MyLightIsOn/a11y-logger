@@ -1,7 +1,17 @@
 import { render, screen } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 import { AllAssessmentsTable } from '../all-assessments-table';
 import type { AssessmentWithProject } from '@/lib/db/assessments';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const assessment: AssessmentWithProject = {
   id: 'a1',
@@ -20,30 +30,30 @@ const assessment: AssessmentWithProject = {
 };
 
 test('renders assessment name as link', () => {
-  render(<AllAssessmentsTable assessments={[assessment]} />);
+  renderWithIntl(<AllAssessmentsTable assessments={[assessment]} />);
   const link = screen.getByRole('link', { name: 'Q1 Audit' });
   expect(link).toBeInTheDocument();
   expect(link).toHaveAttribute('href', '/projects/p1/assessments/a1');
 });
 
 test('renders project name as link', () => {
-  render(<AllAssessmentsTable assessments={[assessment]} />);
+  renderWithIntl(<AllAssessmentsTable assessments={[assessment]} />);
   const link = screen.getByRole('link', { name: 'My Project' });
   expect(link).toBeInTheDocument();
   expect(link).toHaveAttribute('href', '/projects/p1');
 });
 
 test('renders status badge', () => {
-  render(<AllAssessmentsTable assessments={[assessment]} />);
+  renderWithIntl(<AllAssessmentsTable assessments={[assessment]} />);
   expect(screen.getByText('Ready')).toBeInTheDocument();
 });
 
 test('renders issue count', () => {
-  render(<AllAssessmentsTable assessments={[assessment]} />);
+  renderWithIntl(<AllAssessmentsTable assessments={[assessment]} />);
   expect(screen.getByText('5')).toBeInTheDocument();
 });
 
 test('renders empty message when no assessments', () => {
-  render(<AllAssessmentsTable assessments={[]} />);
+  renderWithIntl(<AllAssessmentsTable assessments={[]} />);
   expect(screen.getByText('No assessments yet.')).toBeInTheDocument();
 });

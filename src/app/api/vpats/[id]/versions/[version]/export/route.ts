@@ -12,8 +12,33 @@ import { generateVpatDocx } from '@/lib/export/vpat-docx';
 import { generateOpenAcrYaml } from '@/lib/export/openacr';
 import type { VpatCriterionRow } from '@/lib/db/vpat-criterion-rows';
 import type { Vpat } from '@/lib/db/vpats';
+import type { ExportTranslations } from '@/lib/export/vpat-shared';
+import { SECTION_MSG_KEY } from '@/lib/export/vpat-shared';
+import { getSetting } from '@/lib/db/settings';
 
 type RouteContext = { params: Promise<{ id: string; version: string }> };
+
+async function getExportTranslations(): Promise<ExportTranslations | undefined> {
+  const locale = getSetting('language');
+  if (typeof locale !== 'string' || locale === 'en') {
+    return undefined;
+  }
+  const messages = (await import(`@/messages/${locale}.json`)) as {
+    default: { vpats: { sections: Record<string, string>; conformance: Record<string, string> } };
+  };
+  const msgSections = messages.default.vpats.sections;
+  // Remap message-file keys (tableA, chapter3…) back to SECTION_LABELS keys (A, Chapter3…)
+  const sectionLabels: Record<string, string> = {};
+  for (const [sectionKey, msgKey] of Object.entries(SECTION_MSG_KEY)) {
+    if (msgSections[msgKey]) {
+      sectionLabels[sectionKey] = msgSections[msgKey];
+    }
+  }
+  return {
+    sectionLabels,
+    conformanceLabels: messages.default.vpats.conformance,
+  };
+}
 
 const SUPPORTED_FORMATS = ['docx', 'openacr'] as const;
 type SupportedFormat = (typeof SUPPORTED_FORMATS)[number];
@@ -111,9 +136,16 @@ export async function GET(request: Request, { params }: RouteContext) {
     }));
 
     const slug = safeTitle(snapshot.data.title);
+    const exportTranslations = await getExportTranslations();
 
     if ((format as SupportedFormat) === 'docx') {
-      const buffer = await generateVpatDocx(snapshotVpat, project, rows);
+      const buffer = await generateVpatDocx(
+        snapshotVpat,
+        project,
+        rows,
+        undefined,
+        exportTranslations
+      );
       return new Response(new Uint8Array(buffer), {
         status: 200,
         headers: {

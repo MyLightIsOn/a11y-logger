@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { AssessmentCard } from '@/components/assessments/assessment-card';
 import type { AssessmentWithProject } from '@/lib/db/assessments';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const mockAssessment: AssessmentWithProject = {
   id: '1',
@@ -19,45 +29,45 @@ const mockAssessment: AssessmentWithProject = {
 };
 
 test('renders assessment name', () => {
-  render(<AssessmentCard assessment={mockAssessment} />);
+  renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
   expect(screen.getByText('Mobile Audit Q1')).toBeInTheDocument();
 });
 
 test('renders assessment description', () => {
-  render(<AssessmentCard assessment={mockAssessment} />);
+  renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
   expect(screen.getByText('Full audit of mobile app')).toBeInTheDocument();
 });
 
 test('shows status badge', () => {
-  render(<AssessmentCard assessment={mockAssessment} />);
+  renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
   expect(screen.getByText(/in.progress/i)).toBeInTheDocument();
 });
 
 test('shows issue count', () => {
-  render(<AssessmentCard assessment={mockAssessment} />);
+  renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
   expect(screen.getByText(/5 issues/i)).toBeInTheDocument();
 });
 
 test('links to assessment detail', () => {
-  render(<AssessmentCard assessment={mockAssessment} />);
+  renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
   expect(screen.getByRole('link')).toHaveAttribute('href', '/projects/p1/assessments/1');
 });
 
 test('shows ready status badge with correct style', () => {
   const ready = { ...mockAssessment, status: 'ready' as const };
-  render(<AssessmentCard assessment={ready} />);
+  renderWithIntl(<AssessmentCard assessment={ready} />);
   expect(screen.getByText(/ready/i)).toBeInTheDocument();
 });
 
 test('shows completed status badge', () => {
   const completed = { ...mockAssessment, status: 'completed' as const };
-  render(<AssessmentCard assessment={completed} />);
+  renderWithIntl(<AssessmentCard assessment={completed} />);
   expect(screen.getByText(/completed/i)).toBeInTheDocument();
 });
 
 test('ready badge has gray style', () => {
   const ready = { ...mockAssessment, status: 'ready' as const };
-  render(<AssessmentCard assessment={ready} />);
+  renderWithIntl(<AssessmentCard assessment={ready} />);
   const badge = screen.getByText(/ready/i);
   expect(badge).toHaveClass('bg-gray-100');
 });

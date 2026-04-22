@@ -1,6 +1,6 @@
 'use client';
 import { useState, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, X } from 'lucide-react';
@@ -82,6 +82,7 @@ export function IssueForm({
 }: IssueFormProps) {
   const t = useTranslations('issues.form');
   const tAttachments = useTranslations('issues.attachments');
+  const locale = useLocale();
 
   // AI assistance state — not part of the submitted form
   const [aiDescription, setAiDescription] = useState('');
@@ -139,6 +140,7 @@ export function IssueForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ai_description: aiDescription,
+          locale,
           current: {
             title: current.title || null,
             description: current.description || null,

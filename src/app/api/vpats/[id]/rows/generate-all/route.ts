@@ -11,13 +11,23 @@ import { getDb } from '@/lib/db';
 import { getSetting } from '@/lib/db/settings';
 import { getAIProvider } from '@/lib/ai';
 import type { VpatGenerationContext, VpatRowGenerationResult } from '@/lib/ai';
+import { getLanguageName } from '@/lib/ai/language';
 
 type RouteContext = { params: Promise<{ id: string }> };
 
-export async function POST(_request: Request, { params }: RouteContext) {
+export async function POST(request: Request, { params }: RouteContext) {
   const { id: vpatId } = await params;
 
-  const ai = getAIProvider('vpat');
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    body = {};
+  }
+  const { locale } = body as Record<string, unknown>;
+  const language = getLanguageName(typeof locale === 'string' ? locale : 'en');
+
+  const ai = getAIProvider('vpat', language);
   if (!ai) {
     return NextResponse.json(
       { success: false, error: 'No AI provider configured', code: 'NO_AI_PROVIDER' },
@@ -36,7 +46,7 @@ export async function POST(_request: Request, { params }: RouteContext) {
   const rows = allRows.filter((r) => !r.remarks);
 
   const reviewEnabled = getSetting('ai_review_pass_enabled');
-  const reviewer = reviewEnabled ? getAIProvider('vpat_review') : null;
+  const reviewer = reviewEnabled ? getAIProvider('vpat_review', language) : null;
 
   let generated = 0;
   const errors: string[] = [];

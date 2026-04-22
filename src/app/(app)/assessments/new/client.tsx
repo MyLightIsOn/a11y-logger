@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
@@ -19,10 +20,13 @@ interface Props {
 export default function NewAssessmentClient({ projects }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('assessments.new');
+  const tToast = useTranslations('assessments.toast');
+  const tNav = useTranslations('assessments.list');
 
   const handleSubmit = async (data: AssessmentFormData) => {
     if (!data.project_id) {
-      toast.error('Please select a project');
+      toast.error(t('project_required'));
       return;
     }
     setLoading(true);
@@ -40,10 +44,10 @@ export default function NewAssessmentClient({ projects }: Props) {
       });
       const json = await res.json();
       if (!json.success) throw new Error(json.error);
-      toast.success('Assessment created');
+      toast.success(tToast('created'));
       router.push(`/projects/${data.project_id}/assessments/${json.data.id}`);
     } catch {
-      toast.error('Failed to create assessment');
+      toast.error(tToast('create_failed'));
       setLoading(false);
     }
   };
@@ -51,9 +55,9 @@ export default function NewAssessmentClient({ projects }: Props) {
   return (
     <div className="space-y-6">
       <Breadcrumbs
-        items={[{ label: 'Assessments', href: '/assessments' }, { label: 'New Assessment' }]}
+        items={[{ label: tNav('page_title'), href: '/assessments' }, { label: t('page_title') }]}
       />
-      <h1 className="text-2xl font-bold">New Assessment</h1>
+      <h1 className="text-2xl font-bold">{t('page_title')}</h1>
       <Card>
         <CardContent>
           <AssessmentForm
@@ -67,12 +71,12 @@ export default function NewAssessmentClient({ projects }: Props) {
       <div className="flex items-center gap-2">
         <Button type="submit" form={FORM_ID} disabled={loading}>
           <Save className="h-4 w-4" />
-          {loading ? 'Saving…' : 'Save Assessment'}
+          {loading ? t('saving') : t('save_button')}
         </Button>
         <Button asChild variant="cancel">
           <Link href="/assessments">
             <X className="h-4 w-4" />
-            Cancel
+            {t('cancel_button')}
           </Link>
         </Button>
       </div>

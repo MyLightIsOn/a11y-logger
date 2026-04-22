@@ -3,10 +3,11 @@ import { describe, it, expect } from 'vitest';
 import { SECTION_ORDER, SECTION_LABELS, CONFORMANCE_DISPLAY, compareCode } from '../vpat-shared';
 
 describe('SECTION_ORDER', () => {
-  it('contains all 9 canonical VPAT sections', () => {
-    expect(SECTION_ORDER).toHaveLength(9);
+  it('contains all 10 canonical VPAT sections', () => {
+    expect(SECTION_ORDER).toHaveLength(10);
     expect(SECTION_ORDER).toContain('A');
     expect(SECTION_ORDER).toContain('AAA');
+    expect(SECTION_ORDER).toContain('Clause11');
     expect(SECTION_ORDER).toContain('Clause12');
   });
 });

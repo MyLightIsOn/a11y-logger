@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { SortableTable } from '@/components/ui/sortable-table';
 import { SeverityBadge } from '@/components/issues/severity-badge';
 import { StatusBadge } from '@/components/issues/status-badge';
@@ -22,10 +23,11 @@ interface IssuesTableProps {
 }
 
 export function IssuesTable({ issues, projectId, assessmentId }: IssuesTableProps) {
+  const t = useTranslations('issues.table');
   const columns = [
     {
       key: 'title' as const,
-      label: 'Title',
+      label: t('col_title'),
       render: (row: Issue) => (
         <Link
           href={`/projects/${projectId}/assessments/${assessmentId}/issues/${row.id}`}
@@ -37,17 +39,17 @@ export function IssuesTable({ issues, projectId, assessmentId }: IssuesTableProp
     },
     {
       key: 'severity' as const,
-      label: 'Severity',
+      label: t('col_severity'),
       render: (row: Issue) => <SeverityBadge severity={row.severity} />,
     },
     {
       key: 'status' as const,
-      label: 'Status',
+      label: t('col_status'),
       render: (row: Issue) => <StatusBadge status={row.status} />,
     },
     {
       key: 'created_at' as const,
-      label: 'Created',
+      label: t('col_created'),
       render: (row: Issue) => (
         <span className="text-muted-foreground">{formatDate(row.created_at)}</span>
       ),
@@ -61,7 +63,7 @@ export function IssuesTable({ issues, projectId, assessmentId }: IssuesTableProp
       defaultSortKey="created_at"
       defaultSortDir="desc"
       getKey={(r) => r.id}
-      emptyMessage="No issues yet."
+      emptyMessage={t('empty')}
     />
   );
 }

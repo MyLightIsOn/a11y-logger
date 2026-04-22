@@ -1,5 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { SortableTable } from '@/components/ui/sortable-table';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 interface Row {
   id: string;
@@ -25,7 +35,7 @@ const manyRows: Row[] = Array.from({ length: 12 }, (_, i) => ({
 }));
 
 test('renders all rows', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={rows}
@@ -38,7 +48,7 @@ test('renders all rows', () => {
 });
 
 test('renders column headers', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={rows}
@@ -51,7 +61,7 @@ test('renders column headers', () => {
 });
 
 test('default sort is applied on initial render', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={rows}
@@ -65,7 +75,7 @@ test('default sort is applied on initial render', () => {
 });
 
 test('clicking the active sort header toggles to descending', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={rows}
@@ -80,7 +90,7 @@ test('clicking the active sort header toggles to descending', () => {
 });
 
 test('clicking the active sort header twice returns to ascending', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={rows}
@@ -96,7 +106,7 @@ test('clicking the active sort header twice returns to ascending', () => {
 });
 
 test('clicking a different column sorts ascending by that column', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={rows}
@@ -113,7 +123,7 @@ test('clicking a different column sorts ascending by that column', () => {
 // Pagination tests
 
 test('shows only first 10 rows by default when there are more than 10', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -126,7 +136,7 @@ test('shows only first 10 rows by default when there are more than 10', () => {
 });
 
 test('shows page indicator text', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -138,7 +148,7 @@ test('shows page indicator text', () => {
 });
 
 test('prev button is disabled on first page', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -150,7 +160,7 @@ test('prev button is disabled on first page', () => {
 });
 
 test('next button navigates to next page', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -165,7 +175,7 @@ test('next button navigates to next page', () => {
 });
 
 test('next button is disabled on last page', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -178,7 +188,7 @@ test('next button is disabled on last page', () => {
 });
 
 test('prev button navigates back', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -192,7 +202,7 @@ test('prev button navigates back', () => {
 });
 
 test('changing page size resets to page 1', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -210,7 +220,7 @@ test('changing page size resets to page 1', () => {
 });
 
 test('page size 25 shows all rows when total is under 25', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={manyRows}
@@ -228,7 +238,9 @@ test('column className is applied to the <th> element', () => {
     { key: 'name' as const, label: 'Name', className: 'w-1/2', render: (row: Row) => row.name },
     { key: 'count' as const, label: 'Count', render: (row: Row) => row.count },
   ];
-  render(<SortableTable columns={cols} rows={rows} defaultSortKey="name" getKey={(r) => r.id} />);
+  renderWithIntl(
+    <SortableTable columns={cols} rows={rows} defaultSortKey="name" getKey={(r) => r.id} />
+  );
   const nameHeader = screen.getByRole('columnheader', { name: /name/i });
   expect(nameHeader).toHaveClass('w-1/2');
 });
@@ -243,7 +255,9 @@ test('column cellClassName is applied to every <td> in that column', () => {
     },
     { key: 'count' as const, label: 'Count', render: (row: Row) => row.count },
   ];
-  render(<SortableTable columns={cols} rows={rows} defaultSortKey="name" getKey={(r) => r.id} />);
+  renderWithIntl(
+    <SortableTable columns={cols} rows={rows} defaultSortKey="name" getKey={(r) => r.id} />
+  );
   // Both data rows should have a cell with max-w-0
   const cells = document.querySelectorAll('td.max-w-0');
   expect(cells).toHaveLength(2);
@@ -254,12 +268,14 @@ test('table gets table-fixed class when any column has a className', () => {
     { key: 'name' as const, label: 'Name', className: 'w-1/2', render: (row: Row) => row.name },
     { key: 'count' as const, label: 'Count', render: (row: Row) => row.count },
   ];
-  render(<SortableTable columns={cols} rows={rows} defaultSortKey="name" getKey={(r) => r.id} />);
+  renderWithIntl(
+    <SortableTable columns={cols} rows={rows} defaultSortKey="name" getKey={(r) => r.id} />
+  );
   expect(screen.getByRole('table')).toHaveClass('table-fixed');
 });
 
 test('shows empty message when rows is empty', () => {
-  render(
+  renderWithIntl(
     <SortableTable
       columns={columns}
       rows={[]}

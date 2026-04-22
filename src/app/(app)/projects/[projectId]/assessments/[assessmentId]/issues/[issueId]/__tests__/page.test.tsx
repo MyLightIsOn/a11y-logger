@@ -1,6 +1,37 @@
 import { render, screen } from '@testing-library/react';
 
 import { NextIntlClientProvider } from 'next-intl';
+import { vi } from 'vitest';
+
+vi.mock('next-intl/server', () => ({
+  getTranslations: () =>
+    Promise.resolve((key: string) => {
+      const map: Record<string, string> = {
+        breadcrumb_issues: 'Issues',
+        field_description: 'Description',
+        field_url: 'URL',
+        field_user_impact: 'User Impact',
+        field_suggested_fix: 'Suggested Fix',
+        field_technical_details: 'Technical Details',
+        field_selector: 'Selector',
+        field_code_snippet: 'Code Snippet',
+        field_wcag_criteria: 'WCAG Criteria',
+        field_tags: 'Tags',
+        field_environment: 'Environment',
+        field_device: 'Device',
+        field_browser: 'Browser',
+        field_os: 'OS',
+        field_assistive_tech: 'Assistive Tech',
+        section_attachments: 'Attachments',
+        no_attachments: 'No attachments',
+        section_dates: 'Dates',
+        date_created: 'Created',
+        date_updated: 'Updated',
+        date_resolved: 'Resolved',
+      };
+      return map[key] ?? key;
+    }),
+}));
 
 const messages = {
   issues: {
@@ -35,7 +66,6 @@ function renderWithIntl(ui: React.ReactElement) {
     </NextIntlClientProvider>
   );
 }
-import { vi } from 'vitest';
 
 vi.mock('@/lib/db/projects', () => ({
   getProject: () => ({ id: 'p1', name: 'My Project' }),

@@ -49,16 +49,16 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
     <Card>
       <CardHeader>
         <CardTitle>{t('heading')}</CardTitle>
-        <CardDescription>Manage your local data storage, exports, and imports.</CardDescription>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="db-path">Database Path</Label>
+            <Label htmlFor="db-path">{t('db_path_label')}</Label>
             <Input id="db-path" value={dbPath} readOnly className="font-mono text-sm bg-muted" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="media-path">Media Path</Label>
+            <Label htmlFor="media-path">{t('media_path_label')}</Label>
             <Input
               id="media-path"
               value={mediaPath}
@@ -67,9 +67,9 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
             />
           </div>
           <p className="text-xs text-muted-foreground">
-            These paths are read-only. To change them, set the{' '}
-            <code className="font-mono">DATABASE_PATH</code> environment variable before starting
-            the server.
+            {t.rich('read_only_note', {
+              code: (chunks) => <code className="font-mono">{chunks}</code>,
+            })}
           </p>
         </div>
 
@@ -84,10 +84,7 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
 
         <div className="rounded-lg border border-destructive/50 p-4 space-y-3">
           <h2 className="font-medium text-destructive">{t('danger_zone_heading')}</h2>
-          <p className="text-sm text-muted-foreground">
-            Reset the database. This will permanently delete all projects, assessments, issues,
-            reports, and VPATs.
-          </p>
+          <p className="text-sm text-muted-foreground">{t('danger_zone_description')}</p>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm">
@@ -100,7 +97,7 @@ export function DataManagementSection({ dbPath, mediaPath }: DataManagementSecti
                 <AlertDialogDescription>{t('clear_dialog_description')}</AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-1.5">
-                <Label htmlFor="reset-confirm">Type RESET to confirm</Label>
+                <Label htmlFor="reset-confirm">{t('reset_confirm_label')}</Label>
                 <Input
                   id="reset-confirm"
                   value={resetConfirm}

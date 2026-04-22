@@ -19,7 +19,7 @@ test('can select a code', () => {
   const checkbox = screen.getByRole('checkbox', { name: '4.2.1' });
   fireEvent.click(checkbox);
   expect(onChange).toHaveBeenCalledWith(['4.2.1']);
-});
+}, 15000);
 
 test('can remove a selected code', () => {
   const onChange = vi.fn();

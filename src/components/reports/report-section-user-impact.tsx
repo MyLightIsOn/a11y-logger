@@ -17,17 +17,18 @@ interface Props {
   isGenerating: boolean;
 }
 
-const IMPACT_FIELDS: { key: keyof UserImpact; label: string }[] = [
-  { key: 'screen_reader', label: 'Screen Reader User' },
-  { key: 'low_vision', label: 'Low Vision' },
-  { key: 'color_vision', label: 'Color Vision' },
-  { key: 'keyboard_only', label: 'Keyboard Only' },
-  { key: 'cognitive', label: 'Cognitive' },
-  { key: 'deaf_hard_of_hearing', label: 'Deaf / Hard of Hearing' },
-];
-
 export function UserImpactSection({ data, onChange, onDelete, onGenerate, isGenerating }: Props) {
   const t = useTranslations('reports.sections');
+
+  const IMPACT_FIELDS: { key: keyof UserImpact; label: string }[] = [
+    { key: 'screen_reader', label: t('personas.screen_reader') },
+    { key: 'low_vision', label: t('personas.low_vision') },
+    { key: 'color_vision', label: t('personas.color_vision') },
+    { key: 'keyboard_only', label: t('personas.keyboard_only') },
+    { key: 'cognitive', label: t('personas.cognitive') },
+    { key: 'deaf_hard_of_hearing', label: t('personas.deaf_hard_of_hearing') },
+  ];
+
   const handleFieldChange = (key: keyof UserImpact, value: string) => {
     onChange({ ...data, [key]: value });
   };

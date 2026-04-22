@@ -18,6 +18,14 @@ const messages = {
       generating_label: 'Generating…',
       generating_overlay: 'Generating with AI...',
       delete_button: 'Delete',
+      personas: {
+        screen_reader: 'Screen Reader User',
+        low_vision: 'Low Vision',
+        color_vision: 'Color Vision',
+        keyboard_only: 'Keyboard Only',
+        cognitive: 'Cognitive',
+        deaf_hard_of_hearing: 'Deaf / Hard of Hearing',
+      },
     },
   },
 };

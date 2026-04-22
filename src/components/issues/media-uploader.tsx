@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
@@ -39,6 +40,7 @@ export function MediaUploader({
   onRemove,
   disabled = false,
 }: MediaUploaderProps) {
+  const t = useTranslations('issues.attachments');
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -54,11 +56,11 @@ export function MediaUploader({
 
     for (const file of files) {
       if (!ALLOWED_TYPES.includes(file.type)) {
-        errors.push(`"${file.name}": file type not allowed.`);
+        errors.push(t('error_type_not_allowed', { fileName: file.name }));
         continue;
       }
       if (file.size > MAX_SIZE) {
-        errors.push(`"${file.name}": file too large (max 10MB).`);
+        errors.push(t('error_too_large', { fileName: file.name }));
         continue;
       }
 
@@ -78,10 +80,10 @@ export function MediaUploader({
         if (body.success) {
           onUpload(body.data.url);
         } else {
-          errors.push(`"${file.name}": ${body.error ?? 'upload failed.'}`);
+          errors.push(body.error ?? t('error_upload_failed', { fileName: file.name }));
         }
       } catch {
-        errors.push(`"${file.name}": upload failed. Please check your connection.`);
+        errors.push(t('error_connection_failed', { fileName: file.name }));
       }
     }
 
@@ -126,7 +128,7 @@ export function MediaUploader({
                   <Button
                     type="button"
                     variant="ghost"
-                    aria-label={`Remove ${fileName}`}
+                    aria-label={t('remove_file', { fileName })}
                     onClick={() => onRemove(url)}
                     className="absolute right-0 top-0 h-5 w-5 rounded-full bg-gray-800 p-0 text-white opacity-80 hover:bg-gray-800 hover:opacity-100"
                   >
@@ -154,7 +156,7 @@ export function MediaUploader({
           disabled={disabled || uploading}
           onClick={() => inputRef.current?.click()}
           className="flex w-full flex-col h-auto items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-form-background dark:bg-form-background p-6 text-center hover:border-primary hover:bg-muted/30 hover:text-foreground"
-          aria-label="Upload media"
+          aria-label={t('upload_instructions')}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -172,14 +174,12 @@ export function MediaUploader({
             />
           </svg>
           <p className="text-sm font-medium text-muted-foreground">
-            {uploading ? 'Uploading…' : 'Upload screenshots or videos'}
+            {uploading ? t('uploading') : t('upload_instructions')}
           </p>
-          <p className="text-xs text-muted-foreground text-wrap">
-            PNG, JPG, GIF, WebP, MP4, WebM, MOV up to 10MB
-          </p>
+          <p className="text-xs text-muted-foreground text-wrap">{t('upload_formats')}</p>
         </Button>
         <label htmlFor="media-file-input" className="sr-only">
-          Choose file
+          {t('choose_file')}
         </label>
         <input
           id="media-file-input"
@@ -190,11 +190,11 @@ export function MediaUploader({
           disabled={disabled || uploading}
           onChange={handleFileChange}
           className="sr-only"
-          aria-label="Choose file"
+          aria-label={t('choose_file')}
         />
         {uploading && (
           <p aria-live="polite" className="sr-only">
-            Uploading file…
+            {t('uploading_file')}
           </p>
         )}
       </div>

@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 vi.mock('@/lib/db/projects', () => ({
   getProjects: () =>
@@ -29,7 +31,11 @@ import ProjectsPage from '../page';
 
 test('project grid uses 3-column layout at md breakpoint', async () => {
   const user = userEvent.setup();
-  const { container } = render(await ProjectsPage());
+  const { container } = render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {await ProjectsPage()}
+    </NextIntlClientProvider>
+  );
 
   const gridViewButton = screen.getByRole('button', { name: 'Grid view' });
   await user.click(gridViewButton);

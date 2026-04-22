@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -19,11 +19,11 @@ import type { ReportContent } from '@/lib/validators/reports';
 
 type SectionKey = keyof ReportContent;
 
-const SECTION_LABELS: Record<SectionKey, string> = {
-  executive_summary: 'Executive Summary',
-  top_risks: 'Top Risks',
-  quick_wins: 'Quick Wins',
-  user_impact: 'User Impact',
+const SECTION_TITLE_KEYS: Record<SectionKey, string> = {
+  executive_summary: 'executive_summary_title',
+  top_risks: 'top_risks_title',
+  quick_wins: 'quick_wins_title',
+  user_impact: 'user_impact_title',
 };
 
 const EMPTY_USER_IMPACT = {
@@ -66,6 +66,7 @@ export function ReportEditForm({ report, issues }: Props) {
   const tSections = useTranslations('reports.sections');
   const tForm = useTranslations('reports.form');
   const tPanel = useTranslations('reports.panel');
+  const locale = useLocale();
   // Lazy-initialise from the serialised JSON so parsing only runs once and
   // a corrupted content field degrades gracefully to an empty report.
   const [content, setContent] = useState<ReportContent>(() => {
@@ -114,7 +115,7 @@ export function ReportEditForm({ report, issues }: Props) {
       const res = await fetch(endpointMap[key], {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportId: report.id }),
+        body: JSON.stringify({ reportId: report.id, locale }),
       });
       const json = await res.json();
       if (!json.success) {
@@ -259,7 +260,9 @@ export function ReportEditForm({ report, issues }: Props) {
       {/* Delete confirmation modal */}
       {deleteTarget && (
         <ReportSectionDeleteModal
-          sectionName={SECTION_LABELS[deleteTarget]}
+          sectionName={tSections(
+            SECTION_TITLE_KEYS[deleteTarget] as Parameters<typeof tSections>[0]
+          )}
           onConfirm={() => removeSection(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
         />

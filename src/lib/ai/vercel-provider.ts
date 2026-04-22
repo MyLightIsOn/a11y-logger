@@ -32,7 +32,14 @@ const VALID_SEVERITIES = ['critical', 'high', 'medium', 'low'] as const;
  * underlying model based on the application's BYOK configuration.
  */
 export class VercelAIProvider implements AIProvider {
-  constructor(private model: LanguageModel) {}
+  constructor(
+    private model: LanguageModel,
+    private language: string = 'English'
+  ) {}
+
+  private withLanguage(system: string): string {
+    return `${system}\n\nWrite all prose, descriptions, and user-facing text in ${this.language}. For JSON responses, keep all property names in English and translate only the string values.`;
+  }
 
   /**
    * Sends a minimal ping to the configured model to verify the connection is working.
@@ -63,7 +70,7 @@ export class VercelAIProvider implements AIProvider {
   async analyzeIssue(plainText: string): Promise<AIAnalysisResult> {
     const { text } = await generateText({
       model: this.model,
-      system: ANALYZE_ISSUE_SYSTEM,
+      system: this.withLanguage(ANALYZE_ISSUE_SYSTEM),
       prompt: plainText,
     });
     let result: Record<string, unknown>;
@@ -101,7 +108,7 @@ export class VercelAIProvider implements AIProvider {
   async generateReportSection(context: string, sectionTitle: string): Promise<string> {
     const { text } = await generateText({
       model: this.model,
-      system: REPORT_WRITER_SYSTEM,
+      system: this.withLanguage(REPORT_WRITER_SYSTEM),
       prompt: buildReportSectionUser(context, sectionTitle),
     });
     return text;
@@ -120,7 +127,7 @@ export class VercelAIProvider implements AIProvider {
   async generateExecutiveSummaryHtml(context: string): Promise<string> {
     const { text } = await generateText({
       model: this.model,
-      system: EXECUTIVE_SUMMARY_SYSTEM,
+      system: this.withLanguage(EXECUTIVE_SUMMARY_SYSTEM),
       prompt: buildExecutiveSummaryUser(context),
     });
     return text;
@@ -139,7 +146,7 @@ export class VercelAIProvider implements AIProvider {
   async generateVpatRemarks(issueSummary: string, criterion: string): Promise<string> {
     const { text } = await generateText({
       model: this.model,
-      system: VPAT_REMARKS_SYSTEM,
+      system: this.withLanguage(VPAT_REMARKS_SYSTEM),
       prompt: buildVpatRemarksUser(issueSummary, criterion),
     });
     return text;
@@ -157,9 +164,11 @@ export class VercelAIProvider implements AIProvider {
    * @throws {Error} If the AI response is not valid JSON or is missing required fields.
    */
   async generateVpatRow(context: VpatGenerationContext): Promise<VpatRowGenerationResult> {
+    const prompt = buildVpatRowPrompt(context);
     const { text } = await generateText({
       model: this.model,
-      prompt: buildVpatRowPrompt(context),
+      system: this.withLanguage('You are an accessibility conformance expert.'),
+      prompt,
     });
     return parseVpatRowResponse(text);
   }
@@ -176,9 +185,11 @@ export class VercelAIProvider implements AIProvider {
     context: VpatGenerationContext,
     firstPass: VpatRowGenerationResult
   ): Promise<VpatRowGenerationResult> {
+    const prompt = buildVpatReviewPrompt(context, firstPass);
     const { text } = await generateText({
       model: this.model,
-      prompt: buildVpatReviewPrompt(context, firstPass),
+      system: this.withLanguage('You are an accessibility conformance expert.'),
+      prompt,
     });
     return parseVpatRowResponse(text);
   }

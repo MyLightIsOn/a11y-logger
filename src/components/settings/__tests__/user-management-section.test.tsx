@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { UserManagementSection } from '../user-management-section';
 
 const mockFetch = vi.fn();
@@ -9,22 +10,9 @@ global.fetch = mockFetch;
 
 const user = userEvent.setup();
 
-const messages = {
-  settings: {
-    users: {
-      heading: 'User Management',
-      create_account_heading: 'Create Account',
-      username_label: 'Username',
-      password_label: 'Password',
-      new_password_label: 'New Password',
-      create_button: 'Create Account',
-    },
-  },
-};
-
 function renderWithIntl(ui: React.ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
+    <NextIntlClientProvider locale="en" messages={en}>
       {ui}
     </NextIntlClientProvider>
   );

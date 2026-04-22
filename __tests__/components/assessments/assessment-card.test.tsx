@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { AssessmentCard } from '@/components/assessments/assessment-card';
 import type { AssessmentWithProject } from '@/lib/db/assessments';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const mockAssessment: AssessmentWithProject = {
   id: 'a1',
@@ -20,28 +30,28 @@ const mockAssessment: AssessmentWithProject = {
 
 describe('AssessmentCard', () => {
   it('renders name as a link to the assessment', () => {
-    render(<AssessmentCard assessment={mockAssessment} />);
+    renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
     expect(screen.getByRole('link')).toHaveAttribute('href', '/projects/p1/assessments/a1');
     expect(screen.getByText('Q1 Audit')).toBeInTheDocument();
   });
 
   it('renders project name', () => {
-    render(<AssessmentCard assessment={mockAssessment} />);
+    renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
     expect(screen.getByText('My Project')).toBeInTheDocument();
   });
 
   it('renders description when present', () => {
-    render(<AssessmentCard assessment={mockAssessment} />);
+    renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
     expect(screen.getByText('Testing the main flows')).toBeInTheDocument();
   });
 
   it('does not render description when absent', () => {
-    render(<AssessmentCard assessment={{ ...mockAssessment, description: null }} />);
+    renderWithIntl(<AssessmentCard assessment={{ ...mockAssessment, description: null }} />);
     expect(screen.queryByText('Testing the main flows')).not.toBeInTheDocument();
   });
 
   it('renders issue count', () => {
-    render(<AssessmentCard assessment={mockAssessment} />);
+    renderWithIntl(<AssessmentCard assessment={mockAssessment} />);
     expect(screen.getByText(/5 issue/i)).toBeInTheDocument();
   });
 });

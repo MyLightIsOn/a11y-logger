@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -83,6 +84,7 @@ export function SortableTable<T extends object>({
   getKey,
   emptyMessage = 'No results.',
 }: SortableTableProps<T>) {
+  const t = useTranslations('common.table');
   const [sortKey, setSortKey] = useState<keyof T & string>(defaultSortKey);
   const [sortDir, setSortDir] = useState<SortDir>(defaultSortDir);
   const [page, setPage] = useState(1);
@@ -149,7 +151,7 @@ export function SortableTable<T extends object>({
       <div className="flex items-center justify-between px-1 py-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <label htmlFor="page-size" className="select-none">
-            Rows per page:
+            {t('rows_per_page')}
           </label>
           <Select
             value={String(pageSize)}
@@ -158,7 +160,11 @@ export function SortableTable<T extends object>({
               setPage(1);
             }}
           >
-            <SelectTrigger id="page-size" aria-label="Rows per page" className="w-auto text-sm">
+            <SelectTrigger
+              id="page-size"
+              aria-label={t('rows_per_page')}
+              className="w-auto text-sm"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -172,13 +178,11 @@ export function SortableTable<T extends object>({
         </div>
 
         <div className="flex items-center gap-1">
-          <span className="mx-2">
-            Page {page} of {totalPages}
-          </span>
+          <span className="mx-2">{t('page_of', { page, total: totalPages })}</span>
           <Button
             variant="ghost"
             size="sm"
-            aria-label="Previous page"
+            aria-label={t('previous_page')}
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
           >
@@ -187,7 +191,7 @@ export function SortableTable<T extends object>({
           <Button
             variant="ghost"
             size="sm"
-            aria-label="Next page"
+            aria-label={t('next_page')}
             disabled={page === totalPages}
             onClick={() => setPage((p) => p + 1)}
           >

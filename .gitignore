@@ -65,3 +65,6 @@ test-results/
 /docs/*
 !/docs/screenshots/
 !/docs/screenshots/**
+!/docs/superpowers/
+!/docs/superpowers/**
+.worktrees/

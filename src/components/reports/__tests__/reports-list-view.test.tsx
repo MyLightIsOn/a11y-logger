@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 vi.mock('@/components/reports/report-card', () => ({
   ReportCard: () => <div data-testid="report-card" />,
@@ -10,14 +12,22 @@ vi.mock('@/components/reports/report-badge-utils', () => ({
 
 import { ReportsListView } from '../reports-list-view';
 
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 describe('ReportsListView layout', () => {
   it('renders the New Report link', () => {
-    render(<ReportsListView reports={[]} />);
+    renderWithIntl(<ReportsListView reports={[]} />);
     expect(screen.getByRole('link', { name: /new report/i })).toBeInTheDocument();
   });
 
   it('ViewToggle is in the header row with the New Report button', () => {
-    render(<ReportsListView reports={[]} />);
+    renderWithIntl(<ReportsListView reports={[]} />);
     const heading = screen.getByRole('heading', { name: 'Reports' });
     const headerRow = heading.closest('div')!;
     const viewGroup = screen.getByRole('group', { name: 'View options' });
@@ -25,12 +35,12 @@ describe('ReportsListView layout', () => {
   });
 
   it('ViewToggle is rendered on the page', () => {
-    render(<ReportsListView reports={[]} />);
+    renderWithIntl(<ReportsListView reports={[]} />);
     expect(screen.getByRole('group', { name: 'View options' })).toBeInTheDocument();
   });
 
   it('header section has aria-labelledby pointing to the Reports heading', () => {
-    render(<ReportsListView reports={[]} />);
+    renderWithIntl(<ReportsListView reports={[]} />);
     const heading = screen.getByRole('heading', { name: 'Reports' });
     expect(heading).toHaveAttribute('id', 'reports-heading');
     const section = heading.closest('section')!;
@@ -38,7 +48,7 @@ describe('ReportsListView layout', () => {
   });
 
   it('shows empty state without a double-bordered Card wrapper', () => {
-    render(<ReportsListView reports={[]} />);
+    renderWithIntl(<ReportsListView reports={[]} />);
     const dashed = document.querySelector('.border-dashed')!;
     // should not be inside a Card (which uses rounded-lg border)
     expect(dashed.closest('[data-slot="card"]')).toBeNull();
@@ -59,7 +69,7 @@ describe('ReportsListView layout', () => {
       created_at: '2026-01-01T00:00:00',
       updated_at: '2026-01-15T00:00:00',
     };
-    render(<ReportsListView reports={[report]} />);
+    renderWithIntl(<ReportsListView reports={[report]} />);
     expect(screen.getByText('Published')).toBeInTheDocument();
   });
 });

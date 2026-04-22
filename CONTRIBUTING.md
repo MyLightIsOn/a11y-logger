@@ -11,8 +11,8 @@ Thanks for your interest in contributing. This guide covers everything you need 
 ## Setup
 
 ```bash
-git clone https://github.com/hci-design-lab/a11y-pm.git
-cd a11y-pm
+git clone https://github.com/hci-design-lab/a11y-logger.git
+cd a11y-logger
 npm install
 npm run dev
 ```
@@ -79,4 +79,4 @@ TypeScript strict mode is on. Avoid `any`.
 
 ## Questions
 
-Open a [GitHub Discussion](https://github.com/hci-design-lab/a11y-pm/discussions) for questions that aren't bug reports or feature requests.
+Open a [GitHub Discussion](https://github.com/hci-design-lab/a11y-logger/discussions) for questions that aren't bug reports or feature requests.
