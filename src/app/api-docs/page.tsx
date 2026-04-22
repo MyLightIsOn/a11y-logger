@@ -8,12 +8,19 @@ const RedocStandalone = dynamic(() => import('redoc').then((mod) => mod.RedocSta
 
 export default function ApiDocsPage() {
   return (
-    <RedocStandalone
-      specUrl="/api/openapi.json"
-      options={{
-        hideDownloadButton: false,
-        theme: { colors: { primary: { main: '#2563eb' } } },
-      }}
-    />
+    <div style={{ background: '#ffffff', minHeight: '100vh' }}>
+      <RedocStandalone
+        specUrl="/api/openapi.json"
+        options={{
+          hideDownloadButton: false,
+          theme: {
+            colors: { primary: { main: '#2563eb' } },
+            rightPanel: { backgroundColor: '#1e2a3a' },
+            sidebar: { backgroundColor: '#f8fafc' },
+            codeBlock: { backgroundColor: '#1e293b' },
+          },
+        }}
+      />
+    </div>
   );
 }
