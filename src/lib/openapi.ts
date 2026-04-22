@@ -1917,6 +1917,15 @@ registry.registerPath({
       id: z.string().openapi({ example: 'vpat-uuid' }),
       rowId: z.string().openapi({ example: 'row-uuid' }),
     }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({ locale: z.string().optional().openapi({ example: 'fr' }) })
+            .openapi('GenerateVpatRowRequest'),
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -2012,7 +2021,18 @@ registry.registerPath({
   tags: ['VPATs'],
   summary: 'AI-generate conformance text for all criterion rows',
   security: auth,
-  request: { params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }) },
+  request: {
+    params: z.object({ id: z.string().openapi({ example: 'vpat-uuid' }) }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z
+            .object({ locale: z.string().optional().openapi({ example: 'fr' }) })
+            .openapi('GenerateAllVpatRowsRequest'),
+        },
+      },
+    },
+  },
   responses: {
     200: {
       description: 'Generation complete',
@@ -2534,6 +2554,7 @@ registry.registerPath({
                   eu_codes: z.array(z.string()).optional(),
                 })
                 .optional(),
+              locale: z.string().optional().openapi({ example: 'fr' }),
             })
             .openapi('GenerateIssueRequest'),
         },
@@ -2638,7 +2659,10 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: z
-            .object({ report_id: z.string().openapi({ example: 'report-uuid' }) })
+            .object({
+              reportId: z.string().openapi({ example: 'report-uuid' }),
+              locale: z.string().optional().openapi({ example: 'fr' }),
+            })
             .openapi('AiReportSectionRequest'),
         },
       },
@@ -2681,7 +2705,10 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: z
-            .object({ report_id: z.string().openapi({ example: 'report-uuid' }) })
+            .object({
+              reportId: z.string().openapi({ example: 'report-uuid' }),
+              locale: z.string().optional().openapi({ example: 'fr' }),
+            })
             .openapi('AiReportSectionRequest'),
         },
       },
@@ -2724,7 +2751,10 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: z
-            .object({ report_id: z.string().openapi({ example: 'report-uuid' }) })
+            .object({
+              reportId: z.string().openapi({ example: 'report-uuid' }),
+              locale: z.string().optional().openapi({ example: 'fr' }),
+            })
             .openapi('AiReportSectionRequest'),
         },
       },
@@ -2766,7 +2796,10 @@ registry.registerPath({
     body: {
       content: {
         'application/json': {
-          schema: z.object({ report_id: z.string().openapi({ example: 'report-uuid' }) }),
+          schema: z.object({
+            reportId: z.string().openapi({ example: 'report-uuid' }),
+            locale: z.string().optional().openapi({ example: 'fr' }),
+          }),
         },
       },
     },
