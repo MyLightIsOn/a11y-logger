@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 
 const { mockPush, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
   mockPush: vi.fn(),
@@ -42,6 +43,30 @@ vi.mock('@/components/issues/issue-form', () => ({
 
 import { NewIssueClient } from '../new-issue-client';
 
+const messages = {
+  issues: {
+    list: {
+      new_button: 'New Issue',
+    },
+    form: {
+      save_button: 'Save Issue',
+      cancel_button: 'Cancel',
+    },
+    toast: {
+      created: 'Issue created',
+      create_failed: 'Failed to create issue',
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 describe('NewIssueClient', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -49,13 +74,13 @@ describe('NewIssueClient', () => {
   });
 
   it('renders the heading and issue form', () => {
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     expect(screen.getByRole('heading', { name: 'New Issue' })).toBeInTheDocument();
     expect(screen.getByTestId('issue-form-loading')).toBeInTheDocument();
   });
 
   it('passes loading=false initially', () => {
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     expect(screen.getByTestId('issue-form-loading')).toHaveTextContent('idle');
   });
 
@@ -64,7 +89,7 @@ describe('NewIssueClient', () => {
       json: async () => ({ success: true, data: { id: 'issue-99' } }),
     });
 
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));
 
     expect(global.fetch).toHaveBeenCalledWith(
@@ -85,7 +110,7 @@ describe('NewIssueClient', () => {
       json: async () => ({ success: false, error: 'Validation failed' }),
     });
 
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));
 
     expect(mockToastError).toHaveBeenCalledWith('Failed to create issue');
@@ -96,7 +121,7 @@ describe('NewIssueClient', () => {
   it('shows error toast when fetch throws a network error', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('Network error'));
 
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));
 
     expect(mockToastError).toHaveBeenCalledWith('Failed to create issue');
@@ -105,26 +130,26 @@ describe('NewIssueClient', () => {
   });
 
   it('renders a Cancel link pointing to the assessment page', () => {
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     const cancelLink = screen.getByRole('link', { name: /cancel/i });
     expect(cancelLink).toHaveAttribute('href', '/projects/p1/assessments/a1');
   });
 
   it('renders a Save Issue submit button with the form attribute', () => {
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     const btn = screen.getByRole('button', { name: /save issue/i });
     expect(btn).toHaveAttribute('type', 'submit');
     expect(btn).toHaveAttribute('form', 'new-issue-form');
   });
 
   it('Save Issue button has an icon', () => {
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     const btn = screen.getByRole('button', { name: /save issue/i });
     expect(btn.querySelector('svg')).toBeInTheDocument();
   });
 
   it('Cancel link has an icon', () => {
-    render(<NewIssueClient projectId="p1" assessmentId="a1" />);
+    renderWithIntl(<NewIssueClient projectId="p1" assessmentId="a1" />);
     const link = screen.getByRole('link', { name: /cancel/i });
     expect(link.querySelector('svg')).toBeInTheDocument();
   });

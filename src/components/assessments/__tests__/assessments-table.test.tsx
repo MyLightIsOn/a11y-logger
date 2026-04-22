@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import type { AssessmentWithCounts } from '@/lib/db/assessments';
 import { AssessmentStatusBadge } from '../assessment-status-badge';
 
@@ -8,6 +10,14 @@ vi.mock('next/navigation', () => ({
 }));
 
 import { AssessmentsTable } from '@/components/assessments/assessments-table';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const assessments: AssessmentWithCounts[] = [
   {
@@ -41,13 +51,13 @@ const assessments: AssessmentWithCounts[] = [
 ];
 
 test('renders all assessment rows', () => {
-  render(<AssessmentsTable assessments={assessments} projectId="p1" />);
+  renderWithIntl(<AssessmentsTable assessments={assessments} projectId="p1" />);
   expect(screen.getByText('Zebra Assessment')).toBeInTheDocument();
   expect(screen.getByText('Alpha Assessment')).toBeInTheDocument();
 });
 
 test('clicking Name header sorts rows ascending by name', () => {
-  render(<AssessmentsTable assessments={assessments} projectId="p1" />);
+  renderWithIntl(<AssessmentsTable assessments={assessments} projectId="p1" />);
   fireEvent.click(screen.getByRole('button', { name: /name/i }));
   const rows = screen.getAllByRole('row').slice(1); // skip header
   expect(rows[0]).toHaveTextContent('Alpha Assessment');
@@ -55,7 +65,7 @@ test('clicking Name header sorts rows ascending by name', () => {
 });
 
 test('clicking Name header twice sorts rows descending by name', () => {
-  render(<AssessmentsTable assessments={assessments} projectId="p1" />);
+  renderWithIntl(<AssessmentsTable assessments={assessments} projectId="p1" />);
   fireEvent.click(screen.getByRole('button', { name: /name/i }));
   fireEvent.click(screen.getByRole('button', { name: /name/i }));
   const rows = screen.getAllByRole('row').slice(1);
@@ -64,7 +74,7 @@ test('clicking Name header twice sorts rows descending by name', () => {
 });
 
 test('clicking Issues header sorts rows by issue count ascending', () => {
-  render(<AssessmentsTable assessments={assessments} projectId="p1" />);
+  renderWithIntl(<AssessmentsTable assessments={assessments} projectId="p1" />);
   fireEvent.click(screen.getByRole('button', { name: /issues/i }));
   const rows = screen.getAllByRole('row').slice(1);
   expect(rows[0]).toHaveTextContent('Alpha Assessment'); // 2 issues
@@ -72,7 +82,7 @@ test('clicking Issues header sorts rows by issue count ascending', () => {
 });
 
 test('clicking Status header sorts rows by status', () => {
-  render(<AssessmentsTable assessments={assessments} projectId="p1" />);
+  renderWithIntl(<AssessmentsTable assessments={assessments} projectId="p1" />);
   fireEvent.click(screen.getByRole('button', { name: /status/i }));
   const rows = screen.getAllByRole('row').slice(1);
   // 'completed' < 'ready' alphabetically
@@ -80,8 +90,7 @@ test('clicking Status header sorts rows by status', () => {
   expect(rows[1]).toHaveTextContent('Zebra Assessment');
 });
 
-test('AssessmentStatusBadge falls back to raw status label for unknown status', () => {
-  // Cast to bypass TypeScript's union type check — exercises the ?? fallback branch
-  render(<AssessmentStatusBadge status={'unknown_status' as 'ready'} />);
-  expect(screen.getByText('unknown_status')).toBeInTheDocument();
+test('AssessmentStatusBadge renders translated label for known statuses', () => {
+  renderWithIntl(<AssessmentStatusBadge status="ready" />);
+  expect(screen.getByText('Ready')).toBeInTheDocument();
 });

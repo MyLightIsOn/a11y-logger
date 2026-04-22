@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { VpatVersionHistoryTable } from '@/components/vpats/vpat-version-history-table';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const snapshots = [
   {
@@ -21,12 +31,12 @@ const snapshots = [
 
 describe('VpatVersionHistoryTable', () => {
   it('does not render a Version History card title', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.queryByText('Version History')).not.toBeInTheDocument();
   });
 
   it('version numbers are links to the version page', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     const v2Link = screen.getByRole('link', { name: 'v2' });
     const v1Link = screen.getByRole('link', { name: 'v1' });
     expect(v2Link).toHaveAttribute('href', '/vpats/v1/versions/2');
@@ -34,38 +44,38 @@ describe('VpatVersionHistoryTable', () => {
   });
 
   it('renders Version column header', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.getByRole('button', { name: 'Version' })).toBeInTheDocument();
   });
 
   it('renders Published column header', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.getByRole('button', { name: 'Published' })).toBeInTheDocument();
   });
 
   it('renders Created At column header', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.getByRole('button', { name: 'Created At' })).toBeInTheDocument();
   });
 
   it('does not render an Actions column', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.queryByRole('button', { name: 'Actions' })).not.toBeInTheDocument();
   });
 
   it('does not render View links', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.queryByRole('link', { name: /view/i })).not.toBeInTheDocument();
   });
 
   it('displays version numbers', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={snapshots} />);
     expect(screen.getByText('v2')).toBeInTheDocument();
     expect(screen.getByText('v1')).toBeInTheDocument();
   });
 
   it('shows empty state when no snapshots', () => {
-    render(<VpatVersionHistoryTable vpatId="v1" snapshots={[]} />);
+    renderWithIntl(<VpatVersionHistoryTable vpatId="v1" snapshots={[]} />);
     expect(
       screen.getByText('No published versions yet. Publish this VPAT to create a snapshot.')
     ).toBeInTheDocument();

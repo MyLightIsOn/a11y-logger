@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { StatsCard } from '@/components/dashboard/stats-card';
 import { ActivityChart } from '@/components/dashboard/activity-chart';
 import { IssueAnalysisSection } from '@/components/dashboard/issue-analysis-section';
@@ -5,6 +6,7 @@ import { getActionableStats } from '@/lib/db/dashboard';
 
 export default async function DashboardPage() {
   const actionableStats = await getActionableStats();
+  const t = await getTranslations('dashboard');
 
   return (
     <div className="p-6 space-y-6">
@@ -15,25 +17,25 @@ export default async function DashboardPage() {
         </h1>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
           <StatsCard
-            label="Open Critical Issues"
+            label={t('stats.open_critical_issues')}
             count={actionableStats.open_critical_issues}
             href="/issues?severity=critical&status=open"
             showAlert={actionableStats.open_critical_issues > 0}
           />
           <StatsCard
-            label="In-Progress Assessments"
+            label={t('stats.in_progress_assessments')}
             count={actionableStats.in_progress_assessments}
             href="/assessments?status=in_progress"
           />
           <StatsCard
-            label="Resolved This Month"
+            label={t('stats.resolved_this_month')}
             count={actionableStats.resolved_this_month}
             href="/issues?status=resolved"
           />
           <StatsCard
-            label="Active Projects"
+            label={t('stats.active_projects')}
             count={actionableStats.active_projects}
-            subtitle={`of ${actionableStats.total_projects} total`}
+            subtitle={t('stats.of_total', { total: actionableStats.total_projects })}
             href="/projects"
           />
         </div>

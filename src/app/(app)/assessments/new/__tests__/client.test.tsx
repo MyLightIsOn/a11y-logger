@@ -1,6 +1,8 @@
 import { render, screen, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import { toast } from 'sonner';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
@@ -22,6 +24,14 @@ vi.mock('@/components/assessments/assessment-form', () => ({
 
 import NewAssessmentClient from '../client';
 
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 const baseFormData = {
   project_id: 'p1',
   name: 'Test Assessment',
@@ -37,24 +47,24 @@ beforeEach(() => {
 });
 
 test('renders Save button outside the card', () => {
-  render(<NewAssessmentClient projects={[]} />);
+  renderWithIntl(<NewAssessmentClient projects={[]} />);
   const btn = screen.getByRole('button', { name: /save assessment/i });
   expect(btn).toHaveAttribute('type', 'submit');
   expect(btn).toHaveAttribute('form', 'new-assessment-form');
 });
 
 test('renders Cancel link outside the card', () => {
-  render(<NewAssessmentClient projects={[]} />);
+  renderWithIntl(<NewAssessmentClient projects={[]} />);
   expect(screen.getByRole('link', { name: /cancel/i })).toHaveAttribute('href', '/assessments');
 });
 
 test('form has the correct id', () => {
-  const { container } = render(<NewAssessmentClient projects={[]} />);
+  const { container } = renderWithIntl(<NewAssessmentClient projects={[]} />);
   expect(container.querySelector('form#new-assessment-form')).toBeInTheDocument();
 });
 
 test('shows error toast when project_id is missing', async () => {
-  render(<NewAssessmentClient projects={[]} />);
+  renderWithIntl(<NewAssessmentClient projects={[]} />);
   await act(async () => {
     await capturedOnSubmit!({ ...baseFormData, project_id: null });
   });
@@ -72,7 +82,7 @@ test('creates assessment and redirects on success', async () => {
     })
   );
 
-  render(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
+  renderWithIntl(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
   await act(async () => {
     await capturedOnSubmit!(baseFormData);
   });
@@ -93,7 +103,7 @@ test('shows error toast when API returns failure', async () => {
     })
   );
 
-  render(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
+  renderWithIntl(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
   await act(async () => {
     await capturedOnSubmit!(baseFormData);
   });
@@ -110,7 +120,7 @@ test('includes description in payload when provided', async () => {
     })
   );
 
-  render(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
+  renderWithIntl(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
   await act(async () => {
     await capturedOnSubmit!({ ...baseFormData, description: 'My description' });
   });
@@ -128,7 +138,7 @@ test('includes test dates in payload when provided', async () => {
     })
   );
 
-  render(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
+  renderWithIntl(<NewAssessmentClient projects={[{ id: 'p1', name: 'Project 1' }]} />);
   await act(async () => {
     await capturedOnSubmit!({
       ...baseFormData,

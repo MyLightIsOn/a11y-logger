@@ -54,6 +54,7 @@ export function SettingsClient({
   authEnabled,
   users,
 }: SettingsClientProps) {
+  const t = useTranslations('settings');
   const tToast = useTranslations('settings.toast');
   const handleSaveAI = async (data: {
     provider: string;
@@ -129,10 +130,10 @@ export function SettingsClient({
   return (
     <Tabs defaultValue="ai">
       <TabsList variant="segmented">
-        <TabsTrigger value="ai">AI Configuration</TabsTrigger>
-        <TabsTrigger value="data">Data Management</TabsTrigger>
-        <TabsTrigger value="security">Security</TabsTrigger>
-        <TabsTrigger value="about">About</TabsTrigger>
+        <TabsTrigger value="ai">{t('tabs.ai_config')}</TabsTrigger>
+        <TabsTrigger value="data">{t('tabs.data_management')}</TabsTrigger>
+        <TabsTrigger value="security">{t('tabs.security')}</TabsTrigger>
+        <TabsTrigger value="about">{t('tabs.about')}</TabsTrigger>
       </TabsList>
       <TabsContent value="ai" className="mt-6">
         <AIConfigSection
@@ -160,15 +161,15 @@ export function SettingsClient({
       <TabsContent value="about" className="mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>About A11y Logger</CardTitle>
+            <CardTitle>{t('about.heading')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Version</span>
+              <span className="text-muted-foreground">{t('about.version_label')}</span>
               <span className="font-mono">{version}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">License</span>
+              <span className="text-muted-foreground">{t('about.license_label')}</span>
               <a
                 href="https://www.gnu.org/licenses/agpl-3.0.html"
                 target="_blank"
@@ -178,10 +179,7 @@ export function SettingsClient({
                 AGPL-3.0
               </a>
             </div>
-            <p className="text-muted-foreground pt-2">
-              A11y Logger is an open-source, offline-first accessibility auditing tool. No accounts
-              or cloud services required.
-            </p>
+            <p className="text-muted-foreground pt-2">{t('about.description')}</p>
           </CardContent>
         </Card>
       </TabsContent>

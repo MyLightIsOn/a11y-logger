@@ -11,6 +11,27 @@ const messages = {
       status: { open: 'Open', resolved: 'Resolved', wont_fix: "Won't Fix" },
     },
   },
+  vpats: {
+    ai_panel: {
+      dialog_aria_label: 'AI Analysis for criterion {criterion_code}',
+      heading: 'AI Analysis — {criterion_code}',
+      close_aria_label: 'Close',
+      confidence: 'Confidence',
+      low_confidence_warning: 'Limited evidence — consider additional testing.',
+      suggested_conformance: 'Suggested Conformance',
+      issues_referenced: 'Issues Referenced',
+      no_issues_referenced: 'No issues referenced.',
+      reasoning: 'Reasoning',
+      generated_at: 'Generated',
+    },
+    conformance: {
+      supports: 'Supports',
+      partially_supports: 'Partially Supports',
+      does_not_support: 'Does Not Support',
+      not_applicable: 'Not Applicable',
+      not_evaluated: 'Not Evaluated',
+    },
+  },
 };
 
 function renderWithIntl(ui: React.ReactElement) {

@@ -93,7 +93,18 @@ Supported providers:
 
 ## Language support
 
-One of the first tasks to complete before this moves out of beta is internationalization. The UI is currenlty available in English, with many parts of the UI also available in French, Spanish, and German. Switch languages from the header. VPAT criteria are translated where available.
+The UI is available in English, French, Spanish, and German. Switch languages from the header.
+
+**Criteria translation coverage:**
+
+| Standard                         | French (fr)                                           | Spanish (es)                                            | German (de)                                           |
+| -------------------------------- | ----------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------- |
+| WCAG (all criteria)              | Full — official W3C French translation                | Full — official W3C Spanish translation                 | English fallback — no official W3C German translation |
+| EN 301 549 (Clauses 4–8, 12, 13) | Full — official ETSI French publication               | English fallback — no official ETSI Spanish translation | Full — official ETSI German publication               |
+| EN 301 549 (Clauses 10, 11)      | English fallback                                      | English fallback                                        | English fallback                                      |
+| Section 508                      | English fallback — US regulation, English-only source | English fallback                                        | English fallback                                      |
+
+"English fallback" means the criterion name displays in English when no official translation is available.
 
 ---
 

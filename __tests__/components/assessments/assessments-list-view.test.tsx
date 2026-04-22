@@ -1,7 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { AssessmentsListView } from '@/components/assessments/assessments-list-view';
 import type { AssessmentWithProject } from '@/lib/db/assessments';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const mockAssessments: AssessmentWithProject[] = [
   {
@@ -23,12 +33,12 @@ const mockAssessments: AssessmentWithProject[] = [
 
 describe('AssessmentsListView', () => {
   it('defaults to table view', () => {
-    render(<AssessmentsListView assessments={mockAssessments} />);
+    renderWithIntl(<AssessmentsListView assessments={mockAssessments} />);
     expect(screen.getByRole('table')).toBeInTheDocument();
   });
 
   it('switches to grid view', async () => {
-    render(<AssessmentsListView assessments={mockAssessments} />);
+    renderWithIntl(<AssessmentsListView assessments={mockAssessments} />);
     await userEvent.click(screen.getByRole('button', { name: /grid view/i }));
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     expect(screen.getByText('Q1 Audit')).toBeInTheDocument();

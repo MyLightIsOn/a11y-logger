@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 const { mockPush, mockRefresh, mockToastError } = vi.hoisted(() => ({
   mockPush: vi.fn(),
@@ -27,14 +29,22 @@ const assessments = [
   { id: 'a2', project_id: 'p2', name: 'Q2 Audit', status: 'ready' },
 ];
 
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 describe('ReportWizard card styling', () => {
   it('wraps content in a card', () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     expect(document.querySelector('[data-slot="card"]')).toBeInTheDocument();
   });
 
   it('displays the step title inside a card header', () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     const cardHeader = document.querySelector('[data-slot="card-header"]')!;
     expect(cardHeader).toContainElement(screen.getByText('Select Projects'));
   });
@@ -47,17 +57,17 @@ describe('ReportWizard step navigation', () => {
   });
 
   it('shows a project multi-select on step 1', () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   it('Next button is disabled until a project is selected', () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
   });
 
   it('advances to step 2 after selecting a project and clicking Next', async () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: /Project Alpha/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -65,7 +75,7 @@ describe('ReportWizard step navigation', () => {
   });
 
   it('shows only assessments for selected projects on step 2', async () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: /Project Alpha/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -75,7 +85,7 @@ describe('ReportWizard step navigation', () => {
   });
 
   it('advances to step 3 after selecting an assessment', async () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: /Project Alpha/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -86,7 +96,7 @@ describe('ReportWizard step navigation', () => {
   });
 
   it('goes back to step 2 from step 3', async () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: /Project Alpha/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -101,7 +111,7 @@ describe('ReportWizard step navigation', () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       json: async () => ({ success: true, data: { id: 'r1' } }),
     });
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: /Project Alpha/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Next' }));
@@ -114,7 +124,7 @@ describe('ReportWizard step navigation', () => {
   });
 
   it('Create Report button is disabled when title is empty', async () => {
-    render(<ReportWizard projects={projects} assessments={assessments} />);
+    renderWithIntl(<ReportWizard projects={projects} assessments={assessments} />);
     await userEvent.click(screen.getByRole('combobox'));
     await userEvent.click(screen.getByRole('option', { name: /Project Alpha/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Next' }));

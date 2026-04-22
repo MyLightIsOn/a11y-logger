@@ -18,7 +18,7 @@ import type { AITask } from './models';
  *
  * Provider and API key are read from env vars first, then DB settings.
  */
-export function getAIProvider(task?: AITask): AIProvider | null {
+export function getAIProvider(task?: AITask, language?: string): AIProvider | null {
   const provider = (
     process.env.AI_PROVIDER ??
     (getSetting('ai_provider') as string | null) ??
@@ -40,28 +40,28 @@ export function getAIProvider(task?: AITask): AIProvider | null {
     case 'openai': {
       if (!apiKey) return null;
       const openai = createOpenAI({ apiKey });
-      return new VercelAIProvider(openai(model || 'gpt-4o-mini'));
+      return new VercelAIProvider(openai(model || 'gpt-4o-mini'), language);
     }
     case 'anthropic': {
       if (!apiKey) return null;
       const anthropic = createAnthropic({ apiKey });
-      return new VercelAIProvider(anthropic(model || 'claude-haiku-4-5-20251001'));
+      return new VercelAIProvider(anthropic(model || 'claude-haiku-4-5-20251001'), language);
     }
     case 'google': {
       if (!apiKey) return null;
       const google = createGoogleGenerativeAI({ apiKey });
-      return new VercelAIProvider(google(model || 'gemini-2.0-flash'));
+      return new VercelAIProvider(google(model || 'gemini-2.0-flash'), language);
     }
     case 'ollama': {
       if (!model) return null;
       const ollamaBase = baseUrl || 'http://localhost:11434/v1';
       const ollama = createOpenAI({ baseURL: ollamaBase, apiKey: 'ollama' });
-      return new VercelAIProvider(ollama(model));
+      return new VercelAIProvider(ollama(model), language);
     }
     case 'openai-compatible': {
       if (!baseUrl || !model) return null;
       const custom = createOpenAI({ baseURL: baseUrl, apiKey: apiKey || '' });
-      return new VercelAIProvider(custom(model));
+      return new VercelAIProvider(custom(model), language);
     }
     default:
       return null;

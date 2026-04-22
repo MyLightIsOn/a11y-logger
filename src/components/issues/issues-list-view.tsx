@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,8 @@ interface IssuesListViewProps {
 }
 
 export function IssuesListView({ issues }: IssuesListViewProps) {
+  const t = useTranslations('issues.list');
+  const tSeverity = useTranslations('issues.badge.severity');
   const [view, setView] = useState<'grid' | 'table'>('table');
   const [query, setQuery] = useState('');
   const router = useRouter();
@@ -51,13 +54,13 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
     <section aria-labelledby="issues-heading" className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 id="issues-heading" className="text-lg font-semibold">
-          Issues
+          {t('page_title')}
         </h1>
         <div className="flex items-center gap-2">
           <Button asChild variant="success" size="sm">
             <Link href="/issues/new">
               <Plus className="mr-2 h-4 w-4" />
-              New Issue
+              {t('new_button')}
             </Link>
           </Button>
           <ViewToggle view={view} onViewChange={setView} />
@@ -69,10 +72,10 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
         <div className="flex items-center justify-between gap-4">
           <Tabs value={severity ?? ''} onValueChange={handleSeverityChange}>
             <TabsList variant="segmented">
-              <TabsTrigger value="">All</TabsTrigger>
+              <TabsTrigger value="">{t('all_tab')}</TabsTrigger>
               {SEVERITIES.map((s) => (
                 <TabsTrigger key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                  {tSeverity(s)}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -80,14 +83,14 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
 
           <div className="flex items-center gap-2">
             <label htmlFor="issues-search" className="sr-only">
-              Search issues
+              {t('search_label')}
             </label>
             <Input
               id="issues-search"
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search issues…"
+              placeholder={t('search_placeholder')}
               className="w-56"
             />
           </div>
@@ -96,7 +99,7 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
 
       {filtered.length === 0 && view === 'grid' ? (
         <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-          No issues found.
+          {t('no_results')}
         </div>
       ) : view === 'grid' ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -111,10 +114,10 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
             <div className="flex items-center justify-between gap-4 pb-4">
               <Tabs value={severity ?? ''} onValueChange={handleSeverityChange}>
                 <TabsList variant="segmented">
-                  <TabsTrigger value="">All</TabsTrigger>
+                  <TabsTrigger value="">{t('all_tab')}</TabsTrigger>
                   {SEVERITIES.map((s) => (
                     <TabsTrigger key={s} value={s}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                      {tSeverity(s)}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -122,14 +125,14 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
 
               <div className="flex items-center gap-2">
                 <label htmlFor="issues-search" className="sr-only">
-                  Search issues
+                  {t('search_label')}
                 </label>
                 <Input
                   id="issues-search"
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search issues…"
+                  placeholder={t('search_placeholder')}
                   className="w-56"
                 />
               </div>
@@ -137,7 +140,7 @@ export function IssuesListView({ issues }: IssuesListViewProps) {
 
             {filtered.length === 0 ? (
               <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-                No issues found.
+                {t('no_results')}
               </div>
             ) : (
               <AllIssuesTable issues={filtered} />

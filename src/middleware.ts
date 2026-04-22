@@ -1,4 +1,3 @@
-import { createHmac, timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC_PATHS = [
@@ -16,24 +15,47 @@ const SECRET = process.env.ENCRYPTION_SECRET ?? 'offline-default-secret-change-i
  * Verifies a session token produced by src/lib/auth/session.ts signToken().
  * Format: userId:nonce:hmac-sha256-hex
  * Returns the userId if valid, null otherwise.
- * Uses only crypto primitives available in the Next.js Edge runtime.
+ * Uses Web Crypto API (crypto.subtle) which is available in the Next.js Edge runtime.
  */
-function verifySessionToken(token: string): string | null {
+async function verifySessionToken(token: string): Promise<string | null> {
   const lastColon = token.lastIndexOf(':');
   if (lastColon < 0) return null;
   const payload = token.slice(0, lastColon);
   const sig = token.slice(lastColon + 1);
-  const expected = createHmac('sha256', SECRET).update(payload).digest('hex');
+
+  const encoder = new TextEncoder();
+  let key: CryptoKey;
   try {
-    if (!timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'))) return null;
+    key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(SECRET),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify']
+    );
   } catch {
     return null;
   }
+
+  // Parse the hex signature into bytes
+  const sigBytes = sig.match(/.{2}/g)?.map((byte) => parseInt(byte, 16));
+  if (!sigBytes || sigBytes.length !== 32) return null;
+
+  // crypto.subtle.verify performs a timing-safe comparison internally
+  const isValid = await crypto.subtle.verify(
+    'HMAC',
+    key,
+    new Uint8Array(sigBytes),
+    encoder.encode(payload)
+  );
+
+  if (!isValid) return null;
+
   const parts = payload.split(':');
   return parts.length >= 2 ? (parts[0] ?? null) : null;
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Always allow public paths
@@ -53,7 +75,7 @@ export function middleware(req: NextRequest) {
   }
 
   const session = req.cookies.get('session')?.value;
-  if (!session || !verifySessionToken(session)) {
+  if (!session || !(await verifySessionToken(session))) {
     const loginUrl = new URL('/login', req.url);
     return NextResponse.redirect(loginUrl);
   }

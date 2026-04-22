@@ -6,6 +6,7 @@
 
 import { NextResponse } from 'next/server';
 import { getAIProvider } from '@/lib/ai';
+import { getLanguageName } from '@/lib/ai/language';
 
 interface CurrentFields {
   title?: string | null;
@@ -19,14 +20,6 @@ interface CurrentFields {
 }
 
 export async function POST(request: Request) {
-  const ai = getAIProvider('issues');
-  if (!ai) {
-    return NextResponse.json(
-      { success: false, error: 'AI not configured', code: 'AI_NOT_CONFIGURED' },
-      { status: 503 }
-    );
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -37,10 +30,24 @@ export async function POST(request: Request) {
     );
   }
 
-  const { ai_description, current = {} } = body as {
+  const {
+    ai_description,
+    current = {},
+    locale,
+  } = body as {
     ai_description?: unknown;
     current?: CurrentFields;
+    locale?: unknown;
   };
+
+  const language = getLanguageName(typeof locale === 'string' ? locale : 'en');
+  const ai = getAIProvider('issues', language);
+  if (!ai) {
+    return NextResponse.json(
+      { success: false, error: 'AI not configured', code: 'AI_NOT_CONFIGURED' },
+      { status: 503 }
+    );
+  }
 
   if (typeof ai_description !== 'string' || !ai_description.trim()) {
     return NextResponse.json(

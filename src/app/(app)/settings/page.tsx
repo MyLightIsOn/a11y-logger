@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { getSetting } from '@/lib/db/settings';
 import { getUsers } from '@/lib/db/users';
 import { SettingsClient } from '@/components/settings/settings-client';
@@ -6,6 +7,7 @@ import { SettingsClient } from '@/components/settings/settings-client';
 export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
+  const t = await getTranslations('settings');
   const aiProvider = (getSetting('ai_provider') as string) ?? '';
   // The API key is encrypted at rest — pass a masked placeholder if one exists
   const rawApiKey = getSetting('ai_api_key');
@@ -31,7 +33,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-2xl font-bold">{t('page_title')}</h1>
       <SettingsClient
         aiProvider={aiProvider}
         aiApiKey={aiApiKey}

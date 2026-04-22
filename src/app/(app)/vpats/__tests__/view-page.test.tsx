@@ -20,10 +20,16 @@ vi.mock('next-intl', () => ({
       section = (section[part] ?? {}) as Record<string, unknown>;
     }
     return (key: string, params?: Record<string, unknown>) => {
-      const val = section[key] as string | undefined;
-      if (!val) return key;
-      if (!params) return val;
-      return val.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
+      // Support dotted keys by navigating nested objects
+      const keyParts = key.split('.');
+      let val: unknown = section;
+      for (const part of keyParts) {
+        val = (val as Record<string, unknown>)?.[part];
+      }
+      const strVal = val as string | undefined;
+      if (!strVal) return key;
+      if (!params) return strVal;
+      return strVal.replace(/\{(\w+)\}/g, (_, k) => String(params[k] ?? `{${k}}`));
     };
   },
 }));

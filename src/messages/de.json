@@ -26,7 +26,13 @@
     "status": "Status",
     "actions": "Aktionen",
     "no_results": "Keine Ergebnisse gefunden",
-    "required_field": "Dieses Feld ist erforderlich"
+    "required_field": "Dieses Feld ist erforderlich",
+    "table": {
+      "rows_per_page": "Zeilen pro Seite:",
+      "page_of": "Seite {page} von {total}",
+      "previous_page": "Vorherige Seite",
+      "next_page": "Nächste Seite"
+    }
   },
   "ui": {
     "theme_toggle": {
@@ -38,6 +44,18 @@
     }
   },
   "vpats": {
+    "list": {
+      "heading": "VPATs",
+      "new_button": "New VPAT",
+      "empty_title": "No VPATs yet",
+      "empty_description": "Create a Voluntary Product Accessibility Template to document how your product conforms to WCAG criteria.",
+      "empty_cta": "Create VPAT",
+      "col_title": "Title",
+      "col_scope": "Scope",
+      "col_status": "Status",
+      "col_version": "Version",
+      "col_updated": "Updated"
+    },
     "conformance": {
       "not_evaluated": "Nicht bewertet",
       "supports": "Erfüllt",
@@ -52,23 +70,23 @@
       "reviewed": "Überprüft"
     },
     "sections": {
-      "tableA": "Table 1: Success Criteria, Level A",
-      "tableAA": "Table 2: Success Criteria, Level AA",
-      "tableAAA": "Table 3: Success Criteria, Level AAA",
-      "chapter3": "Chapter 3: Functional Performance Criteria",
-      "chapter5": "Chapter 5: Software",
-      "chapter6": "Chapter 6: Support Documentation and Services",
-      "clause4": "Clause 4: Functional Performance Statements",
-      "clause5": "Clause 5: Generic Requirements",
-      "clause11": "Clause 11: Non-Web Software",
-      "clause12": "Clause 12: Documentation and Support Services"
+      "tableA": "Tabelle 1: Erfolgskriterien, Stufe A",
+      "tableAA": "Tabelle 2: Erfolgskriterien, Stufe AA",
+      "tableAAA": "Tabelle 3: Erfolgskriterien, Stufe AAA",
+      "chapter3": "Kapitel 3: Kriterien für funktionale Leistung",
+      "chapter5": "Kapitel 5: Software",
+      "chapter6": "Kapitel 6: Supportdokumentation und Dienste",
+      "clause4": "Klausel 4: Aussagen zur funktionalen Leistung",
+      "clause5": "Klausel 5: Allgemeine Anforderungen",
+      "clause11": "Klausel 11: Nicht-Web-Software",
+      "clause12": "Klausel 12: Dokumentation und Support-Dienste"
     },
     "pdf": {
-      "title": "Export to PDF",
-      "description": "Generate a PDF export of this VPAT.",
-      "generate": "Generate PDF",
-      "download": "Download PDF",
-      "generating": "Generating…"
+      "title": "Als PDF exportieren",
+      "description": "Einen PDF-Export dieses VPATs erstellen.",
+      "generate": "PDF erstellen",
+      "download": "PDF herunterladen",
+      "generating": "Wird erstellt…"
     },
     "card": {
       "no_project": "Kein Projekt",
@@ -171,6 +189,125 @@
       "accessible_alternative": "Für ein zugängliches PDF für formelle Zwecke laden Sie das DOCX herunter und verwenden Sie die Option 'Als PDF exportieren' in Word oder LibreOffice mit aktivierten Barrierefreiheitsoptionen.",
       "continue_to_print": "Weiter zum Drucken",
       "download_docx": "Stattdessen DOCX herunterladen"
+    },
+    "ai_panel": {
+      "dialog_aria_label": "KI-Analyse für Kriterium {criterion_code}",
+      "heading": "KI-Analyse — {criterion_code}",
+      "close_aria_label": "Schließen",
+      "confidence": "Konfidenz",
+      "low_confidence_warning": "Begrenzte Belege — erwägen Sie zusätzliche Tests.",
+      "suggested_conformance": "Vorgeschlagene Konformität",
+      "issues_referenced": "Referenzierte Probleme",
+      "no_issues_referenced": "Keine Probleme referenziert.",
+      "reasoning": "Begründung",
+      "generated_at": "Generiert"
+    },
+    "tabs": {
+      "cover_sheet": "Deckblatt",
+      "version_history": "Versionsverlauf",
+      "level_a": "Stufe A",
+      "level_aa": "Stufe AA",
+      "level_aaa": "Stufe AAA",
+      "chapter3": "FPC",
+      "chapter4": "Hardware",
+      "chapter5": "Software",
+      "chapter6": "Dokumentation",
+      "clause4": "Clause 4",
+      "clause5": "Clause 5",
+      "clause6": "Clause 6",
+      "clause7": "Clause 7",
+      "clause8": "Clause 8",
+      "clause10": "Clause 10",
+      "clause11": "Clause 11",
+      "clause12": "Clause 12",
+      "clause13": "Clause 13"
+    },
+    "detail": {
+      "loading": "Wird geladen…",
+      "cover_sheet_empty": "Es wurden noch keine Informationen zum Deckblatt hinzugefügt.",
+      "edition_508": "Section 508",
+      "edition_eu": "EN 301 549",
+      "edition_int": "International",
+      "edition_wcag": "WCAG {version} · {level}",
+      "reviewed_by": "Überprüft von {name} am {date}",
+      "load_failed": "VPAT konnte nicht geladen werden",
+      "publish_failed": "Veröffentlichung fehlgeschlagen",
+      "publish_success": "VPAT veröffentlicht",
+      "unpublish_failed": "Veröffentlichung zurückziehen fehlgeschlagen",
+      "unpublish_success": "VPAT zurückgezogen",
+      "review_failed": "Als überprüft markieren fehlgeschlagen",
+      "review_success": "VPAT als überprüft markiert",
+      "edit_reset_failed": "VPAT zurücksetzen fehlgeschlagen",
+      "save_failed": "Speichern fehlgeschlagen",
+      "ai_failed": "KI-Generierung fehlgeschlagen"
+    },
+    "version_history": {
+      "col_version": "Version",
+      "col_published": "Veröffentlicht",
+      "col_created_at": "Erstellt am",
+      "empty": "Noch keine veröffentlichten Versionen. Veröffentlichen Sie dieses VPAT, um einen Schnappschuss zu erstellen."
+    },
+    "wizard": {
+      "page_title": "Neues VPAT",
+      "step1_title": "Schritt 1 von 3: Edition auswählen",
+      "step1_description": "Wählen Sie den Standard, den Ihr VPAT abdecken soll.",
+      "step2_upload_title": "Schritt 2 von 3: OpenACR hochladen",
+      "step2_upload_description": "Laden Sie eine gültige OpenACR-YAML-Datei zum Importieren hoch.",
+      "step2_scope_title": "Schritt 2 von 3: Umfang",
+      "step2_scope_description": "Konfigurieren Sie den Umfang dieses VPATs.",
+      "step3_import_title": "Schritt 3 von 3: Projekt auswählen",
+      "step3_import_description": "Verknüpfen Sie diesen Import mit einem Projekt.",
+      "step3_create_title": "Schritt 3 von 3: Details",
+      "step3_create_description": "Benennen Sie Ihr VPAT und verknüpfen Sie es mit einem Projekt.",
+      "edition_wcag_label": "WCAG",
+      "edition_wcag_description": "Barrierefreiheitserklärung für den privaten Sektor / allgemeines Web",
+      "edition_508_label": "Section 508",
+      "edition_508_description": "Beschaffung der US-Bundesbehörden",
+      "edition_eu_label": "EN 301 549",
+      "edition_eu_description": "Europäischer öffentlicher Sektor / EAA-Konformität",
+      "edition_int_label": "International",
+      "edition_int_description": "Am umfassendsten; umfasst alle drei Standards",
+      "edition_import_label": "Von OpenACR importieren",
+      "edition_import_description": "Eine vorhandene OpenACR-YAML-Datei importieren",
+      "yaml_file_label": "YAML-Datei",
+      "wcag_version_label": "WCAG-Version",
+      "conformance_level_legend": "Konformitätsstufe",
+      "level_a_only": "Nur Stufe A",
+      "level_a_aa": "Stufe A + AA",
+      "level_a_aa_aaa": "Stufe A + AA + AAA",
+      "conformance_locked": "Die Konformitätsstufe ist für {edition} auf A + AA gesperrt.",
+      "product_scope_legend": "Produktumfang",
+      "product_scope_description": "Wählen Sie alle Produkttypen aus, die dieses VPAT abdeckt.",
+      "scope_web": "Web",
+      "scope_desktop": "Desktop-Software",
+      "scope_mobile": "Mobile Software",
+      "scope_documents": "Dokumente",
+      "scope_hardware": "Hardware",
+      "scope_telephony": "Telefonie",
+      "title_label": "Titel",
+      "title_placeholder": "z.B. Acme SaaS Platform VPAT 2026",
+      "project_label": "Projekt",
+      "select_project": "— Projekt auswählen —",
+      "description_label": "Beschreibung (optional)",
+      "description_placeholder": "Kurze Notizen zu dieser Bewertung…",
+      "projects_load_failed": "Projekte konnten nicht geladen werden. Bitte aktualisieren.",
+      "projects_load_failed_long": "Projekte konnten nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+      "invalid_openacr": "Die Datei scheint keine gültige OpenACR-YAML-Datei zu sein (Katalog oder Kapitel fehlen).",
+      "yaml_parse_error": "YAML konnte nicht analysiert werden. Bitte überprüfen Sie das Dateiformat.",
+      "title_required": "Titel ist erforderlich",
+      "project_required": "Projekt ist erforderlich",
+      "scope_required": "Wählen Sie mindestens einen Produktumfang aus",
+      "create_success": "VPAT erstellt",
+      "create_failed": "VPAT konnte nicht erstellt werden",
+      "import_success": "VPAT importiert",
+      "import_failed": "Import fehlgeschlagen",
+      "importing": "Wird importiert…",
+      "creating": "Wird erstellt…",
+      "create_button": "VPAT erstellen",
+      "import_button": "Importieren",
+      "back_button": "Zurück",
+      "next_button": "Weiter",
+      "cancel_button": "Abbrechen"
     }
   },
   "auth": {
@@ -189,12 +326,13 @@
     }
   },
   "settings": {
+    "page_title": "Einstellungen",
     "language": {
-      "label": "Language",
-      "en": "English",
-      "fr": "French",
-      "es": "Spanish",
-      "de": "German"
+      "label": "Sprache",
+      "en": "Englisch",
+      "fr": "Französisch",
+      "es": "Spanisch",
+      "de": "Deutsch"
     },
     "ai": {
       "heading": "KI-Konfiguration",
@@ -209,7 +347,28 @@
       "base_url_placeholder": "https://api.example.com/v1",
       "ollama_base_url_placeholder": "http://localhost:11434/v1",
       "save_button": "KI-Einstellungen speichern",
-      "save_button_loading": "Speichern…"
+      "save_button_loading": "Speichern…",
+      "description": "Konfigurieren Sie Ihren KI-Anbieter, um KI-gestützte Funktionen zu aktivieren. Unterstützt Cloud-Anbieter (OpenAI, Anthropic, Google Gemini) und lokale Offline-Modelle über Ollama. Ihr API-Schlüssel wird lokal gespeichert und nie an unsere Server gesendet.",
+      "custom_provider_description": "Jede API, die dem OpenAI-Chat-Format folgt, funktioniert hier — Groq, Together AI, LM Studio und die meisten selbst gehosteten Modelle. Zeigen Sie auf die Basis-URL, wählen Sie einen Modellnamen, und es verhält sich wie OpenAI.",
+      "show_api_key": "API-Schlüssel anzeigen",
+      "hide_api_key": "API-Schlüssel verbergen",
+      "provider_google": "Google Gemini",
+      "provider_ollama": "Ollama (lokal)",
+      "provider_compatible": "OpenAI-kompatibel (benutzerdefiniert)",
+      "provider_none_short": "Keine",
+      "select_provider": "Anbieter auswählen",
+      "provider_default": "Anbieter-Standard",
+      "other_model": "Andere…",
+      "optional": "(optional)",
+      "set_via_env": "Über Umgebungsvariable festgelegt",
+      "env_override_note": "Einige Einstellungen werden durch Umgebungsvariablen gesteuert und sind hier schreibgeschützt. Entfernen Sie die entsprechenden Umgebungsvariablen, um sie von dieser Seite aus zu verwalten.",
+      "model_per_task_title": "Modell pro Aufgabe",
+      "model_per_task_description": "Wählen Sie, welches Modell für jede Aufgabe verwendet werden soll. Lassen Sie eine Aufgabe auf \"Anbieter-Standard\", um das Modell zu verwenden, das Ihr Anbieter automatisch auswählt.",
+      "review_pass_title": "KI-Überprüfungsdurchlauf",
+      "review_pass_description": "Nach der Generierung einer VPAT-Kriterienzeile überprüft ein zweiter KI-Aufruf das Ergebnis und korrigiert die Konformitätsbewertung, wenn die Beweise sie nicht unterstützen. Dies verdoppelt die Anzahl der KI-Aufrufe für die VPAT-Generierung.",
+      "enable_review_pass": "KI-Überprüfungsdurchlauf aktivieren",
+      "review_pass_model_label": "Modell für KI-Überprüfungsdurchlauf",
+      "review_pass_model_description": "Wird für den Überprüfungsdurchlauf verwendet. Ein kleineres, schnelleres Modell funktioniert hier oft gut."
     },
     "auth": {
       "heading": "Authentifizierung",
@@ -218,7 +377,9 @@
       "save_button": "Auth-Einstellungen speichern",
       "updating_label": "Aktualisierung…",
       "enable_button": "Auth aktivieren",
-      "disable_button": "Auth deaktivieren"
+      "disable_button": "Auth deaktivieren",
+      "card_description": "Wenn aktiviert, müssen Benutzer sich anmelden, um auf die App zuzugreifen. Erfordert mindestens ein Benutzerkonto.",
+      "create_account_first": "Erstellen Sie zuerst ein Konto."
     },
     "users": {
       "heading": "Benutzerverwaltung",
@@ -226,7 +387,21 @@
       "username_label": "Benutzername",
       "password_label": "Passwort",
       "new_password_label": "Neues Passwort",
-      "create_button": "Konto erstellen"
+      "create_button": "Konto erstellen",
+      "confirm_password_label": "Passwort bestätigen",
+      "creating": "Wird erstellt…",
+      "save_password_button": "Passwort speichern",
+      "cancel_button": "Abbrechen",
+      "saving": "Wird gespeichert…",
+      "change_password_button": "Passwort ändern",
+      "manage_credentials_description": "Verwalten Sie Ihre lokalen Kontoanmeldedaten.",
+      "create_account_description": "Erstellen Sie ein Konto, um die Authentifizierung zu aktivieren.",
+      "password_too_short": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "passwords_no_match": "Die Passwörter stimmen nicht überein.",
+      "account_created": "Konto erstellt",
+      "create_failed": "Konto konnte nicht erstellt werden.",
+      "password_updated": "Passwort aktualisiert",
+      "update_failed": "Passwort konnte nicht aktualisiert werden."
     },
     "data": {
       "heading": "Datenverwaltung",
@@ -237,7 +412,25 @@
       "clear_dialog_title": "Alle Daten löschen?",
       "clear_dialog_description": "Dadurch werden alle Projekte, Bewertungen, Probleme, Berichte und VPATs dauerhaft gelöscht.",
       "clear_dialog_confirm": "Alle Daten löschen",
-      "clear_dialog_cancel": "Abbrechen"
+      "clear_dialog_cancel": "Abbrechen",
+      "description": "Verwalten Sie Ihren lokalen Datenspeicher, Exporte und Importe.",
+      "db_path_label": "Datenbankpfad",
+      "media_path_label": "Medienpfad",
+      "read_only_note": "Diese Pfade sind schreibgeschützt. Um sie zu ändern, setzen Sie die Umgebungsvariable <code>DATABASE_PATH</code> vor dem Starten des Servers.",
+      "reset_confirm_label": "Geben Sie RESET ein, um zu bestätigen",
+      "danger_zone_description": "Datenbank zurücksetzen. Dadurch werden alle Projekte, Bewertungen, Probleme, Berichte und VPATs dauerhaft gelöscht."
+    },
+    "tabs": {
+      "ai_config": "KI-Konfiguration",
+      "data_management": "Datenverwaltung",
+      "security": "Sicherheit",
+      "about": "Über"
+    },
+    "about": {
+      "heading": "Über A11y Logger",
+      "version_label": "Version",
+      "license_label": "Lizenz",
+      "description": "A11y Logger ist ein Open-Source-Barrierefreiheits-Audit-Tool, das offline funktioniert. Keine Konten oder Cloud-Dienste erforderlich."
     },
     "toast": {
       "ai_saved": "KI-Einstellungen gespeichert",
@@ -293,7 +486,23 @@
     "list": {
       "empty_heading": "Noch keine Bewertungen",
       "empty_description": "Erstellen Sie Ihre erste Bewertung, um zu beginnen.",
-      "new_button": "Neue Bewertung"
+      "new_button": "Neue Bewertung",
+      "page_title": "Bewertungen",
+      "create_first": "Erste Bewertung erstellen"
+    },
+    "table": {
+      "col_name": "Name",
+      "col_project": "Projekt",
+      "col_status": "Status",
+      "col_issues": "Probleme",
+      "empty": "Noch keine Bewertungen."
+    },
+    "new": {
+      "page_title": "Neue Bewertung",
+      "save_button": "Bewertung speichern",
+      "saving": "Wird gespeichert…",
+      "cancel_button": "Abbrechen",
+      "project_required": "Bitte wählen Sie ein Projekt aus"
     },
     "toast": {
       "created": "Bewertung erstellt",
@@ -302,6 +511,11 @@
       "create_failed": "Bewertung konnte nicht erstellt werden",
       "update_failed": "Bewertung konnte nicht aktualisiert werden",
       "delete_failed": "Bewertung konnte nicht gelöscht werden"
+    },
+    "status": {
+      "ready": "Ready",
+      "in_progress": "In Progress",
+      "completed": "Completed"
     }
   },
   "issues": {
@@ -354,7 +568,17 @@
     },
     "attachments": {
       "heading": "Screenshots und Videos",
-      "ai_status_message": "Problem wird mit KI generiert. Bitte warten."
+      "ai_status_message": "Problem wird mit KI generiert. Bitte warten.",
+      "upload_instructions": "Upload screenshots or videos",
+      "upload_formats": "PNG, JPG, GIF, WebP, MP4, WebM, MOV up to 10MB",
+      "choose_file": "Choose file",
+      "uploading": "Uploading…",
+      "uploading_file": "Uploading file…",
+      "remove_file": "Remove {fileName}",
+      "error_type_not_allowed": "\"{fileName}\": file type not allowed.",
+      "error_too_large": "\"{fileName}\": file too large (max 10MB).",
+      "error_upload_failed": "\"{fileName}\": upload failed.",
+      "error_connection_failed": "\"{fileName}\": upload failed. Please check your connection."
     },
     "settings_menu": {
       "aria_label": "Problemeinstellungen",
@@ -391,7 +615,21 @@
     "list": {
       "empty_heading": "Noch keine Probleme",
       "empty_description": "Fügen Sie Ihr erstes Problem hinzu, um zu beginnen.",
-      "new_button": "Problem hinzufügen"
+      "new_button": "Problem hinzufügen",
+      "page_title": "Probleme",
+      "search_placeholder": "Probleme suchen…",
+      "search_label": "Probleme suchen",
+      "all_tab": "Alle",
+      "no_results": "Keine Probleme gefunden."
+    },
+    "table": {
+      "col_title": "Titel",
+      "col_severity": "Schweregrad",
+      "col_status": "Status",
+      "col_created": "Erstellt",
+      "col_project": "Projekt",
+      "col_assessment": "Bewertung",
+      "empty": "Noch keine Probleme."
     },
     "badge": {
       "severity": {
@@ -415,6 +653,29 @@
       "update_failed": "Problem konnte nicht aktualisiert werden",
       "delete_failed": "Problem konnte nicht gelöscht werden",
       "import_failed": "Probleme konnten nicht importiert werden"
+    },
+    "detail": {
+      "breadcrumb_issues": "Issues",
+      "field_description": "Description",
+      "field_url": "URL",
+      "field_user_impact": "User Impact",
+      "field_suggested_fix": "Suggested Fix",
+      "field_technical_details": "Technical Details",
+      "field_selector": "Selector",
+      "field_code_snippet": "Code Snippet",
+      "field_wcag_criteria": "WCAG Criteria",
+      "field_tags": "Tags",
+      "field_environment": "Environment",
+      "field_device": "Device",
+      "field_browser": "Browser",
+      "field_os": "OS",
+      "field_assistive_tech": "Assistive Tech",
+      "section_attachments": "Attachments",
+      "no_attachments": "No attachments",
+      "section_dates": "Dates",
+      "date_created": "Created",
+      "date_updated": "Updated",
+      "date_resolved": "Resolved"
     }
   },
   "reports": {
@@ -430,7 +691,15 @@
       "generate_button": "Generieren",
       "generating_label": "Generieren…",
       "generating_overlay": "Generierung mit KI...",
-      "delete_button": "Löschen"
+      "delete_button": "Löschen",
+      "personas": {
+        "screen_reader": "Screen Reader User",
+        "low_vision": "Low Vision",
+        "color_vision": "Color Vision",
+        "keyboard_only": "Keyboard Only",
+        "cognitive": "Cognitive",
+        "deaf_hard_of_hearing": "Deaf / Hard of Hearing"
+      }
     },
     "panel": {
       "assessment_issues_heading": "Bewertungsprobleme"
@@ -462,7 +731,42 @@
     "list": {
       "empty_heading": "Noch keine Berichte",
       "empty_description": "Erstellen Sie Ihren ersten Bericht, um zu beginnen.",
-      "new_button": "Neuer Bericht"
+      "new_button": "Neuer Bericht",
+      "page_title": "Berichte",
+      "empty_cta_description": "Erstellen Sie Ihren ersten Barrierefreiheitsbericht, um Ergebnisse zu dokumentieren und mit Stakeholdern zu teilen.",
+      "empty_cta_button": "Ersten Bericht erstellen"
+    },
+    "table": {
+      "col_title": "Titel",
+      "col_status": "Status",
+      "col_updated": "Aktualisiert",
+      "status_published": "Veröffentlicht",
+      "status_draft": "Entwurf"
+    },
+    "new": {
+      "page_title": "Neuer Bericht",
+      "no_projects_heading": "Keine Projekte gefunden",
+      "no_projects_description": "Sie benötigen mindestens ein Projekt, bevor Sie einen Bericht erstellen können.",
+      "create_project_link": "Ein Projekt erstellen"
+    },
+    "wizard": {
+      "step_select_projects": "Projekte auswählen",
+      "step_select_assessments": "Bewertungen auswählen",
+      "step_name_report": "Bericht benennen",
+      "step_label": "Schritt {n}",
+      "projects_label": "Projekte",
+      "assessments_label": "Bewertungen",
+      "select_projects_placeholder": "Projekte auswählen…",
+      "select_assessments_placeholder": "Bewertungen auswählen…",
+      "no_assessments_placeholder": "Keine Bewertungen für ausgewählte Projekte",
+      "report_title_label": "Berichtstitel",
+      "report_title_placeholder": "Berichtstitel",
+      "title_required": "Titel ist erforderlich",
+      "create_failed": "Bericht konnte nicht erstellt werden",
+      "creating": "Wird erstellt…",
+      "create_button": "Bericht erstellen",
+      "back_button": "Zurück",
+      "next_button": "Weiter"
     },
     "status": {
       "draft": "Entwurf",
@@ -588,6 +892,13 @@
       "error": "WCAG-Kriterien konnten nicht geladen werden.",
       "empty": "Noch keine Probleme für {principle}-Kriterien erfasst.",
       "tooltip_issues": "Probleme"
+    },
+    "stats": {
+      "open_critical_issues": "Offene kritische Probleme",
+      "in_progress_assessments": "Laufende Bewertungen",
+      "resolved_this_month": "Diesen Monat gelöst",
+      "active_projects": "Aktive Projekte",
+      "of_total": "von {total} insgesamt"
     }
   },
   "projects": {
@@ -621,7 +932,22 @@
     "list": {
       "empty_heading": "Noch keine Projekte",
       "empty_description": "Erstellen Sie Ihr erstes Projekt, um zu beginnen.",
-      "new_button": "Neues Projekt"
+      "new_button": "Neues Projekt",
+      "page_title": "Projekte",
+      "create_first": "Erstes Projekt erstellen"
+    },
+    "table": {
+      "col_name": "Name",
+      "col_description": "Beschreibung",
+      "col_assessments": "Bewertungen",
+      "col_issues": "Probleme",
+      "empty": "Noch keine Projekte."
+    },
+    "new": {
+      "page_title": "Neues Projekt",
+      "save_button": "Projekt speichern",
+      "saving": "Wird gespeichert…",
+      "cancel_button": "Abbrechen"
     },
     "toast": {
       "created": "Projekt erstellt",

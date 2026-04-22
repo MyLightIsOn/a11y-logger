@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { AuthToggleSection } from '../auth-toggle-section';
 
 const mockFetch = vi.fn();
@@ -9,27 +10,9 @@ global.fetch = mockFetch;
 
 const user = userEvent.setup();
 
-const messages = {
-  settings: {
-    auth: {
-      heading: 'Authentication',
-      enable_label: 'Enable authentication',
-      enable_description: 'Require a password to access this instance',
-      save_button: 'Save Auth Settings',
-      updating_label: 'Updating…',
-      enable_button: 'Enable Auth',
-      disable_button: 'Disable Auth',
-    },
-    toast: {
-      auth_saved: 'Auth settings saved',
-      auth_save_failed: 'Failed to save auth settings',
-    },
-  },
-};
-
 function renderWithIntl(ui: React.ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
+    <NextIntlClientProvider locale="en" messages={en}>
       {ui}
     </NextIntlClientProvider>
   );

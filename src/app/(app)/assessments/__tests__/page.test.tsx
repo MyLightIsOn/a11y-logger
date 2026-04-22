@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 vi.mock('@/lib/db/assessments', () => ({
   getAllAssessments: () =>
@@ -24,17 +26,25 @@ vi.mock('@/lib/db/assessments', () => ({
 
 import AssessmentsPage from '../page';
 
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 test('renders page heading', async () => {
-  render(await AssessmentsPage());
+  renderWithIntl(await AssessmentsPage());
   expect(screen.getByRole('heading', { name: /assessments/i })).toBeInTheDocument();
 });
 
 test('renders assessment name', async () => {
-  render(await AssessmentsPage());
+  renderWithIntl(await AssessmentsPage());
   expect(screen.getByText('My Assessment')).toBeInTheDocument();
 });
 
 test('renders project name', async () => {
-  render(await AssessmentsPage());
+  renderWithIntl(await AssessmentsPage());
   expect(screen.getByText('My Project')).toBeInTheDocument();
 });

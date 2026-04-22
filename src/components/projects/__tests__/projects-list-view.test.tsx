@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 
 vi.mock('@/components/projects/project-card', () => ({
   ProjectCard: () => <div data-testid="project-card" />,
@@ -10,14 +12,22 @@ vi.mock('@/components/projects/projects-table', () => ({
 
 import { ProjectsListView } from '../projects-list-view';
 
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 describe('ProjectsListView layout', () => {
   it('renders the New Project link', () => {
-    render(<ProjectsListView projects={[]} />);
+    renderWithIntl(<ProjectsListView projects={[]} />);
     expect(screen.getByRole('link', { name: /new project/i })).toBeInTheDocument();
   });
 
   it('ViewToggle is in the header row with the New Project button', () => {
-    render(<ProjectsListView projects={[]} />);
+    renderWithIntl(<ProjectsListView projects={[]} />);
     const heading = screen.getByRole('heading', { name: 'Projects' });
     const headerRow = heading.closest('div')!;
     const viewGroup = screen.getByRole('group', { name: 'View options' });
@@ -25,7 +35,7 @@ describe('ProjectsListView layout', () => {
   });
 
   it('ViewToggle is rendered on the page', () => {
-    render(<ProjectsListView projects={[]} />);
+    renderWithIntl(<ProjectsListView projects={[]} />);
     expect(screen.getByRole('group', { name: 'View options' })).toBeInTheDocument();
   });
 });

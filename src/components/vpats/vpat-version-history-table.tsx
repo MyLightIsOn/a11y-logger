@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { SortableTable } from '@/components/ui/sortable-table';
 
@@ -22,10 +23,11 @@ interface VpatVersionHistoryTableProps {
 }
 
 export function VpatVersionHistoryTable({ vpatId, snapshots }: VpatVersionHistoryTableProps) {
+  const t = useTranslations('vpats.version_history');
   const columns = [
     {
       key: 'version_number' as const,
-      label: 'Version',
+      label: t('col_version'),
       render: (row: SnapshotSummary) => (
         <Link
           href={`/vpats/${vpatId}/versions/${row.version_number}`}
@@ -37,14 +39,14 @@ export function VpatVersionHistoryTable({ vpatId, snapshots }: VpatVersionHistor
     },
     {
       key: 'published_at' as const,
-      label: 'Published',
+      label: t('col_published'),
       render: (row: SnapshotSummary) => (
         <span className="text-muted-foreground">{formatDate(row.published_at)}</span>
       ),
     },
     {
       key: 'created_at' as const,
-      label: 'Created At',
+      label: t('col_created_at'),
       render: (row: SnapshotSummary) => (
         <span className="text-muted-foreground">{formatDate(row.created_at)}</span>
       ),
@@ -55,9 +57,7 @@ export function VpatVersionHistoryTable({ vpatId, snapshots }: VpatVersionHistor
     <Card>
       <CardContent>
         {snapshots.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No published versions yet. Publish this VPAT to create a snapshot.
-          </p>
+          <p className="text-sm text-muted-foreground">{t('empty')}</p>
         ) : (
           <SortableTable
             columns={columns}
@@ -65,7 +65,7 @@ export function VpatVersionHistoryTable({ vpatId, snapshots }: VpatVersionHistor
             defaultSortKey="version_number"
             defaultSortDir="desc"
             getKey={(r) => r.id}
-            emptyMessage="No published versions yet. Publish this VPAT to create a snapshot."
+            emptyMessage={t('empty')}
           />
         )}
       </CardContent>

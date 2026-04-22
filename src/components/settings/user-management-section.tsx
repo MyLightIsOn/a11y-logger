@@ -32,11 +32,11 @@ function CreateAccountForm({ onCreated }: { onCreated: (user: User) => void }) {
     setError('');
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
+      setError(t('password_too_short'));
       return;
     }
     if (password !== confirm) {
-      setError('Passwords do not match.');
+      setError(t('passwords_no_match'));
       return;
     }
 
@@ -49,13 +49,13 @@ function CreateAccountForm({ onCreated }: { onCreated: (user: User) => void }) {
       });
       const json = await res.json();
       if (!json.success) {
-        setError(json.error ?? 'Failed to create account.');
+        setError(json.error ?? t('create_failed'));
         return;
       }
-      toast.success('Account created');
+      toast.success(t('account_created'));
       onCreated(json.data);
     } catch {
-      setError('Failed to create account.');
+      setError(t('create_failed'));
     } finally {
       setSaving(false);
     }
@@ -86,7 +86,7 @@ function CreateAccountForm({ onCreated }: { onCreated: (user: User) => void }) {
         />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="confirm-password">Confirm Password</Label>
+        <Label htmlFor="confirm-password">{t('confirm_password_label')}</Label>
         <Input
           id="confirm-password"
           type="password"
@@ -98,7 +98,7 @@ function CreateAccountForm({ onCreated }: { onCreated: (user: User) => void }) {
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" disabled={saving}>
-        {saving ? 'Creating…' : t('create_button')}
+        {saving ? t('creating') : t('create_button')}
       </Button>
     </form>
   );
@@ -116,11 +116,11 @@ function ChangePasswordForm({ user, onDone }: { user: User; onDone: () => void }
     setError('');
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
+      setError(t('password_too_short'));
       return;
     }
     if (password !== confirm) {
-      setError('Passwords do not match.');
+      setError(t('passwords_no_match'));
       return;
     }
 
@@ -133,13 +133,13 @@ function ChangePasswordForm({ user, onDone }: { user: User; onDone: () => void }
       });
       const json = await res.json();
       if (!json.success) {
-        setError(json.error ?? 'Failed to update password.');
+        setError(json.error ?? t('update_failed'));
         return;
       }
-      toast.success('Password updated');
+      toast.success(t('password_updated'));
       onDone();
     } catch {
-      setError('Failed to update password.');
+      setError(t('update_failed'));
     } finally {
       setSaving(false);
     }
@@ -159,7 +159,7 @@ function ChangePasswordForm({ user, onDone }: { user: User; onDone: () => void }
         />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="change-confirm-password">Confirm Password</Label>
+        <Label htmlFor="change-confirm-password">{t('confirm_password_label')}</Label>
         <Input
           id="change-confirm-password"
           type="password"
@@ -172,10 +172,10 @@ function ChangePasswordForm({ user, onDone }: { user: User; onDone: () => void }
       {error && <p className="text-sm text-destructive">{error}</p>}
       <div className="flex gap-2">
         <Button type="submit" disabled={saving}>
-          {saving ? 'Saving…' : 'Save Password'}
+          {saving ? t('saving') : t('save_password_button')}
         </Button>
         <Button type="button" variant="outline" onClick={onDone}>
-          Cancel
+          {t('cancel_button')}
         </Button>
       </div>
     </form>
@@ -194,9 +194,7 @@ export function UserManagementSection({ users: initialUsers }: UserManagementSec
       <CardHeader>
         <CardTitle>{t('heading')}</CardTitle>
         <CardDescription>
-          {currentUser
-            ? 'Manage your local account credentials.'
-            : 'Create an account to enable authentication.'}
+          {currentUser ? t('manage_credentials_description') : t('create_account_description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -211,7 +209,7 @@ export function UserManagementSection({ users: initialUsers }: UserManagementSec
               </div>
               {!changingPassword && (
                 <Button variant="outline" size="sm" onClick={() => setChangingPassword(true)}>
-                  Change Password
+                  {t('change_password_button')}
                 </Button>
               )}
             </div>

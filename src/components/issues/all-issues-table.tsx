@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { SortableTable } from '@/components/ui/sortable-table';
 import { SeverityBadge } from '@/components/issues/severity-badge';
 import { StatusBadge } from '@/components/issues/status-badge';
@@ -19,10 +20,11 @@ interface AllIssuesTableProps {
 }
 
 export function AllIssuesTable({ issues }: AllIssuesTableProps) {
+  const t = useTranslations('issues.table');
   const columns = [
     {
       key: 'title' as const,
-      label: 'Title',
+      label: t('col_title'),
       render: (row: IssueWithContext) => (
         <Link
           href={`/projects/${row.project_id}/assessments/${row.assessment_id}/issues/${row.id}`}
@@ -34,24 +36,24 @@ export function AllIssuesTable({ issues }: AllIssuesTableProps) {
     },
     {
       key: 'severity' as const,
-      label: 'Severity',
+      label: t('col_severity'),
       render: (row: IssueWithContext) => <SeverityBadge severity={row.severity} />,
     },
     {
       key: 'status' as const,
-      label: 'Status',
+      label: t('col_status'),
       render: (row: IssueWithContext) => <StatusBadge status={row.status} />,
     },
     {
       key: 'created_at' as const,
-      label: 'Created',
+      label: t('col_created'),
       render: (row: IssueWithContext) => (
         <span className="text-muted-foreground">{formatDate(row.created_at)}</span>
       ),
     },
     {
       key: 'project_name' as const,
-      label: 'Project',
+      label: t('col_project'),
       render: (row: IssueWithContext) => (
         <Link
           href={`/projects/${row.project_id}`}
@@ -64,7 +66,7 @@ export function AllIssuesTable({ issues }: AllIssuesTableProps) {
     },
     {
       key: 'assessment_name' as const,
-      label: 'Assessment',
+      label: t('col_assessment'),
       render: (row: IssueWithContext) => (
         <Link
           href={`/projects/${row.project_id}/assessments/${row.assessment_id}`}
@@ -84,7 +86,7 @@ export function AllIssuesTable({ issues }: AllIssuesTableProps) {
       defaultSortKey="created_at"
       defaultSortDir="desc"
       getKey={(r) => r.id}
-      emptyMessage="No issues yet."
+      emptyMessage={t('empty')}
     />
   );
 }

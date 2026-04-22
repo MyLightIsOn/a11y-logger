@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
+import en from '@/messages/en.json';
 import { ProjectsTable } from '@/components/projects/projects-table';
 import type { ProjectWithCounts } from '@/lib/db/projects';
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const mockProjects: ProjectWithCounts[] = [
   {
@@ -20,18 +30,18 @@ const mockProjects: ProjectWithCounts[] = [
 
 describe('ProjectsTable', () => {
   it('renders project name as a link', () => {
-    render(<ProjectsTable projects={mockProjects} />);
+    renderWithIntl(<ProjectsTable projects={mockProjects} />);
     expect(screen.getByRole('link', { name: 'Alpha' })).toHaveAttribute('href', '/projects/p1');
   });
 
   it('renders assessment and issue counts', () => {
-    render(<ProjectsTable projects={mockProjects} />);
+    renderWithIntl(<ProjectsTable projects={mockProjects} />);
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('7')).toBeInTheDocument();
   });
 
   it('renders empty message when no projects', () => {
-    render(<ProjectsTable projects={[]} />);
+    renderWithIntl(<ProjectsTable projects={[]} />);
     expect(screen.getByText(/no projects yet/i)).toBeInTheDocument();
   });
 });

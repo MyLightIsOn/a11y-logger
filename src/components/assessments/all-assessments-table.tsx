@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { SortableTable } from '@/components/ui/sortable-table';
 import { AssessmentStatusBadge } from '@/components/assessments/assessment-status-badge';
 import type { AssessmentWithProject } from '@/lib/db/assessments';
@@ -10,10 +11,11 @@ interface AllAssessmentsTableProps {
 }
 
 export function AllAssessmentsTable({ assessments }: AllAssessmentsTableProps) {
+  const t = useTranslations('assessments.table');
   const columns = [
     {
       key: 'name' as const,
-      label: 'Name',
+      label: t('col_name'),
       render: (row: AssessmentWithProject) => (
         <Link
           href={`/projects/${row.project_id}/assessments/${row.id}`}
@@ -25,7 +27,7 @@ export function AllAssessmentsTable({ assessments }: AllAssessmentsTableProps) {
     },
     {
       key: 'project_name' as const,
-      label: 'Project',
+      label: t('col_project'),
       render: (row: AssessmentWithProject) => (
         <Link
           href={`/projects/${row.project_id}`}
@@ -37,12 +39,12 @@ export function AllAssessmentsTable({ assessments }: AllAssessmentsTableProps) {
     },
     {
       key: 'status' as const,
-      label: 'Status',
+      label: t('col_status'),
       render: (row: AssessmentWithProject) => <AssessmentStatusBadge status={row.status} />,
     },
     {
       key: 'issue_count' as const,
-      label: 'Issues',
+      label: t('col_issues'),
       render: (row: AssessmentWithProject) => row.issue_count,
     },
   ];
@@ -54,7 +56,7 @@ export function AllAssessmentsTable({ assessments }: AllAssessmentsTableProps) {
       defaultSortKey="created_at"
       defaultSortDir="desc"
       getKey={(r) => r.id}
-      emptyMessage="No assessments yet."
+      emptyMessage={t('empty')}
     />
   );
 }
